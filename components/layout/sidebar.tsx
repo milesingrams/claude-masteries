@@ -1,14 +1,31 @@
-"use client";
+"use client"
 
-import { Plus, MessageSquare, FolderOpen } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Separator } from "@/components/ui/separator";
+import { Plus, MessageSquare, FolderOpen } from "lucide-react"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarRail,
+  SidebarTrigger,
+  useSidebar,
+} from "@/components/ui/sidebar"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 
 interface RecentChat {
-  id: string;
-  title: string;
+  id: string
+  title: string
 }
 
 const recentChats: RecentChat[] = [
@@ -17,90 +34,123 @@ const recentChats: RecentChat[] = [
   { id: "3", title: "Extreme LDL reduction and morta..." },
   { id: "4", title: "Hip arthroscopy decision with ca..." },
   { id: "5", title: "Can impingement surgery necess..." },
-];
+]
 
-export function Sidebar() {
+export function AppSidebar() {
+  const { state } = useSidebar()
+
   return (
-    <div className="hidden lg:flex w-[280px] h-screen flex-col bg-sidebar border-r border-sidebar-border">
-      {/* Header */}
-      <div className="flex items-center gap-2 p-4">
-        <div className="flex items-center gap-2 flex-1">
-          <div className="w-8 h-8 rounded-md bg-primary flex items-center justify-center">
-            <span className="text-white text-lg font-semibold">C</span>
+    <Sidebar collapsible="icon" className="border-sidebar-border">
+      <SidebarHeader>
+        {state === "collapsed" ? (
+          // Show only trigger button when collapsed
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <SidebarTrigger />
+            </TooltipTrigger>
+            <TooltipContent side="right">
+              <p>Open sidebar <kbd className="ml-1 text-xs opacity-60">⌘.</kbd></p>
+            </TooltipContent>
+          </Tooltip>
+        ) : (
+          // Show header with Claude text and close button when expanded
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 min-w-0">
+              <div className="w-8 h-8 rounded-md bg-primary flex items-center justify-center shrink-0">
+                <span className="text-white text-lg font-semibold">C</span>
+              </div>
+              <span className="text-sidebar-foreground font-medium truncate">
+                Claude
+              </span>
+            </div>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <SidebarTrigger className="-mr-1" />
+              </TooltipTrigger>
+              <TooltipContent side="bottom">
+                <p>Close sidebar <kbd className="ml-1 text-xs opacity-60">⌘.</kbd></p>
+              </TooltipContent>
+            </Tooltip>
           </div>
-          <span className="text-sidebar-foreground font-medium">Claude</span>
-        </div>
-      </div>
+        )}
+      </SidebarHeader>
 
-      {/* New Chat Button */}
-      <div className="px-3 pb-2">
-        <Button
-          className="w-full justify-start gap-2 bg-sidebar-accent hover:bg-sidebar-accent/80 text-sidebar-accent-foreground border-0"
-          variant="outline"
-        >
-          <Plus className="h-4 w-4" />
-          New chat
-        </Button>
-      </div>
+      <SidebarContent>
+        {/* New Chat Button */}
+        <SidebarGroup>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  className="bg-sidebar-accent hover:bg-sidebar-accent/80 data-[state=open]:bg-sidebar-accent"
+                  tooltip="New chat"
+                >
+                  <Plus className="h-4 w-4" />
+                  <span>New chat</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
 
-      {/* Navigation Tabs */}
-      <div className="px-3 py-2">
-        <div className="flex items-center gap-1 text-sm">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="flex-1 justify-start gap-2 hover:bg-sidebar-accent text-sidebar-foreground h-8"
-          >
-            <MessageSquare className="h-4 w-4" />
-            Chats
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="flex-1 justify-start gap-2 hover:bg-sidebar-accent text-sidebar-foreground/60 h-8"
-          >
-            <FolderOpen className="h-4 w-4" />
-            Projects
-          </Button>
-        </div>
-      </div>
+        {/* Navigation Tabs - Vertically Stacked */}
+        <SidebarGroup>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton tooltip="Chats" isActive>
+                  <MessageSquare className="h-4 w-4" />
+                  <span>Chats</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton tooltip="Projects">
+                  <FolderOpen className="h-4 w-4" />
+                  <span>Projects</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
 
-      <Separator className="bg-sidebar-border" />
+        {/* Recent Chats - Hidden when collapsed */}
+        {state === "expanded" && (
+          <SidebarGroup className="animate-in fade-in duration-200">
+            <SidebarGroupLabel>Recents</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {recentChats.map((chat) => (
+                  <SidebarMenuItem key={chat.id}>
+                    <SidebarMenuButton tooltip={chat.title}>
+                      <span className="truncate">{chat.title}</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
+      </SidebarContent>
 
-      {/* Recent Chats */}
-      <div className="flex-1 px-3 py-2">
-        <h3 className="text-xs font-medium text-sidebar-foreground/60 px-2 py-1 mb-1">
-          Recents
-        </h3>
-        <ScrollArea className="h-full">
-          <div className="space-y-0.5">
-            {recentChats.map((chat) => (
-              <Button
-                key={chat.id}
-                variant="ghost"
-                className="w-full justify-start text-left h-auto py-2 px-2 hover:bg-sidebar-accent text-sidebar-foreground/80 hover:text-sidebar-foreground font-normal"
-              >
-                <span className="truncate text-sm">{chat.title}</span>
-              </Button>
-            ))}
-          </div>
-        </ScrollArea>
-      </div>
+      <SidebarFooter>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton size="lg" tooltip="Miles Ingram">
+              <Avatar className="h-6 w-6">
+                <AvatarFallback className="bg-primary text-white text-xs">
+                  MI
+                </AvatarFallback>
+              </Avatar>
+              <div className="flex flex-col items-start min-w-0">
+                <span className="text-sm text-sidebar-foreground truncate">Miles Ingram</span>
+                <span className="text-xs text-sidebar-foreground/60 truncate">Pro plan</span>
+              </div>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarFooter>
 
-      {/* User Profile */}
-      <div className="border-t border-sidebar-border p-3">
-        <Button
-          variant="ghost"
-          className="w-full justify-start gap-2 hover:bg-sidebar-accent h-auto py-2"
-        >
-          <Avatar className="h-6 w-6">
-            <AvatarFallback className="bg-primary text-white text-xs">
-              MI
-            </AvatarFallback>
-          </Avatar>
-          <span className="text-sm text-sidebar-foreground">Miles Ingram</span>
-        </Button>
-      </div>
-    </div>
-  );
+      <SidebarRail />
+    </Sidebar>
+  )
 }
