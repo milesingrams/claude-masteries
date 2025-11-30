@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useParams } from "next/navigation";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
@@ -16,21 +16,32 @@ export default function ChatPage() {
   const { getChat, updateChat } = useChatContext();
 
   const chat = getChat(chatId);
+  const hasLoadedInitialMessages = useRef(false);
 
-  const { messages, sendMessage, status } = useChat({
+  const { messages, sendMessage, status, setMessages } = useChat({
+    id: chatId,
     transport: new DefaultChatTransport({
       api: "/api/chat",
     }),
-    messages: chat?.messages.map((msg) => ({
-      id: msg.id,
-      role: msg.role,
-      parts: [{ type: "text" as const, text: msg.content }],
-    })),
     onError: (err: Error) => {
       console.error("Chat error:", err);
       toast.error("Failed to send message. Please try again.");
     },
   });
+
+  // Load initial messages from chat only once
+  useEffect(() => {
+    if (!hasLoadedInitialMessages.current && chat?.messages && chat.messages.length > 0) {
+      hasLoadedInitialMessages.current = true;
+      setMessages(
+        chat.messages.map((msg) => ({
+          id: msg.id,
+          role: msg.role,
+          parts: [{ type: "text" as const, text: msg.content }],
+        }))
+      );
+    }
+  }, [chat?.messages, setMessages]);
 
   const isLoading = status === "submitted" || status === "streaming";
 
