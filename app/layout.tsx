@@ -2,12 +2,14 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { AppSidebar } from "@/components/layout/sidebar";
-import { MessageInput } from "@/components/chat/message-input";
 import {
   SidebarProvider,
   SidebarInset,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
+import { ChatProvider } from "@/lib/chat-context";
+import { Toaster } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,21 +36,23 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <SidebarProvider>
-          <AppSidebar />
-          <SidebarInset>
-            {/* Mobile header with trigger */}
-            <SidebarTrigger className="absolute top-2 left-2 md:hidden" />
+        <TooltipProvider>
+          <ChatProvider>
+            <SidebarProvider>
+              <AppSidebar />
+              <SidebarInset>
+                {/* Mobile header with trigger */}
+                <SidebarTrigger className="absolute top-2 left-2 md:hidden" />
 
-            {/* Chat Content */}
-            <div className="flex flex-1 flex-col overflow-hidden">
-              <div className="flex-1 overflow-y-auto">{children}</div>
-
-              {/* Message Input */}
-              <MessageInput />
-            </div>
-          </SidebarInset>
-        </SidebarProvider>
+                {/* Chat Content */}
+                <div className="flex flex-1 flex-col overflow-hidden h-screen">
+                  {children}
+                </div>
+              </SidebarInset>
+            </SidebarProvider>
+            <Toaster />
+          </ChatProvider>
+        </TooltipProvider>
       </body>
     </html>
   );

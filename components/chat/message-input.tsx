@@ -5,15 +5,24 @@ import { Plus, ArrowUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 
-export function MessageInput() {
+interface MessageInputProps {
+  onSubmit: (message: string) => void;
+  disabled?: boolean;
+  placeholder?: string;
+}
+
+export function MessageInput({
+  onSubmit,
+  disabled = false,
+  placeholder = "How can I help you today?",
+}: MessageInputProps) {
   const [message, setMessage] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!message.trim()) return;
+    if (!message.trim() || disabled) return;
 
-    // Handle message submission here
-    console.log("Submitting:", message);
+    onSubmit(message);
     setMessage("");
   };
 
@@ -26,8 +35,9 @@ export function MessageInput() {
             <Textarea
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              placeholder="How can I help you today?"
-              className="min-h-[56px] max-h-[200px] resize-none border-0 bg-transparent px-4 py-3 pr-20 focus-visible:ring-0 focus-visible:ring-offset-0 text-foreground placeholder:text-muted-foreground"
+              placeholder={placeholder}
+              disabled={disabled}
+              className="min-h-[56px] max-h-[200px] resize-none border-0 bg-transparent px-4 py-3 pr-20 focus-visible:ring-0 focus-visible:ring-offset-0 text-foreground placeholder:text-muted-foreground disabled:opacity-50 disabled:cursor-not-allowed"
               onKeyDown={(e) => {
                 if (e.key === "Enter" && !e.shiftKey) {
                   e.preventDefault();
@@ -43,13 +53,14 @@ export function MessageInput() {
                 size="icon"
                 variant="ghost"
                 className="h-8 w-8 hover:bg-accent"
+                disabled={disabled}
               >
                 <Plus className="h-4 w-4 text-muted-foreground" />
               </Button>
               <Button
                 type="submit"
                 size="icon"
-                disabled={!message.trim()}
+                disabled={!message.trim() || disabled}
                 className="h-8 w-8 rounded-lg bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <ArrowUp className="h-4 w-4 text-white" />

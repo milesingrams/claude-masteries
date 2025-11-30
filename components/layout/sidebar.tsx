@@ -1,6 +1,8 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
+import { useParams } from "next/navigation";
 import { Plus, MessageSquare, FolderOpen } from "lucide-react";
 import {
   Sidebar,
@@ -21,22 +23,13 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-
-interface RecentChat {
-  id: string;
-  title: string;
-}
-
-const recentChats: RecentChat[] = [
-  { id: "1", title: "Q2 product launch campaign strategy" },
-  { id: "2", title: "Competitive analysis: AI market positio..." },
-  { id: "3", title: "Writing prompts for modern life" },
-  { id: "4", title: "Social media content calendar ideas" },
-  { id: "5", title: "Exploring themes of solitude in poet..." },
-];
+import { useChatContext } from "@/lib/chat-context";
 
 export function AppSidebar() {
   const { state } = useSidebar();
+  const { chats } = useChatContext();
+  const params = useParams();
+  const currentChatId = params?.chatId as string | undefined;
 
   return (
     <Sidebar collapsible="icon" className="border-sidebar-border">
@@ -86,11 +79,14 @@ export function AppSidebar() {
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton
+                  asChild
                   className="bg-sidebar-accent hover:bg-sidebar-accent/80 data-[state=open]:bg-sidebar-accent"
                   tooltip="New chat"
                 >
-                  <Plus className="h-4 w-4" />
-                  <span>New chat</span>
+                  <Link href="/new">
+                    <Plus className="h-4 w-4" />
+                    <span>New chat</span>
+                  </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
@@ -123,13 +119,25 @@ export function AppSidebar() {
             <SidebarGroupLabel>Recents</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
-                {recentChats.map((chat) => (
-                  <SidebarMenuItem key={chat.id}>
-                    <SidebarMenuButton tooltip={chat.title}>
-                      <span className="truncate">{chat.title}</span>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
+                {chats.length === 0 ? (
+                  <div className="px-2 py-4 text-sm text-muted-foreground text-center">
+                    No chats yet
+                  </div>
+                ) : (
+                  chats.map((chat) => (
+                    <SidebarMenuItem key={chat.id}>
+                      <SidebarMenuButton
+                        asChild
+                        tooltip={chat.title}
+                        isActive={currentChatId === chat.id}
+                      >
+                        <Link href={`/chat/${chat.id}`}>
+                          <span className="truncate">{chat.title}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))
+                )}
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
