@@ -37,7 +37,7 @@ export function MessageInput({
               onChange={(e) => setMessage(e.target.value)}
               placeholder={placeholder}
               disabled={disabled}
-              className="text-foreground placeholder:text-muted-foreground max-h-[200px] min-h-[56px] resize-none border-0 bg-transparent px-4 py-3 pr-20 focus-visible:ring-0 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
+              className="text-foreground placeholder:text-muted-foreground max-h-[200px] min-h-[56px] resize-none border-0 bg-transparent px-4 py-3 pr-20 text-base focus-visible:ring-0 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50 md:text-base"
               onKeyDown={(e) => {
                 if (e.key === "Enter" && !e.shiftKey) {
                   e.preventDefault();

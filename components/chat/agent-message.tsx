@@ -1,8 +1,7 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
 
-export interface AgentMessageProps
-  extends React.HTMLAttributes<HTMLDivElement> {
+export interface AgentMessageProps extends React.HTMLAttributes<HTMLDivElement> {
   content: string;
 }
 
@@ -14,7 +13,10 @@ export function AgentMessage({
   return (
     <div data-slot="agent-message" className="flex w-full">
       <div
-        className={cn("text-foreground text-sm leading-relaxed", className)}
+        className={cn(
+          "text-foreground font-serif text-base leading-relaxed",
+          className
+        )}
         {...props}
       >
         <div className="whitespace-pre-wrap">{content}</div>
@@ -22,4 +24,3 @@ export function AgentMessage({
     </div>
   );
 }
-
