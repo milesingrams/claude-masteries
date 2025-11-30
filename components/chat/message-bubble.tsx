@@ -3,7 +3,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const messageBubbleVariants = cva(
-  "rounded-2xl px-4 py-3 text-sm leading-relaxed break-words",
+  "rounded-2xl px-4 py-3 text-sm leading-relaxed wrap-break-word",
   {
     variants: {
       role: {
@@ -18,9 +18,9 @@ const messageBubbleVariants = cva(
 );
 
 export interface MessageBubbleProps
-  extends React.HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof messageBubbleVariants> {
+  extends React.HTMLAttributes<HTMLDivElement> {
   content: string;
+  role: "user" | "assistant";
 }
 
 export function MessageBubble({
@@ -38,7 +38,11 @@ export function MessageBubble({
       )}
     >
       <div
-        className={cn(messageBubbleVariants({ role }), "max-w-[85%]", className)}
+        className={cn(
+          messageBubbleVariants({ role }),
+          "max-w-[85%]",
+          className
+        )}
         {...props}
       >
         <div className="whitespace-pre-wrap">{content}</div>
