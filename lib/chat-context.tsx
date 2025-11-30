@@ -5,6 +5,7 @@ import {
   useContext,
   useState,
   useEffect,
+  useCallback,
   type ReactNode,
 } from "react";
 import { nanoid } from "nanoid";
@@ -31,12 +32,12 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     setChats(loadedChats);
   }, []);
 
-  const refreshChats = () => {
+  const refreshChats = useCallback(() => {
     const loadedChats = getAllChats();
     setChats(loadedChats);
-  };
+  }, []);
 
-  const createChat = (firstMessage: string): string => {
+  const createChat = useCallback((firstMessage: string): string => {
     const chatId = nanoid();
     const now = new Date();
 
@@ -59,9 +60,9 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     setChats((prev) => [newChat, ...prev]);
 
     return chatId;
-  };
+  }, []);
 
-  const updateChat = (chatId: string, updates: Partial<Chat>) => {
+  const updateChat = useCallback((chatId: string, updates: Partial<Chat>) => {
     setChats((prev) => {
       const updated = prev.map((chat) =>
         chat.id === chatId
@@ -77,16 +78,16 @@ export function ChatProvider({ children }: { children: ReactNode }) {
 
       return updated;
     });
-  };
+  }, []);
 
-  const deleteChat = (chatId: string) => {
+  const deleteChat = useCallback((chatId: string) => {
     deleteStorageChat(chatId);
     setChats((prev) => prev.filter((chat) => chat.id !== chatId));
-  };
+  }, []);
 
-  const getChat = (chatId: string) => {
+  const getChat = useCallback((chatId: string) => {
     return chats.find((chat) => chat.id === chatId);
-  };
+  }, [chats]);
 
   return (
     <ChatContext.Provider

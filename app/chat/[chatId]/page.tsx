@@ -2,13 +2,12 @@
 
 import { useEffect } from "react";
 import { useParams } from "next/navigation";
-import { useChat } from "ai/react";
+import { useChat } from "@ai-sdk/react";
+import { DefaultChatTransport } from "ai";
 import { toast } from "sonner";
-import { nanoid } from "nanoid";
 import { MessageList } from "@/components/chat/message-list";
 import { MessageInput } from "@/components/chat/message-input";
 import { useChatContext } from "@/lib/chat-context";
-import { saveChat } from "@/lib/chat-storage";
 import type { Message } from "@/lib/types";
 
 export default function ChatPage() {
@@ -18,50 +17,69 @@ export default function ChatPage() {
 
   const chat = getChat(chatId);
 
-  const { messages, append, isLoading } = useChat({
-    api: "/api/chat",
-    id: chatId,
-    initialMessages: chat?.messages.map((msg) => ({
+  const { messages, sendMessage, status } = useChat({
+    transport: new DefaultChatTransport({
+      api: "/api/chat",
+    }),
+    messages: chat?.messages.map((msg) => ({
       id: msg.id,
       role: msg.role,
-      content: msg.content,
+      parts: [{ type: "text" as const, text: msg.content }],
     })),
-    onError: (err) => {
+    onError: (err: Error) => {
       console.error("Chat error:", err);
       toast.error("Failed to send message. Please try again.");
     },
   });
 
+  const isLoading = status === "submitted" || status === "streaming";
+
   // Save messages to localStorage whenever they change
   useEffect(() => {
-    if (messages.length > 0 && chat) {
+    if (messages.length > 0) {
       const updatedMessages: Message[] = messages.map((msg) => ({
         id: msg.id,
         role: msg.role as "user" | "assistant",
-        content: msg.content,
+        content:
+          msg.parts
+            .filter((part) => part.type === "text")
+            .map((part) => part.text)
+            .join("") || "",
         createdAt: new Date(),
       }));
 
       updateChat(chatId, { messages: updatedMessages });
     }
-  }, [messages, chatId, chat, updateChat]);
+  }, [messages, chatId, updateChat]);
 
   // Generate title after first exchange
   useEffect(() => {
     const generateTitle = async () => {
+      const currentChat = getChat(chatId);
       if (
         messages.length === 2 &&
-        chat?.title === "New Chat" &&
+        currentChat?.title === "New Chat" &&
         messages[0].role === "user" &&
         messages[1].role === "assistant"
       ) {
         try {
+          const firstUserMessage =
+            messages[0].parts
+              .filter((part) => part.type === "text")
+              .map((part) => part.text)
+              .join("") || "";
+          const firstAssistantMessage =
+            messages[1].parts
+              .filter((part) => part.type === "text")
+              .map((part) => part.text)
+              .join("") || "";
+
           const response = await fetch("/api/generate-title", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-              firstUserMessage: messages[0].content,
-              firstAssistantMessage: messages[1].content,
+              firstUserMessage,
+              firstAssistantMessage,
             }),
           });
 
@@ -76,7 +94,7 @@ export default function ChatPage() {
     };
 
     generateTitle();
-  }, [messages, chat, chatId, updateChat]);
+  }, [messages, chatId, getChat, updateChat]);
 
   if (!chat) {
     return (
@@ -87,10 +105,7 @@ export default function ChatPage() {
   }
 
   const handleMessageSubmit = async (message: string) => {
-    await append({
-      role: "user",
-      content: message,
-    });
+    sendMessage({ text: message });
   };
 
   return (
@@ -99,14 +114,18 @@ export default function ChatPage() {
         messages={messages.map((msg) => ({
           id: msg.id,
           role: msg.role as "user" | "assistant",
-          content: msg.content,
+          content:
+            msg.parts
+              .filter((part) => part.type === "text")
+              .map((part) => part.text)
+              .join("") || "",
           createdAt: new Date(),
         }))}
         isLoading={isLoading}
       />
       <MessageInput
         onSubmit={handleMessageSubmit}
-        disabled={isLoading}
+        disabled={status !== "ready"}
       />
     </div>
   );

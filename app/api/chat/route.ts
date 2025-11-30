@@ -1,13 +1,15 @@
 import { createAnthropic } from "@ai-sdk/anthropic";
-import { streamText } from "ai";
+import { convertToModelMessages, streamText, type UIMessage } from "ai";
 
 const anthropic = createAnthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
 });
 
+export const maxDuration = 30;
+
 export async function POST(req: Request) {
   try {
-    const { messages } = await req.json();
+    const { messages }: { messages: UIMessage[] } = await req.json();
 
     if (!messages || !Array.isArray(messages)) {
       return new Response("Invalid request body", { status: 400 });
@@ -15,12 +17,12 @@ export async function POST(req: Request) {
 
     const result = streamText({
       model: anthropic("claude-sonnet-4-5-20250929"),
-      messages,
       system: "You are Claude, a helpful AI assistant created by Anthropic.",
+      messages: convertToModelMessages(messages),
       maxTokens: 4096,
     });
 
-    return result.toDataStreamResponse();
+    return result.toUIMessageStreamResponse();
   } catch (error) {
     console.error("Error in chat API:", error);
     return new Response("Internal server error", { status: 500 });
