@@ -50,9 +50,7 @@ export function AppSidebar() {
               <SidebarTrigger />
             </TooltipTrigger>
             <TooltipContent side="right">
-              <p>
-                Open sidebar <kbd className="ml-1 text-xs opacity-60">⌘.</kbd>
-              </p>
+              Open sidebar <kbd className="ml-1 text-xs opacity-60">⌘.</kbd>
             </TooltipContent>
           </Tooltip>
         ) : (
@@ -75,10 +73,8 @@ export function AppSidebar() {
                 <SidebarTrigger className="-mr-1" />
               </TooltipTrigger>
               <TooltipContent side="bottom">
-                <p>
-                  Close sidebar{" "}
-                  <kbd className="ml-1 text-xs opacity-60">⌘.</kbd>
-                </p>
+                Close sidebar
+                <kbd className="ml-1 text-xs opacity-60">⌘.</kbd>
               </TooltipContent>
             </Tooltip>
           </div>
@@ -141,28 +137,6 @@ export function AppSidebar() {
           </SidebarGroup>
         )}
       </SidebarContent>
-
-      <SidebarFooter>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton size="lg" tooltip="Miles Ingram">
-              <Avatar className="h-6 w-6">
-                <AvatarFallback className="bg-primary text-white text-xs">
-                  MI
-                </AvatarFallback>
-              </Avatar>
-              <div className="flex flex-col items-start min-w-0">
-                <span className="text-sm text-sidebar-foreground truncate">
-                  Miles Ingram
-                </span>
-                <span className="text-xs text-sidebar-foreground/60 truncate">
-                  Pro plan
-                </span>
-              </div>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarFooter>
 
       <SidebarRail />
     </Sidebar>
