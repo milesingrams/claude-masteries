@@ -27,7 +27,7 @@ import { useChatContext } from "@/lib/chat-context";
 
 export function AppSidebar() {
   const { state } = useSidebar();
-  const { chats } = useChatContext();
+  const { chats, isLoaded } = useChatContext();
   const params = useParams();
   const currentChatId = params?.chatId as string | undefined;
 
@@ -113,16 +113,16 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        {/* Recent Chats - Hidden when collapsed */}
-        {state === "expanded" && (
+        {/* Recent Chats - Hidden when collapsed, only shown after client hydration */}
+        {state === "expanded" && isLoaded && (
           <SidebarGroup className="animate-in fade-in duration-200">
             <SidebarGroupLabel>Recents</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 {chats.length === 0 ? (
-                  <div className="text-muted-foreground px-2 py-4 text-center text-sm">
+                  <li className="text-muted-foreground px-2 py-4 text-center text-sm">
                     No chats yet
-                  </div>
+                  </li>
                 ) : (
                   chats.map((chat) => (
                     <SidebarMenuItem key={chat.id}>

@@ -5,6 +5,7 @@ import {
   useContext,
   useState,
   useCallback,
+  useEffect,
   type ReactNode,
 } from "react";
 import { nanoid } from "nanoid";
@@ -17,6 +18,7 @@ import {
 
 interface ChatContextType {
   chats: Chat[];
+  isLoaded: boolean;
   createChat: (firstMessage: string) => string;
   updateChat: (chatId: string, updates: Partial<Chat>) => void;
   deleteChat: (chatId: string) => void;
@@ -27,8 +29,16 @@ interface ChatContextType {
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
 
 export function ChatProvider({ children }: { children: ReactNode }) {
-  // Lazy initialization - loads from localStorage on first render
-  const [chats, setChats] = useState<Chat[]>(() => getAllChats());
+  // Initialize with empty array to avoid hydration mismatch
+  const [chats, setChats] = useState<Chat[]>([]);
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  // Load chats from localStorage after mount (client-side only)
+  useEffect(() => {
+    const loadedChats = getAllChats();
+    setChats(loadedChats);
+    setIsLoaded(true);
+  }, []);
 
   const refreshChats = useCallback(() => {
     const loadedChats = getAllChats();
@@ -94,6 +104,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     <ChatContext.Provider
       value={{
         chats,
+        isLoaded,
         createChat,
         updateChat,
         deleteChat,
