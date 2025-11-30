@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+
 export function EmptyState() {
   const greeting = getGreeting();
 
@@ -9,9 +11,12 @@ export function EmptyState() {
         {/* Greeting */}
         <div className="space-y-2">
           <div className="flex items-center justify-center gap-2 mb-6">
-            <div className="w-12 h-12 rounded-lg bg-primary flex items-center justify-center">
-              <span className="text-white text-2xl font-semibold font-serif">C</span>
-            </div>
+            <Image
+              src="/claude-logo.svg"
+              alt="Claude"
+              width={48}
+              height={48}
+            />
           </div>
           <h1 className="text-3xl sm:text-4xl font-normal text-foreground font-serif">
             {greeting}

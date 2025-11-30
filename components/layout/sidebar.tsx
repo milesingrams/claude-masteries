@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { Plus, MessageSquare, FolderOpen } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
@@ -58,10 +59,14 @@ export function AppSidebar() {
           // Show header with Claude text and close button when expanded
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 min-w-0">
-              <div className="w-8 h-8 rounded-md bg-primary flex items-center justify-center shrink-0">
-                <span className="text-white text-lg font-semibold font-serif">C</span>
-              </div>
-              <span className="text-sidebar-foreground font-medium truncate">
+              <Image
+                src="/claude-logo.svg"
+                alt="Claude"
+                width={32}
+                height={32}
+                className="shrink-0"
+              />
+              <span className="text-sidebar-foreground font-medium font-serif truncate">
                 Claude
               </span>
             </div>
@@ -136,6 +141,28 @@ export function AppSidebar() {
           </SidebarGroup>
         )}
       </SidebarContent>
+
+      <SidebarFooter>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton size="lg" tooltip="Miles Ingram">
+              <Avatar className="h-6 w-6">
+                <AvatarFallback className="bg-primary text-white text-xs">
+                  MI
+                </AvatarFallback>
+              </Avatar>
+              <div className="flex flex-col items-start min-w-0">
+                <span className="text-sm text-sidebar-foreground truncate">
+                  Miles Ingram
+                </span>
+                <span className="text-xs text-sidebar-foreground/60 truncate">
+                  Pro plan
+                </span>
+              </div>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarFooter>
 
       <SidebarRail />
     </Sidebar>
