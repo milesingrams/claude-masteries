@@ -29,9 +29,9 @@ export function MessageInput({
   };
 
   return (
-    <div className="pointer-events-none absolute right-0 bottom-0 left-0 z-10 pb-4">
+    <div className="pointer-events-none absolute right-0 bottom-0 left-0 z-10 px-4 pb-4">
       <div className="mx-auto max-w-3xl">
-        <form onSubmit={handleSubmit} className="pointer-events-auto space-y-3">
+        <form onSubmit={handleSubmit} className="pointer-events-auto">
           {/* Input Area */}
           <div className="border-border bg-background focus-within:border-foreground/20 relative rounded-xl border shadow-lg transition-all">
             <Textarea
