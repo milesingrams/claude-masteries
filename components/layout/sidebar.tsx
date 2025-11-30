@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { Plus, MessageSquare, FolderOpen } from "lucide-react";
+import { Plus, MessageSquare, FolderOpen, Network } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -89,15 +89,9 @@ export function AppSidebar() {
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton tooltip="Chats">
-                  <MessageSquare className="h-4 w-4" />
-                  <span>Chats</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton tooltip="Projects">
-                  <FolderOpen className="h-4 w-4" />
-                  <span>Projects</span>
+                <SidebarMenuButton tooltip="Masteries">
+                  <Network className="h-4 w-4" />
+                  <span>Masteries</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
