@@ -2,11 +2,9 @@
 
 import Image from "next/image";
 import { Plus, MessageSquare, FolderOpen } from "lucide-react";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,

@@ -4,16 +4,9 @@ import { useState } from "react";
 import { Plus, ArrowUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 
 export function MessageInput() {
   const [message, setMessage] = useState("");
-  const [selectedModel, setSelectedModel] = useState("Opus 4.5");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -62,54 +55,6 @@ export function MessageInput() {
                 <ArrowUp className="h-4 w-4 text-white" />
               </Button>
             </div>
-          </div>
-
-          {/* Model Selector */}
-          <div className="flex items-center justify-center">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-8 text-xs text-muted-foreground hover:text-foreground"
-                >
-                  {selectedModel}
-                  <svg
-                    className="ml-1 h-3 w-3"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M19 9l-7 7-7-7"
-                    />
-                  </svg>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="center" className="bg-popover">
-                <DropdownMenuItem
-                  onClick={() => setSelectedModel("Opus 4.5")}
-                  className="cursor-pointer"
-                >
-                  Opus 4.5
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => setSelectedModel("Sonnet 4.5")}
-                  className="cursor-pointer"
-                >
-                  Sonnet 4.5
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => setSelectedModel("Haiku 4")}
-                  className="cursor-pointer"
-                >
-                  Haiku 4
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
           </div>
         </form>
       </div>
