@@ -8,10 +8,10 @@ import type {
   MasteryDisplayData,
 } from "@/lib/masteries/types";
 
-const DEBOUNCE_DELAY = 800;
+const DEBOUNCE_DELAY = 1500;
 const SATISFACTION_DISPLAY_DURATION = 1500; // Show checkmark for 1.5s
 const FADE_OUT_DURATION = 500; // Fade animation duration
-const MIN_PROMPT_LENGTH = 10;
+const MIN_PROMPT_LENGTH = 30;
 
 interface UsePromptAnalysisOptions {
   enabled?: boolean;
@@ -135,11 +135,11 @@ export function usePromptAnalysis(
             }
           });
 
-          // Limit to 3 active chips (keep newest)
+          // Limit to 1 active chip (keep newest)
           const activeChips = updated.filter((c) => c.status === "active");
-          if (activeChips.length > 3) {
+          if (activeChips.length > 1) {
             const sorted = activeChips.sort((a, b) => b.surfaced_at - a.surfaced_at);
-            const toKeep = new Set(sorted.slice(0, 3).map((c) => c.mastery_id));
+            const toKeep = new Set(sorted.slice(0, 1).map((c) => c.mastery_id));
             return updated.filter(
               (c) => c.status !== "active" || toKeep.has(c.mastery_id)
             );
