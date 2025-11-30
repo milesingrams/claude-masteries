@@ -27,11 +27,11 @@ export function MessageInput({
   };
 
   return (
-    <div className="border-border bg-background border-t">
-      <div className="mx-auto max-w-3xl p-4">
-        <form onSubmit={handleSubmit} className="space-y-3">
+    <div className="pointer-events-none absolute right-0 bottom-0 left-0 z-10 pb-4">
+      <div className="mx-auto max-w-3xl px-4">
+        <form onSubmit={handleSubmit} className="pointer-events-auto space-y-3">
           {/* Input Area */}
-          <div className="border-border bg-input focus-within:border-ring focus-within:ring-ring relative rounded-xl border transition-all focus-within:ring-1">
+          <div className="border-border bg-background focus-within:border-ring focus-within:ring-ring relative rounded-xl border shadow-lg transition-all focus-within:ring-1">
             <Textarea
               value={message}
               onChange={(e) => setMessage(e.target.value)}

@@ -18,7 +18,7 @@ interface ChatHeaderProps {
 
 export function ChatHeader({ title, onRename, onDelete }: ChatHeaderProps) {
   return (
-    <header className="flex h-12 shrink-0 items-center justify-center border-b border-border/40 bg-background/80 backdrop-blur-sm">
+    <header className="sticky top-0 z-10 flex h-12 shrink-0 items-center justify-center border-b border-border/40 bg-background/80 backdrop-blur-sm">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button

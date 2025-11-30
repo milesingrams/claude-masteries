@@ -16,8 +16,9 @@ export default function Page() {
   };
 
   return (
-    <div className="flex h-full flex-col">
-      <div className="flex flex-1 flex-col items-center justify-center px-4 py-8">
+    <div className="relative h-full flex-1">
+      {/* Content area */}
+      <div className="absolute inset-0 flex flex-col items-center justify-center px-4 py-8">
         <div className="w-full max-w-2xl space-y-8 text-center">
           {/* Greeting */}
           <div className="flex items-center justify-center gap-2">
@@ -28,6 +29,7 @@ export default function Page() {
           </div>
         </div>
       </div>
+      {/* Floating input at bottom */}
       <MessageInput onSubmit={handleFirstMessage} />
     </div>
   );

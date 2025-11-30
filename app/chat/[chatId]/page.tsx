@@ -158,21 +158,25 @@ export default function ChatPage() {
   };
 
   return (
-    <div className="flex h-full flex-1 flex-col">
-      <ChatHeader title={chat.title} onDelete={handleDeleteChat} />
-      <MessageList
-        messages={messages.map((msg) => ({
-          id: msg.id,
-          role: msg.role as "user" | "assistant",
-          content:
-            msg.parts
-              .filter((part) => part.type === "text")
-              .map((part) => part.text)
-              .join("") || "",
-          createdAt: new Date(),
-        }))}
-        isLoading={isLoading}
-      />
+    <div className="relative h-full flex-1">
+      {/* Scrollable content area - absolute to ensure proper height */}
+      <div className="absolute inset-0 overflow-y-auto">
+        <ChatHeader title={chat.title} onDelete={handleDeleteChat} />
+        <MessageList
+          messages={messages.map((msg) => ({
+            id: msg.id,
+            role: msg.role as "user" | "assistant",
+            content:
+              msg.parts
+                .filter((part) => part.type === "text")
+                .map((part) => part.text)
+                .join("") || "",
+            createdAt: new Date(),
+          }))}
+          isLoading={isLoading}
+        />
+      </div>
+      {/* Floating input at bottom */}
       <MessageInput
         onSubmit={handleMessageSubmit}
         disabled={status !== "ready"}
