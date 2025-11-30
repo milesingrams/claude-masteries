@@ -35,7 +35,11 @@ export function MessageList({ messages, isLoading }: MessageListProps) {
           message.role === "user" ? (
             <UserMessage key={message.id} content={message.content} />
           ) : (
-            <AgentMessage key={message.id} content={message.content} />
+            <AgentMessage
+              key={message.id}
+              content={message.content}
+              messageId={message.id}
+            />
           )
         )}
         {isLoading && (

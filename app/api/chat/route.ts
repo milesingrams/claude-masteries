@@ -17,7 +17,8 @@ export async function POST(req: Request) {
 
     const result = streamText({
       model: anthropic("claude-sonnet-4-5-20250929"),
-      system: "You are Claude, a helpful AI assistant created by Anthropic.",
+      system:
+        "You are Claude, a helpful AI assistant created by Anthropic. Respond to the user in Markdown format.",
       messages: convertToModelMessages(messages),
       maxOutputTokens: 4096,
     });
