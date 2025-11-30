@@ -56,19 +56,10 @@ export function AppSidebar() {
           </Tooltip>
         ) : (
           // Show header with Claude text and close button when expanded
-          <div className="flex items-center justify-between">
-            <div className="flex min-w-0 items-center gap-2">
-              <Image
-                src="/claude-logo.svg"
-                alt="Claude"
-                width={26}
-                height={26}
-                className="shrink-0"
-              />
-              <span className="text-sidebar-foreground truncate font-serif text-xl font-medium">
-                Claude
-              </span>
-            </div>
+          <div className="flex items-center justify-between px-2">
+            <span className="text-sidebar-foreground truncate font-serif text-xl font-medium">
+              Claude
+            </span>
             <Tooltip>
               <TooltipTrigger asChild>
                 <SidebarTrigger className="-mr-1" />
@@ -88,13 +79,11 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton
-                  asChild
-                  className="bg-sidebar-accent hover:bg-sidebar-accent/80 data-[state=open]:bg-sidebar-accent"
-                  tooltip="New chat"
-                >
+                <SidebarMenuButton asChild tooltip="New chat">
                   <Link href="/new">
-                    <Plus className="h-4 w-4" />
+                    <div className="bg-claude-orange -m-1 flex items-center justify-center rounded-full p-1">
+                      <Plus className="h-4 w-4" />
+                    </div>
                     <span>New chat</span>
                   </Link>
                 </SidebarMenuButton>
@@ -108,7 +97,7 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton tooltip="Chats" isActive>
+                <SidebarMenuButton tooltip="Chats">
                   <MessageSquare className="h-4 w-4" />
                   <span>Chats</span>
                 </SidebarMenuButton>
