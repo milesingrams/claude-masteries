@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { Plus, MessageSquare, FolderOpen } from "lucide-react";
 import {
   Sidebar,
@@ -23,13 +23,23 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { ChatOptionsDropdown } from "@/components/chat/chat-options-dropdown";
 import { useChatContext } from "@/lib/chat-context";
 
 export function AppSidebar() {
   const { state } = useSidebar();
-  const { chats, isLoaded } = useChatContext();
+  const { chats, isLoaded, deleteChat } = useChatContext();
   const params = useParams();
+  const router = useRouter();
   const currentChatId = params?.chatId as string | undefined;
+
+  const handleDeleteChat = (chatId: string) => {
+    deleteChat(chatId);
+    // If we're deleting the current chat, navigate away
+    if (currentChatId === chatId) {
+      router.push("/new");
+    }
+  };
 
   return (
     <Sidebar collapsible="icon" className="border-sidebar-border">
@@ -124,19 +134,30 @@ export function AppSidebar() {
                     No chats yet
                   </li>
                 ) : (
-                  chats.map((chat) => (
-                    <SidebarMenuItem key={chat.id}>
-                      <SidebarMenuButton
-                        asChild
-                        tooltip={chat.title}
-                        isActive={currentChatId === chat.id}
+                  chats.map((chat) => {
+                    const isActive = currentChatId === chat.id;
+                    return (
+                      <SidebarMenuItem
+                        key={chat.id}
+                        className="group/menu-item"
                       >
-                        <Link href={`/chat/${chat.id}`}>
-                          <span className="truncate">{chat.title}</span>
-                        </Link>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  ))
+                        <SidebarMenuButton
+                          asChild
+                          tooltip={chat.title}
+                          isActive={isActive}
+                        >
+                          <Link href={`/chat/${chat.id}`}>
+                            <span className="truncate">{chat.title}</span>
+                          </Link>
+                        </SidebarMenuButton>
+                        <ChatOptionsDropdown
+                          onDelete={() => handleDeleteChat(chat.id)}
+                          showOnHover
+                          isActive={isActive}
+                        />
+                      </SidebarMenuItem>
+                    );
+                  })
                 )}
               </SidebarMenu>
             </SidebarGroupContent>
