@@ -70,7 +70,7 @@ export function AppSidebar() {
               <TooltipTrigger asChild>
                 <SidebarTrigger className="-mr-1" />
               </TooltipTrigger>
-              <TooltipContent side="bottom">
+              <TooltipContent side="right">
                 Close sidebar
                 <kbd className="ml-1 text-xs opacity-60">⌘.</kbd>
               </TooltipContent>
