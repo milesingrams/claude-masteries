@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 
-export function EmptyState() {
+export function NewChat() {
   const greeting = getGreeting();
 
   return (

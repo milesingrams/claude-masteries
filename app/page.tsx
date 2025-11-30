@@ -1,10 +1,5 @@
-import { ChatLayout } from "@/components/layout/chat-layout"
-import { EmptyState } from "@/components/chat/empty-state"
+import { redirect } from "next/navigation"
 
 export default function Home() {
-  return (
-    <ChatLayout>
-      <EmptyState />
-    </ChatLayout>
-  )
+  redirect("/new")
 }
