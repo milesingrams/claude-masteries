@@ -41,8 +41,8 @@ export default function RootLayout({
             <SidebarProvider>
               <AppSidebar />
               <SidebarInset>
-                {/* Mobile header with trigger */}
-                <SidebarTrigger className="absolute top-2 left-2 md:hidden" />
+                {/* Mobile sidebar trigger - positioned to work with chat header */}
+                <SidebarTrigger className="absolute top-2 left-2 z-10 md:hidden" />
 
                 {/* Chat Content */}
                 <div className="flex h-screen flex-1 flex-col overflow-hidden">

@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { toast } from "sonner";
+import { ChatHeader } from "@/components/chat/chat-header";
 import { MessageList } from "@/components/chat/message-list";
 import { MessageInput } from "@/components/chat/message-input";
 import { useChatContext } from "@/lib/chat-context";
@@ -12,8 +13,9 @@ import type { Message } from "@/lib/types";
 
 export default function ChatPage() {
   const params = useParams();
+  const router = useRouter();
   const chatId = params.chatId as string;
-  const { getChat, updateChat } = useChatContext();
+  const { getChat, updateChat, deleteChat } = useChatContext();
 
   const chat = getChat(chatId);
   const hasLoadedInitialMessages = useRef(false);
@@ -149,8 +151,15 @@ export default function ChatPage() {
     sendMessage({ text: message });
   };
 
+  const handleDeleteChat = () => {
+    deleteChat(chatId);
+    router.push("/new");
+    toast.success("Chat deleted");
+  };
+
   return (
     <div className="flex h-full flex-1 flex-col">
+      <ChatHeader title={chat.title} onDelete={handleDeleteChat} />
       <MessageList
         messages={messages.map((msg) => ({
           id: msg.id,
