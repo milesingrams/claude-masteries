@@ -19,7 +19,7 @@ export async function POST(req: Request) {
       model: anthropic("claude-sonnet-4-5-20250929"),
       system: "You are Claude, a helpful AI assistant created by Anthropic.",
       messages: convertToModelMessages(messages),
-      maxTokens: 4096,
+      maxOutputTokens: 4096,
     });
 
     return result.toUIMessageStreamResponse();

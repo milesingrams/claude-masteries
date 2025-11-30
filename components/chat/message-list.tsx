@@ -2,7 +2,8 @@
 
 import { useEffect, useRef } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { MessageBubble } from "./message-bubble";
+import { UserMessage } from "./user-message";
+import { AgentMessage } from "./agent-message";
 import type { Message } from "@/lib/types";
 
 interface MessageListProps {
@@ -30,13 +31,13 @@ export function MessageList({ messages, isLoading }: MessageListProps) {
   return (
     <div ref={containerRef} className="flex-1 overflow-y-auto px-4">
       <div className="mx-auto max-w-3xl space-y-4 py-4">
-        {messages.map((message) => (
-          <MessageBubble
-            key={message.id}
-            role={message.role}
-            content={message.content}
-          />
-        ))}
+        {messages.map((message) =>
+          message.role === "user" ? (
+            <UserMessage key={message.id} content={message.content} />
+          ) : (
+            <AgentMessage key={message.id} content={message.content} />
+          )
+        )}
         {isLoading && (
           <div className="flex w-full">
             <div className="mr-auto max-w-[85%] space-y-2">

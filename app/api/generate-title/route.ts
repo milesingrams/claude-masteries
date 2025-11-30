@@ -26,7 +26,7 @@ Assistant: ${firstAssistantMessage}
 Respond with ONLY the title, nothing else.`,
         },
       ],
-      maxTokens: 50,
+      maxOutputTokens: 50,
     });
 
     const title = text.trim();

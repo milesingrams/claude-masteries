@@ -17,6 +17,8 @@ export default function ChatPage() {
 
   const chat = getChat(chatId);
   const hasLoadedInitialMessages = useRef(false);
+  const hasSentPendingMessage = useRef(false);
+  const hasGeneratedTitle = useRef(false);
 
   const { messages, sendMessage, status, setMessages } = useChat({
     id: chatId,
@@ -37,15 +39,33 @@ export default function ChatPage() {
       chat.messages.length > 0
     ) {
       hasLoadedInitialMessages.current = true;
-      setMessages(
-        chat.messages.map((msg) => ({
-          id: msg.id,
-          role: msg.role,
-          parts: [{ type: "text" as const, text: msg.content }],
-        }))
-      );
+
+      // Check if there's a pending user message (no assistant response yet)
+      const hasPendingUserMessage =
+        chat.messages.length === 1 &&
+        chat.messages[0].role === "user" &&
+        !chat.messages.some((m) => m.role === "assistant");
+
+      if (hasPendingUserMessage && !hasSentPendingMessage.current) {
+        // Don't load messages into state - let sendMessage handle it
+        hasSentPendingMessage.current = true;
+        sendMessage({ text: chat.messages[0].content });
+      } else {
+        // Load existing conversation (has assistant responses)
+        // If it already has a proper title, mark title as generated
+        if (chat.title && chat.title !== "New Chat") {
+          hasGeneratedTitle.current = true;
+        }
+        setMessages(
+          chat.messages.map((msg) => ({
+            id: msg.id,
+            role: msg.role,
+            parts: [{ type: "text" as const, text: msg.content }],
+          }))
+        );
+      }
     }
-  }, [chat?.messages, setMessages]);
+  }, [chat?.messages, chat?.title, setMessages, sendMessage]);
 
   const isLoading = status === "submitted" || status === "streaming";
 
@@ -67,49 +87,55 @@ export default function ChatPage() {
     }
   }, [messages, chatId, updateChat]);
 
-  // Generate title after first exchange
+  // Generate title after first exchange (only once)
   useEffect(() => {
+    // Skip if already generating or generated, or not ready yet
+    if (hasGeneratedTitle.current) return;
+    if (status !== "ready") return;
+    if (messages.length !== 2) return;
+    if (messages[0].role !== "user" || messages[1].role !== "assistant") return;
+
+    const currentChat = getChat(chatId);
+    if (!currentChat || currentChat.title !== "New Chat") return;
+
+    // Mark as generating to prevent duplicate calls
+    hasGeneratedTitle.current = true;
+
     const generateTitle = async () => {
-      const currentChat = getChat(chatId);
-      if (
-        messages.length === 2 &&
-        currentChat?.title === "New Chat" &&
-        messages[0].role === "user" &&
-        messages[1].role === "assistant"
-      ) {
-        try {
-          const firstUserMessage =
-            messages[0].parts
-              .filter((part) => part.type === "text")
-              .map((part) => part.text)
-              .join("") || "";
-          const firstAssistantMessage =
-            messages[1].parts
-              .filter((part) => part.type === "text")
-              .map((part) => part.text)
-              .join("") || "";
+      try {
+        const firstUserMessage =
+          messages[0].parts
+            .filter((part) => part.type === "text")
+            .map((part) => part.text)
+            .join("") || "";
+        const firstAssistantMessage =
+          messages[1].parts
+            .filter((part) => part.type === "text")
+            .map((part) => part.text)
+            .join("") || "";
 
-          const response = await fetch("/api/generate-title", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              firstUserMessage,
-              firstAssistantMessage,
-            }),
-          });
+        const response = await fetch("/api/generate-title", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            firstUserMessage,
+            firstAssistantMessage,
+          }),
+        });
 
-          if (response.ok) {
-            const { title } = await response.json();
-            updateChat(chatId, { title });
-          }
-        } catch (err) {
-          console.error("Failed to generate title:", err);
+        if (response.ok) {
+          const { title } = await response.json();
+          updateChat(chatId, { title });
         }
+      } catch (err) {
+        console.error("Failed to generate title:", err);
+        // Reset flag on error so it can be retried
+        hasGeneratedTitle.current = false;
       }
     };
 
     generateTitle();
-  }, [messages, chatId, getChat, updateChat]);
+  }, [messages, status, chatId, getChat, updateChat]);
 
   if (!chat) {
     return (
