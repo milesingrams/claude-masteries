@@ -30,7 +30,7 @@ export function MessageInput({
 
   return (
     <div className="pointer-events-none absolute right-0 bottom-0 left-0 z-10 pb-4">
-      <div className="mx-auto max-w-3xl px-4">
+      <div className="mx-auto max-w-3xl">
         <form onSubmit={handleSubmit} className="pointer-events-auto space-y-3">
           {/* Input Area */}
           <div className="border-border bg-background focus-within:border-foreground/20 relative rounded-xl border shadow-lg transition-all">
@@ -40,7 +40,7 @@ export function MessageInput({
               onChange={(e) => setMessage(e.target.value)}
               placeholder={placeholder}
               disabled={disabled}
-              className="text-foreground placeholder:text-muted-foreground max-h-[200px] min-h-[56px] resize-none border-0 bg-transparent px-4 py-3 pr-20 text-base focus-visible:ring-0 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50 md:text-base"
+              className="text-foreground placeholder:text-muted-foreground max-h-[200px] min-h-[56px] resize-none border-0 bg-transparent px-3 py-3 pr-20 text-base focus-visible:ring-0 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50 md:text-base"
               onKeyDown={(e) => {
                 if (e.key === "Enter" && !e.shiftKey) {
                   e.preventDefault();

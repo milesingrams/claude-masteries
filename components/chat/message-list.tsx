@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { Skeleton } from "@/components/ui/skeleton";
+import Image from "next/image";
 import { UserMessage } from "./user-message";
 import { AgentMessage } from "./agent-message";
 import type { Message } from "@/lib/types";
@@ -43,11 +43,14 @@ export function MessageList({ messages, isLoading }: MessageListProps) {
           )
         )}
         {isLoading && (
-          <div className="flex w-full">
-            <div className="mr-auto max-w-[85%] space-y-2">
-              <Skeleton className="h-4 w-[250px]" />
-              <Skeleton className="h-4 w-[200px]" />
-            </div>
+          <div className="flex w-full px-3 py-2">
+            <Image
+              src="/claude-logo.svg"
+              alt="Claude is thinking..."
+              width={20}
+              height={20}
+              className="animate-pulse-scale opacity-60"
+            />
           </div>
         )}
         <div ref={bottomRef} />
