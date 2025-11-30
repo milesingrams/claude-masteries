@@ -28,11 +28,11 @@ interface RecentChat {
 }
 
 const recentChats: RecentChat[] = [
-  { id: "1", title: "Founding design engineer project brainstorm" },
-  { id: "2", title: "Hip arthroscopy pre- and post-sur..." },
-  { id: "3", title: "Extreme LDL reduction and morta..." },
-  { id: "4", title: "Hip arthroscopy decision with ca..." },
-  { id: "5", title: "Can impingement surgery necess..." },
+  { id: "1", title: "Q2 product launch campaign strategy" },
+  { id: "2", title: "Competitive analysis: AI market positio..." },
+  { id: "3", title: "Writing prompts for modern life" },
+  { id: "4", title: "Social media content calendar ideas" },
+  { id: "5", title: "Exploring themes of solitude in poet..." },
 ];
 
 export function AppSidebar() {
