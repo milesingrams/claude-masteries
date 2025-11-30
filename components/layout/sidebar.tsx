@@ -60,11 +60,11 @@ export function AppSidebar() {
               <Image
                 src="/claude-logo.svg"
                 alt="Claude"
-                width={32}
-                height={32}
+                width={26}
+                height={26}
                 className="shrink-0"
               />
-              <span className="text-sidebar-foreground font-medium font-serif truncate">
+              <span className="text-sidebar-foreground text-xl font-medium font-serif truncate">
                 Claude
               </span>
             </div>
