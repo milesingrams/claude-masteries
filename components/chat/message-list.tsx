@@ -42,14 +42,14 @@ export function MessageList({ messages, isLoading }: MessageListProps) {
             />
           )
         )}
-        {isLoading && (
+        {messages.length > 0 && (
           <div className="flex w-full px-3 py-2">
             <Image
               src="/claude-logo.svg"
-              alt="Claude is thinking..."
-              width={20}
-              height={20}
-              className="animate-pulse-scale opacity-60"
+              alt="Claude"
+              width={28}
+              height={28}
+              className={isLoading ? "animate-pulse-scale" : ""}
             />
           </div>
         )}
