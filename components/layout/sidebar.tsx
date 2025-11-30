@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import { Plus, MessageSquare, FolderOpen } from "lucide-react"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Plus, MessageSquare, FolderOpen } from "lucide-react";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   Sidebar,
   SidebarContent,
@@ -16,16 +16,16 @@ import {
   SidebarRail,
   SidebarTrigger,
   useSidebar,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@/components/ui/tooltip"
+} from "@/components/ui/tooltip";
 
 interface RecentChat {
-  id: string
-  title: string
+  id: string;
+  title: string;
 }
 
 const recentChats: RecentChat[] = [
@@ -34,10 +34,10 @@ const recentChats: RecentChat[] = [
   { id: "3", title: "Extreme LDL reduction and morta..." },
   { id: "4", title: "Hip arthroscopy decision with ca..." },
   { id: "5", title: "Can impingement surgery necess..." },
-]
+];
 
 export function AppSidebar() {
-  const { state } = useSidebar()
+  const { state } = useSidebar();
 
   return (
     <Sidebar collapsible="icon" className="border-sidebar-border">
@@ -49,7 +49,9 @@ export function AppSidebar() {
               <SidebarTrigger />
             </TooltipTrigger>
             <TooltipContent side="right">
-              <p>Open sidebar <kbd className="ml-1 text-xs opacity-60">⌘.</kbd></p>
+              <p>
+                Open sidebar <kbd className="ml-1 text-xs opacity-60">⌘.</kbd>
+              </p>
             </TooltipContent>
           </Tooltip>
         ) : (
@@ -57,7 +59,7 @@ export function AppSidebar() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 min-w-0">
               <div className="w-8 h-8 rounded-md bg-primary flex items-center justify-center shrink-0">
-                <span className="text-white text-lg font-semibold">C</span>
+                <span className="text-white text-lg font-semibold font-serif">C</span>
               </div>
               <span className="text-sidebar-foreground font-medium truncate">
                 Claude
@@ -68,7 +70,10 @@ export function AppSidebar() {
                 <SidebarTrigger className="-mr-1" />
               </TooltipTrigger>
               <TooltipContent side="bottom">
-                <p>Close sidebar <kbd className="ml-1 text-xs opacity-60">⌘.</kbd></p>
+                <p>
+                  Close sidebar{" "}
+                  <kbd className="ml-1 text-xs opacity-60">⌘.</kbd>
+                </p>
               </TooltipContent>
             </Tooltip>
           </div>
@@ -132,25 +137,7 @@ export function AppSidebar() {
         )}
       </SidebarContent>
 
-      <SidebarFooter>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton size="lg" tooltip="Miles Ingram">
-              <Avatar className="h-6 w-6">
-                <AvatarFallback className="bg-primary text-white text-xs">
-                  MI
-                </AvatarFallback>
-              </Avatar>
-              <div className="flex flex-col items-start min-w-0">
-                <span className="text-sm text-sidebar-foreground truncate">Miles Ingram</span>
-                <span className="text-xs text-sidebar-foreground/60 truncate">Pro plan</span>
-              </div>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarFooter>
-
       <SidebarRail />
     </Sidebar>
-  )
+  );
 }

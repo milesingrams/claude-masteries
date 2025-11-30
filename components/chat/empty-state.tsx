@@ -10,11 +10,11 @@ export function EmptyState() {
         <div className="space-y-2">
           <div className="flex items-center justify-center gap-2 mb-6">
             <div className="w-12 h-12 rounded-lg bg-primary flex items-center justify-center">
-              <span className="text-white text-2xl font-semibold">C</span>
+              <span className="text-white text-2xl font-semibold font-serif">C</span>
             </div>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-normal text-foreground">
-            {greeting}, Miles
+          <h1 className="text-3xl sm:text-4xl font-normal text-foreground font-serif">
+            {greeting}
           </h1>
         </div>
       </div>
