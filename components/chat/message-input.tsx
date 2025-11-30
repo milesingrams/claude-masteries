@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Plus, ArrowUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -17,6 +17,7 @@ export function MessageInput({
   placeholder = "How can I help you today?",
 }: MessageInputProps) {
   const [message, setMessage] = useState("");
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,6 +25,7 @@ export function MessageInput({
 
     onSubmit(message);
     setMessage("");
+    textareaRef.current?.focus();
   };
 
   return (
@@ -31,8 +33,9 @@ export function MessageInput({
       <div className="mx-auto max-w-3xl px-4">
         <form onSubmit={handleSubmit} className="pointer-events-auto space-y-3">
           {/* Input Area */}
-          <div className="border-border bg-background focus-within:border-ring focus-within:ring-ring relative rounded-xl border shadow-lg transition-all focus-within:ring-1">
+          <div className="border-border bg-background focus-within:border-foreground/20 relative rounded-xl border shadow-lg transition-all">
             <Textarea
+              ref={textareaRef}
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               placeholder={placeholder}
