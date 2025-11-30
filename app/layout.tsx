@@ -45,7 +45,7 @@ export default function RootLayout({
                 <SidebarTrigger className="absolute top-2 left-2 md:hidden" />
 
                 {/* Chat Content */}
-                <div className="flex flex-1 flex-col overflow-hidden h-screen">
+                <div className="flex h-screen flex-1 flex-col overflow-hidden">
                   {children}
                 </div>
               </SidebarInset>

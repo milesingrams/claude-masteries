@@ -57,7 +57,9 @@ export function saveChat(chat: Chat): void {
     console.error("Error saving to localStorage:", error);
     // Handle quota exceeded or other errors
     if (error instanceof Error && error.name === "QuotaExceededError") {
-      throw new Error("Storage quota exceeded. Please clear some chat history.");
+      throw new Error(
+        "Storage quota exceeded. Please clear some chat history."
+      );
     }
     throw error;
   }

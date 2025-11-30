@@ -47,7 +47,7 @@ export function AppSidebar() {
         ) : (
           // Show header with Claude text and close button when expanded
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 min-w-0">
+            <div className="flex min-w-0 items-center gap-2">
               <Image
                 src="/claude-logo.svg"
                 alt="Claude"
@@ -55,7 +55,7 @@ export function AppSidebar() {
                 height={26}
                 className="shrink-0"
               />
-              <span className="text-sidebar-foreground text-xl font-medium font-serif truncate">
+              <span className="text-sidebar-foreground truncate font-serif text-xl font-medium">
                 Claude
               </span>
             </div>
@@ -120,7 +120,7 @@ export function AppSidebar() {
             <SidebarGroupContent>
               <SidebarMenu>
                 {chats.length === 0 ? (
-                  <div className="px-2 py-4 text-sm text-muted-foreground text-center">
+                  <div className="text-muted-foreground px-2 py-4 text-center text-sm">
                     No chats yet
                   </div>
                 ) : (

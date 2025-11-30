@@ -31,7 +31,11 @@ export default function ChatPage() {
 
   // Load initial messages from chat only once
   useEffect(() => {
-    if (!hasLoadedInitialMessages.current && chat?.messages && chat.messages.length > 0) {
+    if (
+      !hasLoadedInitialMessages.current &&
+      chat?.messages &&
+      chat.messages.length > 0
+    ) {
       hasLoadedInitialMessages.current = true;
       setMessages(
         chat.messages.map((msg) => ({
@@ -109,7 +113,7 @@ export default function ChatPage() {
 
   if (!chat) {
     return (
-      <div className="flex-1 flex items-center justify-center">
+      <div className="flex flex-1 items-center justify-center">
         <p className="text-muted-foreground">Chat not found</p>
       </div>
     );
@@ -120,7 +124,7 @@ export default function ChatPage() {
   };
 
   return (
-    <div className="flex flex-1 flex-col h-full">
+    <div className="flex h-full flex-1 flex-col">
       <MessageList
         messages={messages.map((msg) => ({
           id: msg.id,

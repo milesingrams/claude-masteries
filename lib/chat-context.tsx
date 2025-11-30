@@ -4,13 +4,16 @@ import {
   createContext,
   useContext,
   useState,
-  useEffect,
   useCallback,
   type ReactNode,
 } from "react";
 import { nanoid } from "nanoid";
-import type { Chat, Message } from "./types";
-import { getAllChats, saveChat, deleteChat as deleteStorageChat } from "./chat-storage";
+import type { Chat } from "./types";
+import {
+  getAllChats,
+  saveChat,
+  deleteChat as deleteStorageChat,
+} from "./chat-storage";
 
 interface ChatContextType {
   chats: Chat[];
@@ -24,13 +27,8 @@ interface ChatContextType {
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
 
 export function ChatProvider({ children }: { children: ReactNode }) {
-  const [chats, setChats] = useState<Chat[]>([]);
-
-  // Load chats from localStorage on mount
-  useEffect(() => {
-    const loadedChats = getAllChats();
-    setChats(loadedChats);
-  }, []);
+  // Lazy initialization - loads from localStorage on first render
+  const [chats, setChats] = useState<Chat[]>(() => getAllChats());
 
   const refreshChats = useCallback(() => {
     const loadedChats = getAllChats();
@@ -85,13 +83,23 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     setChats((prev) => prev.filter((chat) => chat.id !== chatId));
   }, []);
 
-  const getChat = useCallback((chatId: string) => {
-    return chats.find((chat) => chat.id === chatId);
-  }, [chats]);
+  const getChat = useCallback(
+    (chatId: string) => {
+      return chats.find((chat) => chat.id === chatId);
+    },
+    [chats]
+  );
 
   return (
     <ChatContext.Provider
-      value={{ chats, createChat, updateChat, deleteChat, getChat, refreshChats }}
+      value={{
+        chats,
+        createChat,
+        updateChat,
+        deleteChat,
+        getChat,
+        refreshChats,
+      }}
     >
       {children}
     </ChatContext.Provider>

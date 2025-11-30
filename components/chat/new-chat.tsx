@@ -6,12 +6,12 @@ export function NewChat() {
   const greeting = getGreeting();
 
   return (
-    <div className="flex flex-col items-center justify-center h-full px-4 py-8">
-      <div className="max-w-2xl w-full text-center space-y-8">
+    <div className="flex h-full flex-col items-center justify-center px-4 py-8">
+      <div className="w-full max-w-2xl space-y-8 text-center">
         {/* Greeting */}
-        <div className="flex gap-2 items-center justify-center">
+        <div className="flex items-center justify-center gap-2">
           <Image src="/claude-logo.svg" alt="Claude" width={36} height={36} />
-          <h1 className="text-3xl sm:text-4xl font-normal text-muted-foreground font-serif ml-2">
+          <h1 className="text-muted-foreground ml-2 font-serif text-3xl font-normal sm:text-4xl">
             {greeting}
           </h1>
         </div>
