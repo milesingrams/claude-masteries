@@ -14,7 +14,7 @@ export function UserMessage({
     <div data-slot="user-message" className="flex w-full">
       <div
         className={cn(
-          "rounded-2xl bg-zinc-900 px-4 py-3 font-serif text-base leading-relaxed text-zinc-100",
+          "rounded-2xl bg-zinc-900 px-3 py-2 font-serif text-base leading-relaxed text-zinc-100",
           className
         )}
         {...props}

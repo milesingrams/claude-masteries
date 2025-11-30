@@ -14,7 +14,7 @@ export function AgentMessage({
     <div data-slot="agent-message" className="flex w-full">
       <div
         className={cn(
-          "text-foreground font-serif text-base leading-relaxed",
+          "text-foreground px-3 py-2 font-serif text-base leading-relaxed",
           className
         )}
         {...props}

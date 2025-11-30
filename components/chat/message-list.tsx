@@ -30,7 +30,7 @@ export function MessageList({ messages, isLoading }: MessageListProps) {
 
   return (
     <div ref={containerRef} className="flex-1 px-4">
-      <div className="mx-auto max-w-3xl space-y-4 py-4 pb-24">
+      <div className="mx-auto max-w-3xl space-y-2 py-4 pb-24">
         {messages.map((message) =>
           message.role === "user" ? (
             <UserMessage key={message.id} content={message.content} />
