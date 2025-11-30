@@ -4,20 +4,34 @@ import { useState, useRef } from "react";
 import { Plus, ArrowUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { ChipContainer } from "./chip-container";
+import { usePromptAnalysis } from "@/hooks/use-prompt-analysis";
+import { useMasteryContext } from "@/lib/masteries/mastery-context";
 
 interface MessageInputProps {
   onSubmit: (message: string) => void;
   disabled?: boolean;
   placeholder?: string;
+  enableChips?: boolean;
 }
 
 export function MessageInput({
   onSubmit,
   disabled = false,
   placeholder = "How can I help you today?",
+  enableChips = true,
 }: MessageInputProps) {
   const [message, setMessage] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const { masteryDisplayData, learnedMasteryIds, markSatisfied, isLoading } =
+    useMasteryContext();
+
+  const { chips, dismissChip } = usePromptAnalysis(message, {
+    enabled: enableChips && !disabled && !isLoading,
+    learnedMasteryIds,
+    onSatisfied: markSatisfied,
+  });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,7 +44,17 @@ export function MessageInput({
 
   return (
     <div className="pointer-events-none absolute right-0 bottom-0 left-0 z-10 px-4 pb-4">
-      <div className="mx-auto max-w-3xl">
+      <div className="mx-auto max-w-3xl space-y-2">
+        {/* Mastery Chips */}
+        {enableChips && chips.length > 0 && (
+          <ChipContainer
+            chips={chips}
+            masteryDisplayData={masteryDisplayData}
+            onDismiss={dismissChip}
+            className="pointer-events-auto"
+          />
+        )}
+
         <form onSubmit={handleSubmit} className="pointer-events-auto">
           {/* Input Area */}
           <div className="border-border bg-background focus-within:border-foreground/20 relative rounded-xl border shadow-lg transition-all">

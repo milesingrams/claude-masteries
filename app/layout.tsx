@@ -8,6 +8,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { ChatProvider } from "@/lib/chat-context";
+import { MasteryProvider } from "@/lib/masteries/mastery-context";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
@@ -43,7 +44,8 @@ export default function RootLayout({
       >
         <TooltipProvider>
           <ChatProvider>
-            <SidebarProvider>
+            <MasteryProvider>
+              <SidebarProvider>
               <AppSidebar />
               <SidebarInset>
                 {/* Mobile sidebar trigger - positioned to work with chat header */}
@@ -54,8 +56,9 @@ export default function RootLayout({
                   {children}
                 </div>
               </SidebarInset>
-            </SidebarProvider>
-            <Toaster />
+              </SidebarProvider>
+              <Toaster />
+            </MasteryProvider>
           </ChatProvider>
         </TooltipProvider>
       </body>
