@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { ChatHeader } from "@/components/chat/chat-header";
 import { MessageList } from "@/components/chat/messages/message-list";
 import { PromptInput } from "@/components/chat/prompt/prompt-input";
-import { useChatContext } from "@/lib/chat-context";
+import { useChatContext } from "@/lib/chats/chat-context";
 import type { Message } from "@/lib/types";
 
 export default function ChatPage() {

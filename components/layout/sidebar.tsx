@@ -23,7 +23,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { ChatOptionsDropdown } from "@/components/chat/chat-options-dropdown";
-import { useChatContext } from "@/lib/chat-context";
+import { useChatContext } from "@/lib/chats/chat-context";
 
 export function AppSidebar() {
   const { state, isMobile, setOpenMobile } = useSidebar();
@@ -94,7 +94,10 @@ export function AppSidebar() {
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton tooltip="Masteries" onClick={closeMobileSidebar}>
+                <SidebarMenuButton
+                  tooltip="Masteries"
+                  onClick={closeMobileSidebar}
+                >
                   <Network className="h-4 w-4" />
                   <span>Masteries</span>
                 </SidebarMenuButton>
@@ -126,7 +129,10 @@ export function AppSidebar() {
                           tooltip={chat.title}
                           isActive={isActive}
                         >
-                          <Link href={`/chat/${chat.id}`} onClick={closeMobileSidebar}>
+                          <Link
+                            href={`/chat/${chat.id}`}
+                            onClick={closeMobileSidebar}
+                          >
                             <span className="truncate">{chat.title}</span>
                           </Link>
                         </SidebarMenuButton>

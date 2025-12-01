@@ -7,7 +7,7 @@ import {
   SidebarInset,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { ChatProvider } from "@/lib/chat-context";
+import { ChatProvider } from "@/lib/chats/chat-context";
 import { MasteryProvider } from "@/lib/masteries/mastery-context";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";

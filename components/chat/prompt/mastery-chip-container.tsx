@@ -2,25 +2,17 @@
 
 import type { ComponentProps } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import type { ActiveChip } from "@/lib/masteries/types";
 import { useMasteryContext } from "@/lib/masteries/mastery-context";
+import { usePromptContext } from "@/components/chat/prompt/prompt-context";
 import { MasteryChip } from "./mastery-chip";
 import { cn } from "@/lib/utils";
 
-interface MasteryChipContainerProps extends ComponentProps<"div"> {
-  chip: ActiveChip | null;
-  onDismiss: () => void;
-  onShowMe: (masteryId: string, chipText: string) => Promise<void>;
-}
-
 export function MasteryChipContainer({
-  chip,
-  onDismiss,
-  onShowMe,
   className,
   ...props
-}: MasteryChipContainerProps) {
+}: ComponentProps<"div">) {
   const { getMasteryDisplay } = useMasteryContext();
+  const { chip } = usePromptContext();
 
   const display = chip ? getMasteryDisplay(chip.mastery_id) : null;
   const isVisible = chip && display;
@@ -48,12 +40,7 @@ export function MasteryChipContainer({
             }}
             transition={{ duration: 0.2, ease: "easeOut" }}
           >
-            <MasteryChip
-              chip={chip}
-              display={display}
-              onDismiss={onDismiss}
-              onShowMe={() => onShowMe(chip.mastery_id, chip.chip_text || "")}
-            />
+            <MasteryChip chip={chip} display={display} />
           </motion.div>
         )}
       </AnimatePresence>

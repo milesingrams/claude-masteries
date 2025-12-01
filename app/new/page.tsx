@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { ClaudeLogo } from "@/components/ui/claude-logo";
 import { PromptInput } from "@/components/chat/prompt/prompt-input";
-import { useChatContext } from "@/lib/chat-context";
+import { useChatContext } from "@/lib/chats/chat-context";
 
 export default function Page() {
   const greeting = getGreeting();

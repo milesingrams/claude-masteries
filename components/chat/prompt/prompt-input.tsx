@@ -1,15 +1,16 @@
 "use client";
 
 import type { ComponentProps } from "react";
-import { useState, useRef, useCallback, useEffect } from "react";
-import { useCompletion } from "@ai-sdk/react";
 import { Plus, ArrowUp, Undo2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ClaudeLogo } from "@/components/ui/claude-logo";
 import { MasteryChipContainer } from "./mastery-chip-container";
-import { MasteryDebugPopover } from "@/components/debug/mastery-debug-popover";
-import { usePromptAnalysis } from "@/hooks/use-prompt-analysis";
+import { MasteryDebugPopover } from "@/components/chat/prompt/mastery-debug-popover";
+import {
+  PromptProvider,
+  usePromptContext,
+} from "@/components/chat/prompt/prompt-context";
 import { cn } from "@/lib/utils";
 
 interface PromptInputProps extends ComponentProps<"div"> {
@@ -27,72 +28,41 @@ export function PromptInput({
   className,
   ...props
 }: PromptInputProps) {
-  const [prompt, setPrompt] = useState("");
-  const [originalPrompt, setOriginalPrompt] = useState<string | null>(null);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-
-  const {
-    completion,
-    complete,
-    isLoading: isStreaming,
-  } = useCompletion({
-    api: "/api/rewrite-prompt",
-    streamProtocol: "text",
-    onFinish: (prompt, completionText) => {
-      // prompt is the original we passed to complete()
-      setPrompt(`${prompt} ${completionText}`);
-    },
-    onError: (error) => {
-      console.error("Show me failed:", error);
-      // Revert handled by originalPrompt state
-    },
-  });
-
-  const { chip, suppressedIds, dismissChip, satisfyChip, resetSession } =
-    usePromptAnalysis(prompt, {
-      enabled: enableMasteryChips && !disabled && !isStreaming,
-    });
-
-  // Scroll textarea to bottom during streaming
-  useEffect(() => {
-    if (isStreaming && textareaRef.current) {
-      textareaRef.current.scrollTop = textareaRef.current.scrollHeight;
-    }
-  }, [completion, isStreaming]);
-
-  const handleShowMe = useCallback(
-    async (masteryId: string, chipText: string): Promise<void> => {
-      setOriginalPrompt(prompt);
-
-      // Mark satisfied immediately - user engaged with the technique
-      satisfyChip();
-
-      // Trigger completion with mastery params
-      await complete(prompt, {
-        body: {
-          mastery_id: masteryId,
-          chip_text: chipText,
-        },
-      });
-    },
-    [prompt, complete, satisfyChip]
+  return (
+    <PromptProvider enableMasteryChips={enableMasteryChips} disabled={disabled}>
+      <PromptInputInner
+        onPromptSubmit={onPromptSubmit}
+        disabled={disabled}
+        placeholder={placeholder}
+        enableMasteryChips={enableMasteryChips}
+        className={className}
+        {...props}
+      />
+    </PromptProvider>
   );
+}
 
-  const handleRevert = useCallback(() => {
-    if (originalPrompt !== null) {
-      setPrompt(originalPrompt);
-      setOriginalPrompt(null);
-    }
-  }, [originalPrompt]);
+function PromptInputInner({
+  onPromptSubmit,
+  disabled = false,
+  placeholder = "How can I help you today?",
+  enableMasteryChips = true,
+  className,
+  ...props
+}: PromptInputProps) {
+  const {
+    prompt,
+    setPrompt,
+    originalPrompt,
+    completion,
+    isStreaming,
+    resetSession,
+    handleRevert,
+    textareaRef,
+  } = usePromptContext();
 
   const handleMessageChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const newValue = e.target.value;
-    setPrompt(newValue);
-
-    // If user edits after a rewrite, clear the revert option
-    if (originalPrompt !== null) {
-      setOriginalPrompt(null);
-    }
+    setPrompt(e.target.value);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -114,19 +84,12 @@ export function PromptInput({
       {...props}
     >
       {/* Debug Popover */}
-      {enableMasteryChips && (
-        <MasteryDebugPopover activeChip={chip} suppressedIds={suppressedIds} />
-      )}
+      {enableMasteryChips && <MasteryDebugPopover />}
 
       <div className="mx-auto max-w-3xl space-y-2">
         {/* Mastery Chips */}
         {enableMasteryChips && (
-          <MasteryChipContainer
-            chip={chip}
-            onDismiss={dismissChip}
-            onShowMe={handleShowMe}
-            className="pointer-events-auto"
-          />
+          <MasteryChipContainer className="pointer-events-auto" />
         )}
 
         <form onSubmit={handleSubmit} className="pointer-events-auto">

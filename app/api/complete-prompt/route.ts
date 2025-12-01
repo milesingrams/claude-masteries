@@ -12,7 +12,12 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
     // useCompletion sends 'prompt', but we also support 'original_prompt' for backwards compat
-    const { prompt: inputPrompt, original_prompt, mastery_id, chip_text } = body;
+    const {
+      prompt: inputPrompt,
+      original_prompt,
+      mastery_id,
+      chip_text,
+    } = body;
     const userPrompt = original_prompt || inputPrompt;
 
     if (!userPrompt || !mastery_id) {
@@ -57,7 +62,7 @@ Output ONLY the text to append to the user's prompt.
 
     return result.toTextStreamResponse();
   } catch (error) {
-    console.error("Error in rewrite-prompt:", error);
-    return new Response("Failed to rewrite prompt", { status: 500 });
+    console.error("Error in complete-prompt:", error);
+    return new Response("Failed to complete prompt", { status: 500 });
   }
 }

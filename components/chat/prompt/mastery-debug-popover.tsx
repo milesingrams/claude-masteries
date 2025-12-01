@@ -8,20 +8,13 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { useMasteryContext } from "@/lib/masteries/mastery-context";
+import { usePromptContext } from "@/components/chat/prompt/prompt-context";
 import { cn } from "@/lib/utils";
-import type { ActiveChip } from "@/lib/masteries/types";
 
-interface MasteryDebugPopoverProps {
-  activeChip: ActiveChip | null;
-  suppressedIds: string[];
-}
-
-export function MasteryDebugPopover({
-  activeChip,
-  suppressedIds,
-}: MasteryDebugPopoverProps) {
+export function MasteryDebugPopover() {
   const { masteryDisplayData, progress, learnedMasteryIds } =
     useMasteryContext();
+  const { chip: activeChip, suppressedIds } = usePromptContext();
 
   const allMasteryIds = Object.keys(masteryDisplayData);
   const totalMasteries = allMasteryIds.length;

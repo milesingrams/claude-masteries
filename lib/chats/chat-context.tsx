@@ -9,12 +9,12 @@ import {
   type ReactNode,
 } from "react";
 import { nanoid } from "nanoid";
-import type { Chat } from "./types";
+import type { Chat } from "@/lib/types";
 import {
   getAllChats,
   saveChat,
   deleteChat as deleteStorageChat,
-} from "./chat-storage";
+} from "@/lib/chats/chat-storage";
 
 interface ChatContextType {
   chats: Chat[];
@@ -36,7 +36,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   // Load chats from localStorage after mount (client-side only)
   useEffect(() => {
     const loadedChats = getAllChats();
-    setChats(loadedChats);
+    setChats(loadedChats); // eslint-disable-line react-hooks/set-state-in-effect
     setIsLoaded(true);
   }, []);
 

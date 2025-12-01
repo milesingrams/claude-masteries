@@ -5,21 +5,16 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Check, X, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ClaudeLogo } from "@/components/ui/claude-logo";
+import { usePromptContext } from "@/components/chat/prompt/prompt-context";
 import type { ActiveChip, MasteryDisplayData } from "@/lib/masteries/types";
 
 interface MasteryChipProps {
   chip: ActiveChip;
   display: MasteryDisplayData;
-  onDismiss: () => void;
-  onShowMe: () => Promise<void>;
 }
 
-export function MasteryChip({
-  chip,
-  display,
-  onDismiss,
-  onShowMe,
-}: MasteryChipProps) {
+export function MasteryChip({ chip, display }: MasteryChipProps) {
+  const { dismissChip, handleShowMe } = usePromptContext();
   const [isExpanded, setIsExpanded] = useState(false);
   const [isShowMeLoading, setIsShowMeLoading] = useState(false);
   const chipRef = useRef<HTMLDivElement>(null);
@@ -48,16 +43,16 @@ export function MasteryChip({
     }
   };
 
-  const handleDismiss = (e: React.MouseEvent) => {
+  const onDismissClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    onDismiss();
+    dismissChip();
   };
 
-  const handleShowMe = async (e: React.MouseEvent) => {
+  const onShowMeClick = async (e: React.MouseEvent) => {
     e.stopPropagation();
     setIsShowMeLoading(true);
     try {
-      await onShowMe();
+      await handleShowMe(chip.mastery_id, chip.chip_text || "");
     } catch (error) {
       console.error("Show me failed:", error);
     } finally {
@@ -99,7 +94,7 @@ export function MasteryChip({
               variant="ghost"
               size="icon"
               className="text-muted-foreground hover:text-foreground h-5 w-5 shrink-0"
-              onClick={handleDismiss}
+              onClick={onDismissClick}
             >
               <X className="h-2.5 w-2.5" />
             </Button>
@@ -128,7 +123,7 @@ export function MasteryChip({
                   variant="ghost"
                   size="sm"
                   className="h-6 px-2 text-[10px] text-[#d97757] hover:text-[#d97757]/80"
-                  onClick={handleShowMe}
+                  onClick={onShowMeClick}
                   disabled={isShowMeLoading}
                 >
                   {isShowMeLoading && (

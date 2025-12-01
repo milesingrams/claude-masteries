@@ -1,4 +1,4 @@
-import type { Chat } from "./types";
+import type { Chat } from "../types";
 
 const STORAGE_KEY = "claude-chats";
 
