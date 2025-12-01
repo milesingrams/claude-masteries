@@ -33,16 +33,16 @@ export function MasteryDebugPopover({
         <Button
           variant="ghost"
           size="icon"
-          className="pointer-events-auto fixed top-2 right-2 z-[100] h-8 w-8 opacity-50 hover:opacity-100"
+          className="pointer-events-auto fixed top-2 right-2 z-100 h-8 w-8 opacity-50 hover:opacity-100"
         >
           <Bug className="h-4 w-4" />
           <span className="sr-only">Debug masteries</span>
         </Button>
       </PopoverTrigger>
-      <PopoverContent align="end" className="z-[100] w-80">
+      <PopoverContent align="end" className="z-100 w-80">
         <div className="space-y-4">
           <div className="space-y-1">
-            <h4 className="font-medium leading-none">Mastery Debug</h4>
+            <h4 className="leading-none font-medium">Mastery Debug</h4>
             <p className="text-muted-foreground text-sm">
               {learnedCount}/{totalMasteries} masteries learned
             </p>
@@ -132,7 +132,8 @@ export function MasteryDebugPopover({
                       {id.split("/").pop()}
                     </span>
                     <span>
-                      {p.satisfaction_count}/{display?.learning_threshold ?? "?"}
+                      {p.satisfaction_count}/
+                      {display?.learning_threshold ?? "?"}
                       {p.learned && " ✓"}
                     </span>
                   </div>
