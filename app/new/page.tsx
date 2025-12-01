@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { ClaudeLogo } from "@/components/ui/claude-logo";
-import { MessageInput } from "@/components/chat/prompt/message-input";
+import { PromptInput } from "@/components/chat/prompt/prompt-input";
 import { useChatContext } from "@/lib/chat-context";
 
 export default function Page() {
@@ -10,8 +10,8 @@ export default function Page() {
   const router = useRouter();
   const { createChat } = useChatContext();
 
-  const handleFirstMessage = (message: string) => {
-    const chatId = createChat(message);
+  const handleFirstPrompt = (prompt: string) => {
+    const chatId = createChat(prompt);
     router.push(`/chat/${chatId}`);
   };
 
@@ -30,7 +30,7 @@ export default function Page() {
         </div>
       </div>
       {/* Floating input at bottom */}
-      <MessageInput onMessageSubmit={handleFirstMessage} />
+      <PromptInput onPromptSubmit={handleFirstPrompt} />
     </div>
   );
 }

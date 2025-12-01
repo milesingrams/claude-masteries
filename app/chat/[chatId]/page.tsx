@@ -7,7 +7,7 @@ import { DefaultChatTransport } from "ai";
 import { toast } from "sonner";
 import { ChatHeader } from "@/components/chat/chat-header";
 import { MessageList } from "@/components/chat/messages/message-list";
-import { MessageInput } from "@/components/chat/prompt/message-input";
+import { PromptInput } from "@/components/chat/prompt/prompt-input";
 import { useChatContext } from "@/lib/chat-context";
 import type { Message } from "@/lib/types";
 
@@ -147,8 +147,8 @@ export default function ChatPage() {
     );
   }
 
-  const handleMessageSubmit = async (message: string) => {
-    sendMessage({ text: message });
+  const handlePromptSubmit = (prompt: string) => {
+    sendMessage({ text: prompt });
   };
 
   const handleDeleteChat = () => {
@@ -177,8 +177,8 @@ export default function ChatPage() {
         />
       </div>
       {/* Floating input at bottom */}
-      <MessageInput
-        onMessageSubmit={handleMessageSubmit}
+      <PromptInput
+        onPromptSubmit={handlePromptSubmit}
         disabled={status !== "ready"}
       />
     </div>

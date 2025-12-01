@@ -12,22 +12,22 @@ import { MasteryDebugPopover } from "@/components/debug/mastery-debug-popover";
 import { usePromptAnalysis } from "@/hooks/use-prompt-analysis";
 import { cn } from "@/lib/utils";
 
-interface MessageInputProps extends ComponentProps<"div"> {
-  onMessageSubmit: (message: string) => void;
+interface PromptInputProps extends ComponentProps<"div"> {
+  onPromptSubmit: (prompt: string) => void;
   disabled?: boolean;
   placeholder?: string;
   enableMasteryChips?: boolean;
 }
 
-export function MessageInput({
-  onMessageSubmit,
+export function PromptInput({
+  onPromptSubmit,
   disabled = false,
   placeholder = "How can I help you today?",
   enableMasteryChips = true,
   className,
   ...props
-}: MessageInputProps) {
-  const [message, setMessage] = useState("");
+}: PromptInputProps) {
+  const [prompt, setPrompt] = useState("");
   const [originalPrompt, setOriginalPrompt] = useState<string | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -40,7 +40,7 @@ export function MessageInput({
     streamProtocol: "text",
     onFinish: (prompt, completionText) => {
       // prompt is the original we passed to complete()
-      setMessage(`${prompt} ${completionText}`);
+      setPrompt(`${prompt} ${completionText}`);
     },
     onError: (error) => {
       console.error("Show me failed:", error);
@@ -49,7 +49,7 @@ export function MessageInput({
   });
 
   const { chip, suppressedIds, dismissChip, satisfyChip, resetSession } =
-    usePromptAnalysis(message, {
+    usePromptAnalysis(prompt, {
       enabled: enableMasteryChips && !disabled && !isStreaming,
     });
 
@@ -62,32 +62,32 @@ export function MessageInput({
 
   const handleShowMe = useCallback(
     async (masteryId: string, chipText: string): Promise<void> => {
-      setOriginalPrompt(message);
+      setOriginalPrompt(prompt);
 
       // Mark satisfied immediately - user engaged with the technique
       satisfyChip();
 
       // Trigger completion with mastery params
-      await complete(message, {
+      await complete(prompt, {
         body: {
           mastery_id: masteryId,
           chip_text: chipText,
         },
       });
     },
-    [message, complete, satisfyChip]
+    [prompt, complete, satisfyChip]
   );
 
   const handleRevert = useCallback(() => {
     if (originalPrompt !== null) {
-      setMessage(originalPrompt);
+      setPrompt(originalPrompt);
       setOriginalPrompt(null);
     }
   }, [originalPrompt]);
 
   const handleMessageChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newValue = e.target.value;
-    setMessage(newValue);
+    setPrompt(newValue);
 
     // If user edits after a rewrite, clear the revert option
     if (originalPrompt !== null) {
@@ -97,10 +97,10 @@ export function MessageInput({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!message.trim() || disabled) return;
+    if (!prompt.trim() || disabled) return;
 
-    onMessageSubmit(message);
-    setMessage("");
+    onPromptSubmit(prompt);
+    setPrompt("");
     resetSession();
     textareaRef.current?.focus();
   };
@@ -147,7 +147,7 @@ export function MessageInput({
           >
             <Textarea
               ref={textareaRef}
-              value={isStreaming ? `${originalPrompt} ${completion}` : message}
+              value={isStreaming ? `${originalPrompt} ${completion}` : prompt}
               onChange={handleMessageChange}
               placeholder={placeholder}
               disabled={disabled || isStreaming}
@@ -201,7 +201,7 @@ export function MessageInput({
                 <Button
                   type="submit"
                   size="icon"
-                  disabled={!message.trim() || disabled || isStreaming}
+                  disabled={!prompt.trim() || disabled || isStreaming}
                   className="bg-primary hover:bg-primary/90 h-8 w-8 rounded-lg disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   <ArrowUp className="h-4 w-4 text-white" />
