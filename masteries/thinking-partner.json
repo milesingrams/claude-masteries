@@ -1,5 +1,5 @@
 {
-  "id": "interaction/thinking-partner",
+  "id": "interaction-patterns/thinking-partner",
   "learning_threshold": 3,
   "chip": "You could think through this with Claude, not just get an answer",
   "description": "Uses Claude as a collaborative thinking partner for exploration and reasoning rather than just an answer machine. Surface when user is making a decision, weighing options, exploring an unformed idea, or brainstorming in early project stages. Satisfied when user invites exploration or dialogue using phrases like: help me think through, brainstorm with me, let's explore, what are the angles, think with me, talk this through.",

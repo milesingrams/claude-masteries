@@ -1,5 +1,5 @@
 {
-  "id": "interaction/iterative-refinement",
+  "id": "interaction-patterns/iterative-refinement",
   "learning_threshold": 3,
   "chip": "This could be a starting point",
   "description": "Treats Claude's first response as a draft to be refined rather than a final answer. Surface when user asks for creative content, writing, or code without indicating they expect iteration, or when task complexity suggests first attempts rarely nail it. Satisfied when user requests revisions, alternatives, or improvements using phrases like: try again, make it more, change the, what if instead, give me another, revise, tweak.",

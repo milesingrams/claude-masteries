@@ -8,7 +8,7 @@ Most users are stuck in a local maximum with AI. They found a few patterns that 
 
 Over time, their explorations are reflected back to them as a visual map—not a scoreboard of achievements, but a mirror of their journey. The map shows where they've been, and invites curiosity about where they haven't.
 
-The result: users who don't just use AI more, but use it *better*—with greater range, confidence, and creativity.
+The result: users who don't just use AI more, but use it _better_—with greater range, confidence, and creativity.
 
 ---
 
@@ -39,28 +39,30 @@ As users pause while composing a prompt (debounced ~800ms), the system analyzes 
 ```
 
 **Chip characteristics:**
+
 - Compact, single-line, muted visual presence
 - Maximum 2-3 visible at once
 - Subtle fade-in animation (arrives, doesn't interrupt)
 - Easily dismissable
 
 **Language principles:**
+
 - Plain language describing benefit, not jargon naming features
 - Possibility framing: "You could..." / "What if..." / "Claude could..."
 - Questions that prompt reflection, not offers to take action
 
 **Examples:**
 
-| Mastery | Chip text |
-|---------|-----------|
-| Socratic Mode | "What if Claude asked the questions first?" |
-| Constraint Specification | "What constraints matter here?" |
-| Artifact Creation | "Claude could make this a document you can edit" |
-| Iterative Refinement | "This could be a starting point" |
-| Thinking Partner | "You could ask Claude to push back on this" |
-| Extended Thinking | "Claude could reason through this slowly" |
-| Context Loading | "What context would help Claude here?" |
-| Role Framing | "Who should Claude be for this?" |
+| Mastery                  | Chip text                                        |
+| ------------------------ | ------------------------------------------------ |
+| Socratic Mode            | "What if Claude asked the questions first?"      |
+| Constraint Specification | "What constraints matter here?"                  |
+| Artifact Creation        | "Claude could make this a document you can edit" |
+| Iterative Refinement     | "This could be a starting point"                 |
+| Thinking Partner         | "You could ask Claude to push back on this"      |
+| Extended Thinking        | "Claude could reason through this slowly"        |
+| Context Loading          | "What context would help Claude here?"           |
+| Role Framing             | "Who should Claude be for this?"                 |
 
 ### 2. Expandable Detail
 
@@ -99,6 +101,7 @@ As the user continues typing, the system checks whether they've addressed what t
 The chip transforms: a checkmark appears, the mastery name is revealed (teaching vocabulary), and the chip fades out with a subtle, satisfying animation.
 
 **What this achieves:**
+
 - Confirms the user did something meaningful
 - Introduces the term for what they just learned
 - Creates a quiet moment of recognition without gamification
@@ -106,6 +109,7 @@ The chip transforms: a checkmark appears, the mastery name is revealed (teaching
 ### 4. Background Mastery Tracking
 
 Behind the scenes, the system tracks:
+
 - Which masteries have been surfaced to this user
 - Which have been satisfied, and how many times
 - When a mastery crosses its learning threshold (typically 3-5 satisfactions)
@@ -119,6 +123,7 @@ Once a mastery is "learned," the system stops surfacing it—trusting the user n
 A separate view (accessible from profile or settings) visualizes the user's AI capability landscape.
 
 **Visual representation:**
+
 - Regions representing mastery categories (Interaction Patterns, Prompt Craft, Capabilities, etc.)
 - Nodes within regions for individual masteries
 - Visual density indicates depth of practice:
@@ -127,7 +132,7 @@ A separate view (accessible from profile or settings) visualizes the user's AI c
   - Practiced: More saturated, solidifying
   - Learned: Full color, crisp edges
 
-**The map invites exploration** by making the unexplored visible *as* unexplored. Users see the edges of their knowledge and feel natural curiosity about what lies beyond.
+**The map invites exploration** by making the unexplored visible _as_ unexplored. Users see the edges of their knowledge and feel natural curiosity about what lies beyond.
 
 ---
 
@@ -136,13 +141,15 @@ A separate view (accessible from profile or settings) visualizes the user's AI c
 Each mastery is defined in a markdown file with a structured format:
 
 ```markdown
-# /masteries/interaction/socratic-mode.md
+# /masteries/interaction-patterns/socratic-mode.md
 
 ---
-id: interaction/socratic-mode
+
+id: interaction-patterns/socratic-mode
 name: Socratic Mode
 category: Interaction Patterns
 learning_threshold: 3
+
 ---
 
 ## Chip
@@ -171,7 +178,7 @@ Asking Claude to interview you before solving flips the dynamic. Instead of gues
 **Example hierarchy:**
 
 ```
-interaction/
+interaction-patterns/
   socratic-mode
   iterative-refinement
   thinking-partner
@@ -191,6 +198,7 @@ capabilities/
 ```
 
 **Data split:** The mastery loader extracts fields for different purposes:
+
 - Sent to Claude for analysis: `id`, `triggers`, `satisfaction`
 - Kept on frontend for display: `id`, `name`, `chip_text`, `category`, `detail`, `learning_threshold`
 
@@ -233,7 +241,7 @@ Trimmed to only what Claude needs for analysis:
 ```json
 [
   {
-    "id": "interaction/socratic-mode",
+    "id": "interaction-patterns/socratic-mode",
     "triggers": "User prompt suggests uncertainty or open-ended exploration. User is describing a problem without clear constraints. User asks 'how do I' or 'what should I' type questions.",
     "satisfaction": "Prompt asks Claude to ask questions before solving. Phrases like 'ask me', 'what questions', 'before solving', 'interview me'."
   },
@@ -264,15 +272,21 @@ Using Vercel AI SDK / Claude API structured output (no JSON instructions needed 
 
 ```typescript
 const analysisSchema = z.object({
-  surface: z.array(z.object({
-    mastery_id: z.string(),
-    relevance: z.enum(["high", "medium"]),
-    reason: z.string()
-  })).max(3),
-  satisfied: z.array(z.object({
-    mastery_id: z.string(),
-    evidence: z.string()
-  }))
+  surface: z
+    .array(
+      z.object({
+        mastery_id: z.string(),
+        relevance: z.enum(["high", "medium"]),
+        reason: z.string(),
+      })
+    )
+    .max(3),
+  satisfied: z.array(
+    z.object({
+      mastery_id: z.string(),
+      evidence: z.string(),
+    })
+  ),
 });
 ```
 
@@ -296,7 +310,7 @@ Generate a brief, tailored example showing how the user could apply this mastery
 
 ```typescript
 const detailSchema = z.object({
-  example: z.string()
+  example: z.string(),
 });
 ```
 
@@ -332,6 +346,7 @@ User clicks chip → Detail Prompt → Show tailored example
 ### Phase 1: Core Chip Experience
 
 **Build the modified prompt input component:**
+
 - Text input area with chip display zone below text, above toolbar
 - Chips render as subtle, rounded pills
 - Support for 1-3 chips, horizontal layout
@@ -339,17 +354,20 @@ User clicks chip → Detail Prompt → Show tailored example
 - Expand/collapse interaction for detail view
 
 **Implement debounced prompt analysis:**
+
 - On typing pause (~800ms), send partial prompt to Claude
 - Include list of available masteries with their triggers
 - Claude returns 0-3 most relevant masteries
 - Display corresponding chips
 
 **Implement satisfaction checking:**
+
 - On continued typing, periodically check if active chips are satisfied
 - Send chip's satisfaction criteria + current prompt to Claude
 - If satisfied: trigger satisfaction animation, fade chip, log event
 
 **Create initial mastery files:**
+
 - Write 10-15 mastery definitions covering:
   - Interaction patterns (3-4)
   - Prompt craft (3-4)
@@ -359,17 +377,20 @@ User clicks chip → Detail Prompt → Show tailored example
 ### Phase 2: Tracking & Persistence
 
 **Build mastery tracking store:**
+
 - Track per-user: masteries encountered, satisfied, satisfaction count
 - Persist to local storage (prototype) or database (production)
 - Calculate "learned" status based on threshold
 
 **Personalize chip surfacing:**
+
 - Filter out learned masteries from suggestions
 - Potentially weight toward masteries user hasn't encountered yet
 
 ### Phase 3: Map Visualization (Stretch)
 
 **Build map view component:**
+
 - Visual layout of mastery categories as regions
 - Individual masteries as nodes within regions
 - Visual density based on practice depth
@@ -377,6 +398,7 @@ User clicks chip → Detail Prompt → Show tailored example
 - Click to see details or start a conversation exploring that capability
 
 **Polish map aesthetics:**
+
 - Fog of war / unexplored haziness
 - Smooth transitions as masteries are learned
 - Satisfying visual feedback when new areas are explored
@@ -407,16 +429,16 @@ User clicks chip → Detail Prompt → Show tailored example
     MasteryChip.tsx          # Individual chip component
     ChipDetail.tsx           # Expanded detail view
     MasteryMap.tsx           # Map visualization (Phase 3)
-  
+
   /hooks
     usePromptAnalysis.ts     # Debounced Claude calls for suggestions
     useSatisfactionCheck.ts  # Check if chips are satisfied
     useMasteryStore.ts       # Track user's mastery progress
-  
+
   /lib
     masteryLoader.ts         # Parse mastery markdown files
     claudeApi.ts             # API wrapper for Claude calls
-  
+
   /stores
     masteryProgress.ts       # User's mastery state
 ```
@@ -445,7 +467,7 @@ Traditional metrics (time on site, messages sent) don't capture what we care abo
 
 **Not gamification.** No points, badges, streaks, or leaderboards.
 
-**Not prescriptive.** The system never tells users what they *should* do—only what they *could*.
+**Not prescriptive.** The system never tells users what they _should_ do—only what they _could_.
 
 **Not interruptive.** Chips are peripheral and dismissable. The user's flow is sacred.
 
