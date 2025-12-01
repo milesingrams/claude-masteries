@@ -68,16 +68,16 @@ export function MasteryChip({ chip, display, onDismiss }: MasteryChipProps) {
         </motion.div>
 
         {/* Chip text */}
-        <motion.span
+        <motion.div
           layout="position"
           className="text-muted-foreground flex-1 text-xs whitespace-nowrap"
         >
           {isSatisfied ? display.name : display.chip}
-        </motion.span>
+        </motion.div>
 
         {/* Actions */}
         {!isSatisfied && (
-          <motion.div layout="position">
+          <motion.div layout="position" className="flex items-center">
             <Button
               variant="ghost"
               size="icon"
