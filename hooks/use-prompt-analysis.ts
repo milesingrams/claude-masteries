@@ -15,6 +15,7 @@ interface UsePromptAnalysisOptions {
 interface UsePromptAnalysisReturn {
   chip: ActiveChip | null;
   isAnalyzing: boolean;
+  suppressedIds: string[];
   dismissChip: () => void;
   satisfyChip: () => void;
   resetSession: () => void;
@@ -145,6 +146,7 @@ export function usePromptAnalysis(
   return {
     chip,
     isAnalyzing,
+    suppressedIds,
     dismissChip,
     satisfyChip,
     resetSession,

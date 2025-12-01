@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ClaudeLogo } from "@/components/ui/claude-logo";
 import { ChipContainer } from "./chip-container";
+import { MasteryDebugPopover } from "@/components/debug/mastery-debug-popover";
 import { usePromptAnalysis } from "@/hooks/use-prompt-analysis";
 import { cn } from "@/lib/utils";
 
@@ -47,12 +48,10 @@ export function MessageInput({
     },
   });
 
-  const { chip, dismissChip, satisfyChip, resetSession } = usePromptAnalysis(
-    message,
-    {
+  const { chip, suppressedIds, dismissChip, satisfyChip, resetSession } =
+    usePromptAnalysis(message, {
       enabled: enableChips && !disabled && !isStreaming,
-    }
-  );
+    });
 
   // Scroll textarea to bottom during streaming
   useEffect(() => {
@@ -114,6 +113,11 @@ export function MessageInput({
       )}
       {...props}
     >
+      {/* Debug Popover */}
+      {enableChips && (
+        <MasteryDebugPopover activeChip={chip} suppressedIds={suppressedIds} />
+      )}
+
       <div className="mx-auto max-w-3xl space-y-2">
         {/* Mastery Chips */}
         {enableChips && (
