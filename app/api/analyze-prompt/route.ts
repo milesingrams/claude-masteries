@@ -2,7 +2,10 @@ import { createAnthropic } from "@ai-sdk/anthropic";
 import { generateObject } from "ai";
 import { z } from "zod";
 import { masteries, type Mastery } from "@/lib/masteries";
-import type { AnalyzePromptRequest, AnalyzePromptResponse } from "@/lib/masteries/types";
+import type {
+  AnalyzePromptRequest,
+  AnalyzePromptResponse,
+} from "@/lib/masteries/types";
 
 const anthropic = createAnthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
@@ -36,26 +39,29 @@ export async function POST(req: Request) {
 
     // Skip analysis for empty or very short prompts
     if (!partial_prompt || partial_prompt.trim().length < 30) {
-      return Response.json({ surface: [], satisfied: [] } as AnalyzePromptResponse);
+      return Response.json({
+        surface: [],
+        satisfied: [],
+      } as AnalyzePromptResponse);
     }
 
     // Filter out learned masteries
     let availableMasteries: Mastery[] = masteries;
     if (learned_mastery_ids?.length) {
-      availableMasteries = masteries.filter((m) => !learned_mastery_ids.includes(m.id));
+      availableMasteries = masteries.filter(
+        (m) => !learned_mastery_ids.includes(m.id)
+      );
     }
 
     // Get active chips for satisfaction checking
     const activeChips = active_chip_ids?.length
-      ? availableMasteries.filter((m) => active_chip_ids.includes(m.id))
+      ? masteries.filter((m) => active_chip_ids.includes(m.id))
       : [];
 
     const prompt = `<task>
-Analyze the user's partial prompt to identify the single most relevant mastery suggestion (if any) and check if any active suggestions have been satisfied.
-
-For surfacing: identify 0-1 masteries relevant to what the user seems to be trying to do. Only suggest a mastery if it's clearly and strongly relevant. Be very conservative.
-
-For satisfaction: check if the user's prompt now demonstrates the behavior described in any active chip's satisfaction criteria.
+Analyze the user's partial prompt to:
+1. Identify the single most relevant mastery to surface (if any)
+2. Check if any active chips have been satisfied
 </task>
 
 <partial_prompt>
@@ -63,20 +69,35 @@ ${partial_prompt}
 </partial_prompt>
 
 <masteries>
-${JSON.stringify(availableMasteries.map((m) => ({ id: m.id, description: m.description })), null, 2)}
+${JSON.stringify(
+  availableMasteries.map((m) => ({
+    id: m.id,
+    surface_triggers: m.surface_triggers,
+  })),
+  null,
+  2
+)}
 </masteries>
 
 <active_chips>
-${JSON.stringify(activeChips.map((m) => ({ id: m.id, description: m.description })), null, 2)}
+${JSON.stringify(
+  activeChips.map((m) => ({
+    id: m.id,
+    satisfaction_triggers: m.satisfaction_triggers,
+  })),
+  null,
+  2
+)}
 </active_chips>
 
 <instructions>
-1. Review the partial prompt against each mastery's description (which contains both surface triggers and satisfaction criteria)
-2. Surface at most 1 mastery - only the single most relevant one
-3. For active chips, check if the prompt now satisfies their satisfaction criteria (look for "Satisfied when" in description)
-4. Be very conservative - only surface a chip if it's clearly and strongly relevant
-5. If nothing is highly relevant, return an empty surface array
-6. Keep reasons and evidence brief (1 sentence max)
+SURFACING:
+Match the partial prompt against each mastery's surface_triggers. Surface when the user's prompt matches the trigger conditions but isn't yet using the technique. Only surface the single most relevant mastery. If nothing clearly matches, return an empty array.
+
+SATISFACTION:
+Match the partial prompt against each active chip's satisfaction_triggers. A chip is satisfied when the user's prompt contains the phrases or demonstrates the behavior described. Look for the specific phrases listed.
+
+Be conservative for surfacing. Be generous for satisfaction—if the user incorporated the suggestion, credit them.
 </instructions>`;
 
     const { object } = await generateObject({
@@ -89,6 +110,9 @@ ${JSON.stringify(activeChips.map((m) => ({ id: m.id, description: m.description 
   } catch (error) {
     console.error("Error in analyze-prompt:", error);
     // Return empty response on error to avoid breaking the UI
-    return Response.json({ surface: [], satisfied: [] } as AnalyzePromptResponse);
+    return Response.json({
+      surface: [],
+      satisfied: [],
+    } as AnalyzePromptResponse);
   }
 }

@@ -2,6 +2,7 @@
   "id": "meta/self-critique",
   "learning_threshold": 3,
   "chip": "You could ask Claude to critique its own response",
-  "description": "Asks Claude to evaluate, critique, or find flaws in its own previous response. Surface when user has received a response and is continuing the conversation, seems uncertain about quality, is working on something high-stakes, or when the response would benefit from a second pass. Satisfied when user requests self-evaluation using phrases like: what did you miss, critique this, find flaws, what's wrong with, what could be better, review your response, play devil's advocate on your answer.",
+  "surface_triggers": "User has received a response and is continuing the conversation. User seems uncertain about the quality of Claude's output. Task involves analysis, writing, or recommendations where blind spots matter. Response would benefit from a second pass.",
+  "satisfaction_triggers": "User asks Claude to evaluate, critique, or find flaws in its own response. User asks what might be wrong, missing, or weak. Phrases: what did you miss, critique this, find flaws, what's wrong with, what could be better, review your response, any problems with this, what would you improve.",
   "detail": "Claude can evaluate its own work with surprising honesty. Asking 'what might be wrong with this?' or 'what did you miss?' often surfaces blind spots, assumptions, or alternatives that weren't in the first response. It's like getting a second opinion for free."
 }

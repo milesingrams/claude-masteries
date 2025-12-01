@@ -2,6 +2,7 @@
   "id": "interaction-patterns/iterative-refinement",
   "learning_threshold": 3,
   "chip": "This could be a starting point",
-  "description": "Treats Claude's first response as a draft to be refined rather than a final answer. Surface when user asks for creative content, writing, or code without indicating they expect iteration, or when task complexity suggests first attempts rarely nail it. Satisfied when user requests revisions, alternatives, or improvements using phrases like: try again, make it more, change the, what if instead, give me another, revise, tweak.",
+  "surface_triggers": "User asks for creative content, writing, or code. User expects a polished final output. Task is complex enough that first attempts rarely nail it. User hasn't indicated they expect to iterate.",
+  "satisfaction_triggers": "User treats response as a draft and asks for changes. User requests revisions, alternatives, or improvements. Phrases: try again, make it more, change the, what if instead, give me another, revise, tweak, adjust, can you modify.",
   "detail": "Claude's first response is rarely the best possible version—it's a starting point. Pushing back with 'make it more concise' or 'try a different angle' often yields dramatically better results. The conversation is the canvas."
 }

@@ -2,6 +2,7 @@
   "id": "prompt-craft/examples-in-prompt",
   "learning_threshold": 3,
   "chip": "You could show Claude what good looks like",
-  "description": "Provides examples of desired output to guide Claude toward a specific style, format, or quality. Surface when user asks for content in a specific style or format, wants output matching something they've seen, or has a vision they haven't fully articulated. Satisfied when user includes reference examples using phrases like: like this example, here's what I mean, something similar to, in this style, match this format, for example, here's one I like.",
+  "surface_triggers": "User asks for content in a specific style or format. User wants output that matches something they've seen before. User is asking for something subjective where 'you'll know it when you see it'. Task involves creative work with subjective quality.",
+  "satisfaction_triggers": "User includes an example of what they want in their prompt. User shows Claude a reference to match or emulate. Phrases: like this example, here's what I mean, something similar to, in this style, match this format, for example, here's one I like, similar to this.",
   "detail": "Describing what you want is hard. Showing it is easy. Including an example—a sentence in the right tone, a snippet in the right format, a reference to match—gives Claude a target to aim for. One good example is worth a hundred words of description."
 }

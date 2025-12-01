@@ -2,6 +2,7 @@
   "id": "prompt-craft/constraint-specification",
   "learning_threshold": 3,
   "chip": "What constraints matter here?",
-  "description": "Shapes better outputs by specifying boundaries like format, length, tone, audience, or exclusions. Surface when user asks for creative or open-ended output without specifying format, length, tone, or audience, or when the request could reasonably go many directions. Satisfied when user defines boundaries using phrases like: keep it, no more than, in the style of, for [audience], avoid, don't include, format as, make it [adjective].",
+  "surface_triggers": "User asks for creative or open-ended output. User hasn't specified format, length, tone, or audience. Request could reasonably go in many different directions. User is asking for writing, code, or other generative content.",
+  "satisfaction_triggers": "User specifies format, length, tone, style, or audience. User defines what to include or exclude. User sets boundaries on the response. Phrases: keep it, no more than, in the style of, for [audience], avoid, don't include, format as, make it [adjective], should be [constraint].",
   "detail": "Constraints aren't limitations—they're creative fuel. Telling Claude the format, length, tone, audience, or what to avoid focuses the response dramatically. The more specific your boundaries, the less Claude has to guess."
 }

@@ -2,6 +2,7 @@
   "id": "interaction-patterns/socratic-mode",
   "learning_threshold": 3,
   "chip": "What if Claude asked the questions first?",
-  "description": "Flips the dynamic by having Claude ask clarifying questions before providing solutions—surfacing assumptions and hidden constraints. Surface when user describes a problem without clear constraints, asks 'how do I' or 'what should I' questions, or seems uncertain what they need. Satisfied when prompt requests Claude ask questions first, using phrases like: ask me, interview me, before you answer, what do you need to know, help me figure out.",
+  "surface_triggers": "User describes a problem without clear constraints. User asks 'how do I' or 'what should I' questions. User seems uncertain what they need. Problem has multiple possible interpretations.",
+  "satisfaction_triggers": "Prompt asks Claude to ask questions before solving. Prompt invites clarifying questions. Phrases: ask me, interview me, before you answer, what do you need to know, help me figure out, what questions do you have.",
   "detail": "Asking Claude to interview you before solving flips the dynamic. Instead of guessing what you need, Claude surfaces your assumptions, constraints, and hidden requirements. You often discover you were asking the wrong question entirely."
 }

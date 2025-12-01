@@ -18,7 +18,8 @@ export interface Mastery {
   id: string;
   learning_threshold: number;
   chip: string;
-  description: string;
+  surface_triggers: string;
+  satisfaction_triggers: string;
   detail: string;
 }
 
