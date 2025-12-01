@@ -89,6 +89,9 @@ export function usePromptAnalysis(
 
         const data: AnalyzePromptResponse = await response.json();
 
+        // Collect satisfied mastery IDs to notify after state update
+        const satisfiedMasteryIds: string[] = [];
+
         setChips((prev) => {
           const updated = [...prev];
 
@@ -98,8 +101,8 @@ export function usePromptAnalysis(
             if (idx !== -1 && updated[idx].status === "active") {
               updated[idx] = { ...updated[idx], status: "satisfied" };
 
-              // Notify parent of satisfaction
-              onSatisfied?.(sat.mastery_id);
+              // Track for notification after state update
+              satisfiedMasteryIds.push(sat.mastery_id);
 
               // Schedule fade out after showing checkmark
               setTimeout(() => {
@@ -147,6 +150,9 @@ export function usePromptAnalysis(
 
           return updated;
         });
+
+        // Notify parent of satisfied masteries after state update completes
+        satisfiedMasteryIds.forEach((id) => onSatisfied?.(id));
       } catch (error) {
         if ((error as Error).name !== "AbortError") {
           console.error("Analysis error:", error);
