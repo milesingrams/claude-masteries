@@ -9,12 +9,14 @@ import { cn } from "@/lib/utils";
 interface ChipContainerProps {
   chips: ActiveChip[];
   onDismiss: (id: string) => void;
+  onShowMe: (masteryId: string, chipText: string) => Promise<void>;
   className?: string;
 }
 
 export function ChipContainer({
   chips,
   onDismiss,
+  onShowMe,
   className,
 }: ChipContainerProps) {
   const { getMasteryDisplay, hasMasteryDisplay } = useMasteryContext();
@@ -45,6 +47,7 @@ export function ChipContainer({
                   chip={chip}
                   display={display}
                   onDismiss={() => onDismiss(chip.mastery_id)}
+                  onShowMe={() => onShowMe(chip.mastery_id, chip.chip_text || "")}
                 />
               </motion.div>
             );

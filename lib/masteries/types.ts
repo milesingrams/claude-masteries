@@ -47,3 +47,14 @@ export interface MasteryProgress {
 export interface MasteryProgressStore {
   [mastery_id: string]: MasteryProgress;
 }
+
+// Rewrite prompt API types
+export interface RewritePromptRequest {
+  original_prompt: string;
+  mastery_id: string;
+  chip_text: string;
+}
+
+export interface RewritePromptResponse {
+  rewritten_prompt: string;
+}

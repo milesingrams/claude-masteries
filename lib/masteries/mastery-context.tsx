@@ -18,11 +18,28 @@ import {
   incrementSatisfaction,
   getLearnedMasteryIds,
 } from "./progress-store";
+import { masteries, parseIdParts } from "@/lib/masteries";
+
+// Build static mastery display data at module load time
+const staticMasteryDisplayData: Record<string, MasteryDisplayData> = masteries.reduce(
+  (acc, m) => {
+    const { category, name } = parseIdParts(m.id);
+    acc[m.id] = {
+      id: m.id,
+      name,
+      category,
+      chip: m.chip,
+      detail: m.detail,
+      learning_threshold: m.learning_threshold,
+    };
+    return acc;
+  },
+  {} as Record<string, MasteryDisplayData>
+);
 
 interface MasteryContextValue {
-  // Display data loaded from API
+  // Display data (static)
   masteryDisplayData: Record<string, MasteryDisplayData>;
-  isLoading: boolean;
 
   // Progress tracking
   progress: MasteryProgressStore;
@@ -39,38 +56,7 @@ interface MasteryContextValue {
 const MasteryContext = createContext<MasteryContextValue | null>(null);
 
 export function MasteryProvider({ children }: { children: ReactNode }) {
-  const [masteryDisplayData, setMasteryDisplayData] = useState<
-    Record<string, MasteryDisplayData>
-  >({});
-  const [isLoading, setIsLoading] = useState(true);
   const [progress, setProgress] = useState<MasteryProgressStore>({});
-
-  // Load mastery display data from API
-  useEffect(() => {
-    async function loadMasteries() {
-      try {
-        const response = await fetch("/api/masteries");
-        if (!response.ok) throw new Error("Failed to load masteries");
-
-        const masteries: MasteryDisplayData[] = await response.json();
-        const dataMap = masteries.reduce(
-          (acc, m) => {
-            acc[m.id] = m;
-            return acc;
-          },
-          {} as Record<string, MasteryDisplayData>
-        );
-
-        setMasteryDisplayData(dataMap);
-      } catch (error) {
-        console.error("Failed to load masteries:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    loadMasteries();
-  }, []);
 
   // Load progress from localStorage on mount
   useEffect(() => {
@@ -86,24 +72,24 @@ export function MasteryProvider({ children }: { children: ReactNode }) {
 
   const markSatisfied = useCallback(
     (masteryId: string) => {
-      const mastery = masteryDisplayData[masteryId];
+      const mastery = staticMasteryDisplayData[masteryId];
       if (!mastery) return;
 
       setProgress((prev) =>
         incrementSatisfaction(prev, masteryId, mastery.learning_threshold)
       );
     },
-    [masteryDisplayData]
+    []
   );
 
   const getMasteryDisplay = useCallback(
-    (masteryId: string) => masteryDisplayData[masteryId],
-    [masteryDisplayData]
+    (masteryId: string) => staticMasteryDisplayData[masteryId],
+    []
   );
 
   const hasMasteryDisplay = useCallback(
-    (masteryId: string) => masteryId in masteryDisplayData,
-    [masteryDisplayData]
+    (masteryId: string) => masteryId in staticMasteryDisplayData,
+    []
   );
 
   const learnedMasteryIds = getLearnedMasteryIds(progress);
@@ -111,8 +97,7 @@ export function MasteryProvider({ children }: { children: ReactNode }) {
   return (
     <MasteryContext.Provider
       value={{
-        masteryDisplayData,
-        isLoading,
+        masteryDisplayData: staticMasteryDisplayData,
         progress,
         learnedMasteryIds,
         markSatisfied,

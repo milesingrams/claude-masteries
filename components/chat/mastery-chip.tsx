@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Check, X } from "lucide-react";
+import { Check, X, Sparkles, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ClaudeLogo } from "@/components/ui/claude-logo";
 import type { ActiveChip, MasteryDisplayData } from "@/lib/masteries/types";
@@ -11,10 +11,12 @@ interface MasteryChipProps {
   chip: ActiveChip;
   display: MasteryDisplayData;
   onDismiss: () => void;
+  onShowMe: () => Promise<void>;
 }
 
-export function MasteryChip({ chip, display, onDismiss }: MasteryChipProps) {
+export function MasteryChip({ chip, display, onDismiss, onShowMe }: MasteryChipProps) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isShowMeLoading, setIsShowMeLoading] = useState(false);
   const chipRef = useRef<HTMLDivElement>(null);
 
   const isSatisfied = chip.status === "satisfied";
@@ -44,6 +46,18 @@ export function MasteryChip({ chip, display, onDismiss }: MasteryChipProps) {
   const handleDismiss = (e: React.MouseEvent) => {
     e.stopPropagation();
     onDismiss();
+  };
+
+  const handleShowMe = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsShowMeLoading(true);
+    try {
+      await onShowMe();
+    } catch (error) {
+      console.error("Show me failed:", error);
+    } finally {
+      setIsShowMeLoading(false);
+    }
   };
 
   return (
@@ -101,9 +115,25 @@ export function MasteryChip({ chip, display, onDismiss }: MasteryChipProps) {
               <p className="text-muted-foreground/80 text-[11px] leading-relaxed">
                 {display.detail}
               </p>
-              <p className="text-muted-foreground/50 mt-1 text-[10px]">
-                {formattedCategoryName}
-              </p>
+              <div className="mt-1.5 flex items-center justify-between">
+                <p className="text-muted-foreground/50 text-[10px]">
+                  {formattedCategoryName}
+                </p>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-muted-foreground hover:text-foreground h-6 px-2 text-[10px]"
+                  onClick={handleShowMe}
+                  disabled={isShowMeLoading}
+                >
+                  {isShowMeLoading ? (
+                    <Loader2 className="mr-1 h-3 w-3 animate-spin" />
+                  ) : (
+                    <Sparkles className="mr-1 h-3 w-3" />
+                  )}
+                  Show me
+                </Button>
+              </div>
             </div>
           </motion.div>
         )}
