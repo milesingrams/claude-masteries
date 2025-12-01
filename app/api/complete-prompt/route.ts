@@ -43,16 +43,22 @@ ${userPrompt}
 Name: ${category} / ${name}
 Suggestion: ${chip_text}
 What makes a good implementation: ${mastery.satisfaction_triggers}
-Explanation: ${mastery.detail}
 </technique>
 
 <instructions>
 Output ONLY the text to append to the user's prompt.
-- Generate the additional context, constraints, or enhancements based on the technique
-- Do NOT repeat or include the original prompt
-- Output text that naturally follows the original when appended with a line break
-- Keep it concise and focused on applying the technique
-- Output ONLY the addition text, nothing else (no explanations, no preamble)
+
+CRITICAL:
+- Do NOT invent specific details, constraints, examples, or context the user hasn't provided
+- Use [bracketed placeholders] for any specifics you don't know
+- For example: "Keep it under [X words] and make the tone [formal/casual]"
+- For example: "Respond as a [type of expert] would"
+
+FORMAT:
+- Close the previous sentence properly if needed
+- Do NOT repeat the original prompt
+- Keep it concise (1-2 sentences max)
+- Output ONLY the text to append, nothing else
 </instructions>`;
 
     const result = streamText({

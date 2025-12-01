@@ -82,7 +82,7 @@ export function PromptProvider({
     api: "/api/complete-prompt",
     streamProtocol: "text",
     onFinish: (originalText, completionText) => {
-      setPrompt(`${originalText} ${completionText}`);
+      setPrompt(`${originalText}${completionText}`);
     },
     onError: (error) => {
       console.error("Show me failed:", error);
@@ -228,7 +228,7 @@ export function PromptProvider({
   return (
     <PromptContext.Provider
       value={{
-        prompt,
+        prompt: isStreaming ? `${originalPrompt}${completion}` : prompt,
         setPrompt,
         originalPrompt,
         chip,

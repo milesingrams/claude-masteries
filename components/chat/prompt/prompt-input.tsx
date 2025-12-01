@@ -54,7 +54,6 @@ function PromptInputInner({
     prompt,
     setPrompt,
     originalPrompt,
-    completion,
     isStreaming,
     resetSession,
     handleRevert,
@@ -110,7 +109,7 @@ function PromptInputInner({
           >
             <Textarea
               ref={textareaRef}
-              value={isStreaming ? `${originalPrompt} ${completion}` : prompt}
+              value={prompt}
               onChange={handleMessageChange}
               placeholder={placeholder}
               disabled={disabled || isStreaming}
