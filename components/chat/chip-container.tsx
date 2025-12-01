@@ -1,6 +1,6 @@
 "use client";
 
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 import type { ActiveChip } from "@/lib/masteries/types";
 import { useMasteryContext } from "@/lib/masteries/mastery-context";
 import { MasteryChip } from "./mastery-chip";
@@ -25,29 +25,32 @@ export function ChipContainer({
   );
 
   return (
-    <div className={cn("flex flex-col items-start gap-2", className)}>
-      <AnimatePresence mode="sync">
-        {visibleChips.map((chip) => {
-          const display = getMasteryDisplay(chip.mastery_id);
-          if (!display) return null;
+    <LayoutGroup>
+      <div className={cn("flex flex-col items-start gap-2", className)}>
+        <AnimatePresence mode="sync">
+          {visibleChips.map((chip) => {
+            const display = getMasteryDisplay(chip.mastery_id);
+            if (!display) return null;
 
-          return (
-            <motion.div
-              key={chip.mastery_id}
-              initial={{ opacity: 0, filter: "blur(4px)", scale: 0.95 }}
-              animate={{ opacity: 1, filter: "blur(0px)", scale: 1 }}
-              exit={{ opacity: 0, filter: "blur(4px)", scale: 0.95 }}
-              transition={{ duration: 0.2, ease: "easeOut" }}
-            >
-              <MasteryChip
-                chip={chip}
-                display={display}
-                onDismiss={() => onDismiss(chip.mastery_id)}
-              />
-            </motion.div>
-          );
-        })}
-      </AnimatePresence>
-    </div>
+            return (
+              <motion.div
+                key={chip.mastery_id}
+                layout
+                initial={{ opacity: 0, filter: "blur(4px)", scale: 0.95 }}
+                animate={{ opacity: 1, filter: "blur(0px)", scale: 1 }}
+                exit={{ opacity: 0, filter: "blur(4px)", scale: 0.95 }}
+                transition={{ duration: 0.2, ease: "easeOut" }}
+              >
+                <MasteryChip
+                  chip={chip}
+                  display={display}
+                  onDismiss={() => onDismiss(chip.mastery_id)}
+                />
+              </motion.div>
+            );
+          })}
+        </AnimatePresence>
+      </div>
+    </LayoutGroup>
   );
 }

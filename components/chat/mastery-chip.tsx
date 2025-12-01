@@ -14,15 +14,6 @@ interface MasteryChipProps {
   onDismiss: () => void;
 }
 
-const chipVariants: Variants = {
-  satisfied: {
-    scale: [1, 1.02, 1],
-    transition: {
-      duration: 0.3,
-    },
-  },
-};
-
 export function MasteryChip({ chip, display, onDismiss }: MasteryChipProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const chipRef = useRef<HTMLDivElement>(null);
@@ -59,38 +50,47 @@ export function MasteryChip({ chip, display, onDismiss }: MasteryChipProps) {
       layout
       ref={chipRef}
       onClick={handleChipClick}
-      className="group bg-card/80 text-card-foreground border-border/50 hover:border-border relative w-fit cursor-pointer overflow-hidden rounded-md border backdrop-blur-sm"
+      className="group bg-card/80 text-card-foreground border-border/50 hover:border-border relative w-fit cursor-pointer overflow-hidden border backdrop-blur-sm"
+      style={{ borderRadius: 6 }}
       data-slot="mastery-chip"
     >
-      <div className="flex items-center gap-1.5 px-2 py-1">
+      <motion.div
+        layout="position"
+        className="flex items-center gap-1.5 px-2 py-1"
+      >
         {/* Icon */}
-        <div className="shrink-0">
+        <motion.div layout="position" className="shrink-0">
           {isSatisfied ? (
             <Check className="h-3 w-3 text-green-600 dark:text-green-400" />
           ) : (
             <ClaudeLogo className="h-3 w-3 text-[#d97757]" />
           )}
-        </div>
+        </motion.div>
 
         {/* Chip text */}
-        <span className="text-muted-foreground flex-1 text-xs whitespace-nowrap">
+        <motion.span
+          layout="position"
+          className="text-muted-foreground flex-1 text-xs whitespace-nowrap"
+        >
           {isSatisfied ? display.name : display.chip}
-        </span>
+        </motion.span>
 
         {/* Actions */}
         {!isSatisfied && (
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-5 w-5 shrink-0"
-            onClick={handleDismiss}
-          >
-            <X className="h-2.5 w-2.5" />
-          </Button>
+          <motion.div layout="position">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-5 w-5 shrink-0"
+              onClick={handleDismiss}
+            >
+              <X className="h-2.5 w-2.5" />
+            </Button>
+          </motion.div>
         )}
-      </div>
+      </motion.div>
       {/* Expanded detail */}
-      <AnimatePresence mode="popLayout">
+      <AnimatePresence>
         {isExpanded && !isSatisfied && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
