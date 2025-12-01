@@ -4,9 +4,11 @@ import { useState, useRef, useCallback } from "react";
 import { Plus, ArrowUp, Undo2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { ClaudeLogo } from "@/components/ui/claude-logo";
 import { ChipContainer } from "./chip-container";
 import { usePromptAnalysis } from "@/hooks/use-prompt-analysis";
 import { useMasteryContext } from "@/lib/masteries/mastery-context";
+import { cn } from "@/lib/utils";
 
 interface MessageInputProps {
   onSubmit: (message: string) => void;
@@ -133,7 +135,17 @@ export function MessageInput({
 
         <form onSubmit={handleSubmit} className="pointer-events-auto">
           {/* Input Area */}
-          <div className="border-border bg-background focus-within:border-foreground/20 overflow-hidden rounded-xl border shadow-lg transition-all">
+          <div
+            className={cn(
+              "bg-background overflow-hidden rounded-xl border shadow-lg transition-all",
+              !isStreaming && "border-border focus-within:border-foreground/20"
+            )}
+            style={
+              isStreaming
+                ? { animation: "pulse-border 1.5s ease-in-out infinite", borderColor: "rgba(217, 120, 87, 0.4)" }
+                : undefined
+            }
+          >
             <Textarea
               ref={textareaRef}
               value={message}
@@ -151,8 +163,11 @@ export function MessageInput({
 
             {/* Button Bar */}
             <div className="flex items-center justify-between px-2 pb-2">
-              {/* Left side - Revert Button */}
-              <div>
+              {/* Left side - Revert Button or Streaming Indicator */}
+              <div className="flex items-center">
+                {isStreaming && (
+                  <ClaudeLogo size={20} style={{ animation: "pulse-scale 1.2s ease-in-out infinite" }} />
+                )}
                 {rewriteState && !isStreaming && (
                   <Button
                     type="button"

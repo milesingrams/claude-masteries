@@ -46,7 +46,7 @@ export function MessageList({ messages, isLoading }: MessageListProps) {
           <div className="flex w-full px-3 py-2">
             <ClaudeLogo
               size={28}
-              className={isLoading ? "animate-pulse-scale" : ""}
+              style={isLoading ? { animation: "pulse-scale 1.2s ease-in-out infinite" } : undefined}
             />
           </div>
         )}

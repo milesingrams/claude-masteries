@@ -138,6 +138,13 @@
   }
 }
 
-.animate-pulse-scale {
-  animation: pulse-scale 1.2s ease-in-out infinite;
+/* Pulsing border animation for streaming state */
+@keyframes pulse-border {
+  0%,
+  100% {
+    border-color: rgba(217, 120, 87, 0.4);
+  }
+  50% {
+    border-color: rgba(217, 120, 87, 0.8);
+  }
 }
