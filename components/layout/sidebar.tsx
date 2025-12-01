@@ -26,11 +26,17 @@ import { ChatOptionsDropdown } from "@/components/chat/chat-options-dropdown";
 import { useChatContext } from "@/lib/chat-context";
 
 export function AppSidebar() {
-  const { state } = useSidebar();
+  const { state, isMobile, setOpenMobile } = useSidebar();
   const { chats, isLoaded, deleteChat } = useChatContext();
   const params = useParams();
   const router = useRouter();
   const currentChatId = params?.chatId as string | undefined;
+
+  const closeMobileSidebar = () => {
+    if (isMobile) {
+      setOpenMobile(false);
+    }
+  };
 
   const handleDeleteChat = (chatId: string) => {
     deleteChat(chatId);
@@ -79,7 +85,7 @@ export function AppSidebar() {
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild tooltip="New chat">
-                  <Link href="/new">
+                  <Link href="/new" onClick={closeMobileSidebar}>
                     <div className="bg-claude-orange -m-1 flex items-center justify-center rounded-full p-1">
                       <Plus className="h-4 w-4" />
                     </div>
@@ -88,7 +94,7 @@ export function AppSidebar() {
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton tooltip="Masteries">
+                <SidebarMenuButton tooltip="Masteries" onClick={closeMobileSidebar}>
                   <Network className="h-4 w-4" />
                   <span>Masteries</span>
                 </SidebarMenuButton>
@@ -120,7 +126,7 @@ export function AppSidebar() {
                           tooltip={chat.title}
                           isActive={isActive}
                         >
-                          <Link href={`/chat/${chat.id}`}>
+                          <Link href={`/chat/${chat.id}`} onClick={closeMobileSidebar}>
                             <span className="truncate">{chat.title}</span>
                           </Link>
                         </SidebarMenuButton>

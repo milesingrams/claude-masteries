@@ -17,6 +17,7 @@ interface UsePromptAnalysisReturn {
   isAnalyzing: boolean;
   dismissChip: () => void;
   satisfyChip: () => void;
+  resetSession: () => void;
 }
 
 export function usePromptAnalysis(
@@ -29,6 +30,7 @@ export function usePromptAnalysis(
   const [chip, setChip] = useState<ActiveChip | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [debouncedPrompt, setDebouncedPrompt] = useState("");
+  const [suppressedIds, setSuppressedIds] = useState<string[]>([]);
 
   const lastAnalyzedPrompt = useRef<string>("");
   const abortControllerRef = useRef<AbortController | null>(null);
@@ -44,18 +46,27 @@ export function usePromptAnalysis(
 
   // Chip management functions
   const dismissChip = useCallback(() => {
+    if (chip) {
+      setSuppressedIds((prev) => [...prev, chip.mastery_id]);
+    }
     setChip(null);
-  }, []);
+  }, [chip]);
 
   const satisfyChip = useCallback(() => {
     if (chip) {
       markSatisfied(chip.mastery_id);
+      setSuppressedIds((prev) => [...prev, chip.mastery_id]);
     }
     // Set satisfied status - AnimatePresence preserves this during exit animation
     setChip((prev) => (prev ? { ...prev, status: "satisfied" } : null));
     // Clear chip on next frame - exit animation will show satisfied state
     requestAnimationFrame(() => setChip(null));
   }, [chip, markSatisfied]);
+
+  // Reset session state (call on message submit)
+  const resetSession = useCallback(() => {
+    setSuppressedIds([]);
+  }, []);
 
   // Analyze the prompt and update chip based on API response
   const analyze = useCallback(
@@ -78,6 +89,7 @@ export function usePromptAnalysis(
             partial_prompt: promptToAnalyze,
             active_chip_id: activeChipId,
             learned_mastery_ids: learnedMasteryIds,
+            suppressed_mastery_ids: suppressedIds,
           }),
           signal: abortControllerRef.current.signal,
         });
@@ -108,7 +120,7 @@ export function usePromptAnalysis(
         setIsAnalyzing(false);
       }
     },
-    [chip, learnedMasteryIds, satisfyChip]
+    [chip, learnedMasteryIds, satisfyChip, suppressedIds]
   );
 
   // Trigger analysis when debounced prompt changes
@@ -135,5 +147,6 @@ export function usePromptAnalysis(
     isAnalyzing,
     dismissChip,
     satisfyChip,
+    resetSession,
   };
 }

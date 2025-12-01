@@ -49,7 +49,7 @@ export function MessageInput({
     },
   });
 
-  const { chip, dismissChip, satisfyChip } = usePromptAnalysis(message, {
+  const { chip, dismissChip, satisfyChip, resetSession } = usePromptAnalysis(message, {
     enabled: enableChips && !disabled && !isStreaming,
   });
 
@@ -101,6 +101,7 @@ export function MessageInput({
 
     onMessageSubmit(message);
     setMessage("");
+    resetSession();
     textareaRef.current?.focus();
   };
 
@@ -136,6 +137,7 @@ export function MessageInput({
               onChange={handleMessageChange}
               placeholder={placeholder}
               disabled={disabled || isStreaming}
+              autoFocus
               className="text-foreground placeholder:text-muted-foreground max-h-[200px] min-h-[60px] resize-none border-0 bg-transparent px-3 py-3 text-base focus-visible:ring-0 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50 md:text-base dark:bg-transparent"
               onKeyDown={(e) => {
                 if (e.key === "Enter" && !e.shiftKey) {

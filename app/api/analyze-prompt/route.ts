@@ -38,7 +38,7 @@ export const maxDuration = 15;
 export async function POST(req: Request) {
   try {
     const body: AnalyzePromptRequest = await req.json();
-    const { partial_prompt, active_chip_id, learned_mastery_ids } = body;
+    const { partial_prompt, active_chip_id, learned_mastery_ids, suppressed_mastery_ids } = body;
 
     // Skip analysis for empty or very short prompts
     if (!partial_prompt || partial_prompt.trim().length < 30) {
@@ -48,11 +48,16 @@ export async function POST(req: Request) {
       } as AnalyzePromptResponse);
     }
 
-    // Filter out learned masteries
+    // Filter out learned and suppressed masteries
     let availableMasteries: Mastery[] = masteries;
     if (learned_mastery_ids?.length) {
-      availableMasteries = masteries.filter(
+      availableMasteries = availableMasteries.filter(
         (m) => !learned_mastery_ids.includes(m.id)
+      );
+    }
+    if (suppressed_mastery_ids?.length) {
+      availableMasteries = availableMasteries.filter(
+        (m) => !suppressed_mastery_ids.includes(m.id)
       );
     }
 

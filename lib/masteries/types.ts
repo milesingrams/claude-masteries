@@ -23,6 +23,7 @@ export interface AnalyzePromptRequest {
   partial_prompt: string;
   active_chip_id: string | null;
   learned_mastery_ids?: string[];
+  suppressed_mastery_ids?: string[];
 }
 
 export interface AnalyzePromptResponse {
