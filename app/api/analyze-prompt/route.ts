@@ -121,7 +121,7 @@ The user doesn't need to use exact phrases, but the intent should be clear—not
 3. SURFACE (only if no active_chip, or maintained is false):
 Find the single most relevant mastery for this prompt.
 Only surface if there's a clear match to surface_triggers.
-Be conservative—when in doubt, return null.
+Be very conservative—when in doubt, return null.
 
 If surfacing, generate a contextual chip_text (5-10 words) that:
 - References the user's specific topic/task
