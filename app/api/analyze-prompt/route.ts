@@ -95,7 +95,7 @@ Match the partial prompt against each mastery's surface_triggers. Surface when t
 
 When surfacing a mastery, generate a contextual chip_text (5-10 words) that:
 - References the specific topic/task from the user's prompt
-- Suggests the technique in a helpful, non-pushy way
+- Suggests the technique in a helpful, kind, and non-pushy way
 - Uses the chip_example as a style reference for tone and length
 
 Example: If user is writing about email and mastery chip_example is "You could ask Claude what's possible here", generate something like "Ask Claude how it would approach this email"
