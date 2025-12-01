@@ -23,7 +23,9 @@ function parseMarkdownIntoBlocks(markdown: string): string[] {
 // Memoized block component - only re-renders if its content changes
 const MemoizedMarkdownBlock = memo(
   ({ content }: { content: string }) => {
-    return <ReactMarkdown components={markdownComponents}>{content}</ReactMarkdown>;
+    return (
+      <ReactMarkdown components={markdownComponents}>{content}</ReactMarkdown>
+    );
   },
   (prevProps, nextProps) => prevProps.content === nextProps.content
 );
@@ -49,4 +51,3 @@ export function MemoizedMarkdown({
     </>
   );
 }
-
