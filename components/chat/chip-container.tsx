@@ -1,9 +1,35 @@
 "use client";
 
-import { AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import type { ActiveChip, MasteryDisplayData } from "@/lib/masteries/types";
 import { MasteryChip } from "./mastery-chip";
 import { cn } from "@/lib/utils";
+
+const chipWrapperVariants = {
+  initial: {
+    opacity: 0,
+    filter: "blur(4px)",
+    scale: 0.98,
+  },
+  animate: {
+    opacity: 1,
+    filter: "blur(0px)",
+    scale: 1,
+    transition: {
+      duration: 0.3,
+      ease: "easeOut" as const,
+    },
+  },
+  exit: {
+    opacity: 0,
+    filter: "blur(4px)",
+    scale: 0.98,
+    transition: {
+      duration: 0.2,
+      ease: "easeOut" as const,
+    },
+  },
+};
 
 interface ChipContainerProps {
   chips: ActiveChip[];
@@ -23,22 +49,27 @@ export function ChipContainer({
     (chip) => masteryDisplayData[chip.mastery_id]
   );
 
-  if (visibleChips.length === 0) return null;
-
   return (
     <div className={cn("flex flex-col items-start gap-2", className)}>
-      <AnimatePresence mode="popLayout">
+      <AnimatePresence>
         {visibleChips.map((chip) => {
           const display = masteryDisplayData[chip.mastery_id];
           if (!display) return null;
 
           return (
-            <MasteryChip
+            <motion.div
               key={chip.mastery_id}
-              chip={chip}
-              display={display}
-              onDismiss={() => onDismiss(chip.mastery_id)}
-            />
+              variants={chipWrapperVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+            >
+              <MasteryChip
+                chip={chip}
+                display={display}
+                onDismiss={() => onDismiss(chip.mastery_id)}
+              />
+            </motion.div>
           );
         })}
       </AnimatePresence>

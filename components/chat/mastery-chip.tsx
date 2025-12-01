@@ -15,34 +15,10 @@ interface MasteryChipProps {
 }
 
 const chipVariants: Variants = {
-  initial: {
-    opacity: 0,
-    y: 8,
-    scale: 0.95,
-  },
-  animate: {
-    opacity: 1,
-    y: 0,
-    scale: 1,
-    transition: {
-      type: "spring" as const,
-      stiffness: 400,
-      damping: 25,
-    },
-  },
   satisfied: {
     scale: [1, 1.02, 1],
     transition: {
       duration: 0.3,
-    },
-  },
-  exit: {
-    opacity: 0,
-    scale: 0.95,
-    y: -4,
-    transition: {
-      duration: 0.2,
-      ease: "easeOut" as const,
     },
   },
 };
@@ -83,15 +59,11 @@ export function MasteryChip({ chip, display, onDismiss }: MasteryChipProps) {
   return (
     <motion.div
       ref={chipRef}
-      layout
       variants={chipVariants}
-      initial="initial"
-      animate={isSatisfied ? "satisfied" : "animate"}
-      exit="exit"
+      animate={isSatisfied ? "satisfied" : undefined}
       onClick={handleChipClick}
-      transition={{ layout: { duration: 0.2, ease: "easeOut" } }}
       className={cn(
-        "group relative overflow-hidden rounded-md border",
+        "group relative overflow-hidden rounded-md border w-fit",
         "bg-card/80 text-card-foreground backdrop-blur-sm",
         isSatisfied &&
           "border-green-500/40 bg-green-50/80 dark:bg-green-950/20",
@@ -99,12 +71,11 @@ export function MasteryChip({ chip, display, onDismiss }: MasteryChipProps) {
         !isSatisfied &&
           !isFading &&
           "border-border/50 hover:border-border cursor-pointer",
-        chip.relevance === "high" && !isSatisfied && "border-grey/30",
-        "w-fit"
+        chip.relevance === "high" && !isSatisfied && "border-grey/30"
       )}
       data-slot="mastery-chip"
     >
-      <motion.div layout="position" className="flex items-center gap-1.5 px-2 py-1">
+      <div className="flex items-center gap-1.5 px-2 py-1">
         {/* Icon */}
         <div className="shrink-0">
           {isSatisfied ? (
@@ -130,12 +101,11 @@ export function MasteryChip({ chip, display, onDismiss }: MasteryChipProps) {
             <X className="h-2.5 w-2.5" />
           </Button>
         )}
-      </motion.div>
+      </div>
       {/* Expanded detail */}
       <AnimatePresence mode="popLayout">
         {isExpanded && !isSatisfied && (
           <motion.div
-            layout
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
