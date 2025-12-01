@@ -1,9 +1,8 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { motion, AnimatePresence, type Variants } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Check, X } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ClaudeLogo } from "@/components/ui/claude-logo";
 import type { ActiveChip, MasteryDisplayData } from "@/lib/masteries/types";
@@ -48,54 +47,47 @@ export function MasteryChip({ chip, display, onDismiss }: MasteryChipProps) {
   return (
     <motion.div
       layout
+      transition={{ duration: 0.2, ease: "easeOut" }}
       ref={chipRef}
       onClick={handleChipClick}
       className="group bg-card/80 text-card-foreground border-border/50 hover:border-border relative w-fit cursor-pointer overflow-hidden border backdrop-blur-sm"
       style={{ borderRadius: 6 }}
       data-slot="mastery-chip"
     >
-      <motion.div
-        layout="position"
-        className="flex items-center gap-1.5 px-2 py-1"
-      >
+      <motion.div layout className="flex items-center gap-1.5 px-2 py-1">
         {/* Icon */}
-        <motion.div layout="position" className="shrink-0">
-          {isSatisfied ? (
-            <Check className="h-3 w-3 text-green-600 dark:text-green-400" />
-          ) : (
-            <ClaudeLogo className="h-3 w-3 text-[#d97757]" />
-          )}
-        </motion.div>
+        {isSatisfied ? (
+          <Check className="h-3 w-3 text-green-600 dark:text-green-400" />
+        ) : (
+          <ClaudeLogo className="h-3 w-3 text-[#d97757]" />
+        )}
 
         {/* Chip text */}
-        <motion.div
-          layout="position"
-          className="text-muted-foreground flex-1 text-xs whitespace-nowrap"
-        >
+        <div className="text-muted-foreground flex-1 text-xs whitespace-nowrap">
           {isSatisfied ? display.name : display.chip}
-        </motion.div>
+        </div>
 
         {/* Actions */}
         {!isSatisfied && (
-          <motion.div layout="position" className="flex items-center">
+          <div className="flex items-center">
             <Button
               variant="ghost"
               size="icon"
-              className="h-5 w-5 shrink-0"
+              className="text-muted-foreground hover:text-foreground h-5 w-5 shrink-0"
               onClick={handleDismiss}
             >
               <X className="h-2.5 w-2.5" />
             </Button>
-          </motion.div>
+          </div>
         )}
       </motion.div>
       {/* Expanded detail */}
       <AnimatePresence>
         {isExpanded && !isSatisfied && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
+            initial={{ opacity: 0, height: 0, filter: "blur(4px)" }}
+            animate={{ opacity: 1, height: "auto", filter: "blur(0px)" }}
+            exit={{ opacity: 0, height: 0, filter: "blur(4px)" }}
             transition={{ duration: 0.2, ease: "easeOut" }}
             className="overflow-hidden"
           >
