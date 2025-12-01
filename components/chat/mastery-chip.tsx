@@ -19,6 +19,8 @@ export function MasteryChip({ chip, display, onDismiss }: MasteryChipProps) {
 
   const isSatisfied = chip.status === "satisfied";
 
+  const formattedCategoryName = `${display.category} / ${display.name}`;
+
   // Click outside to collapse
   useEffect(() => {
     if (!isExpanded) return;
@@ -68,7 +70,7 @@ export function MasteryChip({ chip, display, onDismiss }: MasteryChipProps) {
 
         {/* Chip text */}
         <div className="text-muted-foreground flex-1 text-xs whitespace-nowrap">
-          {isSatisfied ? display.name : chip.chip_text}
+          {isSatisfied ? formattedCategoryName : chip.chip_text}
         </div>
 
         {/* Actions */}
@@ -99,8 +101,8 @@ export function MasteryChip({ chip, display, onDismiss }: MasteryChipProps) {
               <p className="text-muted-foreground/80 text-[11px] leading-relaxed">
                 {display.detail}
               </p>
-              <p className="text-muted-foreground/50 mt-0.5 text-[10px]">
-                {display.category}
+              <p className="text-muted-foreground/50 mt-1 text-[10px]">
+                {formattedCategoryName}
               </p>
             </div>
           </motion.div>
