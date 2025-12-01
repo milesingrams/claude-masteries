@@ -9,7 +9,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { ClaudeLogo } from "@/components/ui/claude-logo";
 import { ChipContainer } from "./chip-container";
 import { usePromptAnalysis } from "@/hooks/use-prompt-analysis";
-import { useMasteryContext } from "@/lib/masteries/mastery-context";
 import { cn } from "@/lib/utils";
 
 interface MessageInputProps extends ComponentProps<"div"> {
@@ -35,8 +34,6 @@ export function MessageInput({
   const streamedTextRef = useRef<string>("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const { learnedMasteryIds, markSatisfied } = useMasteryContext();
-
   const {
     completion,
     complete,
@@ -60,10 +57,8 @@ export function MessageInput({
     },
   });
 
-  const { chips, dismissChip } = usePromptAnalysis(message, {
+  const { chips, dismissChips, satisfyChips } = usePromptAnalysis(message, {
     enabled: enableChips && !disabled && !isStreaming,
-    learnedMasteryIds,
-    onSatisfied: markSatisfied,
   });
 
   // Scroll textarea to bottom during streaming
@@ -80,8 +75,7 @@ export function MessageInput({
       streamedTextRef.current = "";
 
       // Mark satisfied immediately - user engaged with the technique
-      markSatisfied(masteryId);
-      dismissChip(masteryId);
+      satisfyChips([masteryId]);
 
       // Trigger completion with mastery params
       await complete(original, {
@@ -91,7 +85,7 @@ export function MessageInput({
         },
       });
     },
-    [message, complete, markSatisfied, dismissChip]
+    [message, complete, satisfyChips]
   );
 
   const handleRevert = useCallback(() => {
@@ -129,7 +123,7 @@ export function MessageInput({
         {enableChips && (
           <ChipContainer
             chips={chips}
-            onDismiss={dismissChip}
+            onDismiss={dismissChips}
             onShowMe={handleShowMe}
             className="pointer-events-auto"
           />

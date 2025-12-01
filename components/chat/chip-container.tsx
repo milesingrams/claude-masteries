@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 
 interface ChipContainerProps extends ComponentProps<"div"> {
   chips: ActiveChip[];
-  onDismiss: (id: string) => void;
+  onDismiss: (ids: string[]) => void;
   onShowMe: (masteryId: string, chipText: string) => Promise<void>;
 }
 
@@ -47,7 +47,7 @@ export function ChipContainer({
                 <MasteryChip
                   chip={chip}
                   display={display}
-                  onDismiss={() => onDismiss(chip.mastery_id)}
+                  onDismiss={() => onDismiss([chip.mastery_id])}
                   onShowMe={() => onShowMe(chip.mastery_id, chip.chip_text || "")}
                 />
               </motion.div>
