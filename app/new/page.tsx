@@ -30,7 +30,7 @@ export default function Page() {
         </div>
       </div>
       {/* Floating input at bottom */}
-      <MessageInput onSubmit={handleFirstMessage} />
+      <MessageInput onMessageSubmit={handleFirstMessage} />
     </div>
   );
 }

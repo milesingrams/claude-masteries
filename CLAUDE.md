@@ -92,6 +92,36 @@ Follow the established pattern from [button.tsx](components/ui/button.tsx):
 3. Use the `cn()` utility to merge className props
 4. Include `data-slot` attributes for component identification
 
+### Component Props Extension Pattern
+
+For components that render a single root node, extend the component props using `React.ComponentProps` instead of manually adding `className`, `style`, or other HTML attributes. This allows consumers to customize the root element by spreading leftover props.
+
+**Pattern:**
+
+```typescript
+import { ComponentProps } from "react";
+
+interface MyComponentProps extends ComponentProps<"div"> {
+  // Custom props specific to this component
+  title: string;
+  variant?: "primary" | "secondary";
+}
+
+function MyComponent({ title, variant, className, ...props }: MyComponentProps) {
+  return (
+    <div className={cn("base-styles", className)} {...props}>
+      {title}
+    </div>
+  );
+}
+```
+
+**Key points:**
+- Use `ComponentProps<"element">` for HTML elements (e.g., `"div"`, `"button"`, `"input"`)
+- Use `ComponentProps<typeof Component>` for Radix UI or other component primitives
+- Destructure custom props and spread the rest (`...props`) onto the root element
+- Always merge `className` using the `cn()` utility to preserve consumer styles
+
 ### TypeScript Configuration
 
 - Strict mode enabled

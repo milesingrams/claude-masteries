@@ -1,5 +1,6 @@
 "use client";
 
+import type { ComponentProps } from "react";
 import { useState, useRef, useCallback } from "react";
 import { Plus, ArrowUp, Undo2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -10,18 +11,20 @@ import { usePromptAnalysis } from "@/hooks/use-prompt-analysis";
 import { useMasteryContext } from "@/lib/masteries/mastery-context";
 import { cn } from "@/lib/utils";
 
-interface MessageInputProps {
-  onSubmit: (message: string) => void;
+interface MessageInputProps extends ComponentProps<"div"> {
+  onMessageSubmit: (message: string) => void;
   disabled?: boolean;
   placeholder?: string;
   enableChips?: boolean;
 }
 
 export function MessageInput({
-  onSubmit,
+  onMessageSubmit,
   disabled = false,
   placeholder = "How can I help you today?",
   enableChips = true,
+  className,
+  ...props
 }: MessageInputProps) {
   const [message, setMessage] = useState("");
   const [rewriteState, setRewriteState] = useState<{
@@ -115,13 +118,13 @@ export function MessageInput({
     e.preventDefault();
     if (!message.trim() || disabled) return;
 
-    onSubmit(message);
+    onMessageSubmit(message);
     setMessage("");
     textareaRef.current?.focus();
   };
 
   return (
-    <div className="pointer-events-none absolute right-0 bottom-0 left-0 z-10 px-4 pb-4">
+    <div className={cn("pointer-events-none absolute right-0 bottom-0 left-0 z-10 px-4 pb-4", className)} {...props}>
       <div className="mx-auto max-w-3xl space-y-2">
         {/* Mastery Chips */}
         {enableChips && (
@@ -152,7 +155,7 @@ export function MessageInput({
               onChange={handleMessageChange}
               placeholder={placeholder}
               disabled={disabled || isStreaming}
-              className="text-foreground placeholder:text-muted-foreground max-h-[200px] min-h-[60px] resize-none border-0 bg-transparent px-3 py-3 text-base focus-visible:ring-0 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50 md:text-base"
+              className="text-foreground placeholder:text-muted-foreground max-h-[200px] min-h-[60px] resize-none border-0 bg-transparent px-3 py-3 text-base focus-visible:ring-0 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50 md:text-base dark:bg-transparent"
               onKeyDown={(e) => {
                 if (e.key === "Enter" && !e.shiftKey) {
                   e.preventDefault();

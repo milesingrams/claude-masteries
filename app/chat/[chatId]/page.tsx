@@ -178,7 +178,7 @@ export default function ChatPage() {
       </div>
       {/* Floating input at bottom */}
       <MessageInput
-        onSubmit={handleMessageSubmit}
+        onMessageSubmit={handleMessageSubmit}
         disabled={status !== "ready"}
       />
     </div>

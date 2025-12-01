@@ -1,5 +1,6 @@
 "use client";
 
+import type { ComponentProps } from "react";
 import { ChevronDown, Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -9,16 +10,17 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { cn } from "@/lib/utils";
 
-interface ChatHeaderProps {
+interface ChatHeaderProps extends ComponentProps<"header"> {
   title: string;
   onRename?: () => void;
   onDelete?: () => void;
 }
 
-export function ChatHeader({ title, onRename, onDelete }: ChatHeaderProps) {
+export function ChatHeader({ title, onRename, onDelete, className, ...props }: ChatHeaderProps) {
   return (
-    <header className="border-border/40 bg-background/80 sticky top-0 z-10 flex h-12 shrink-0 items-center justify-center border-b backdrop-blur-sm">
+    <header className={cn("border-border/40 bg-background/80 sticky top-0 z-10 flex h-12 shrink-0 items-center justify-center border-b backdrop-blur-sm", className)} {...props}>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button

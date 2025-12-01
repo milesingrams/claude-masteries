@@ -1,16 +1,16 @@
 "use client";
 
+import type { ComponentProps } from "react";
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 import type { ActiveChip } from "@/lib/masteries/types";
 import { useMasteryContext } from "@/lib/masteries/mastery-context";
 import { MasteryChip } from "./mastery-chip";
 import { cn } from "@/lib/utils";
 
-interface ChipContainerProps {
+interface ChipContainerProps extends ComponentProps<"div"> {
   chips: ActiveChip[];
   onDismiss: (id: string) => void;
   onShowMe: (masteryId: string, chipText: string) => Promise<void>;
-  className?: string;
 }
 
 export function ChipContainer({
@@ -18,6 +18,7 @@ export function ChipContainer({
   onDismiss,
   onShowMe,
   className,
+  ...props
 }: ChipContainerProps) {
   const { getMasteryDisplay, hasMasteryDisplay } = useMasteryContext();
 
@@ -28,7 +29,7 @@ export function ChipContainer({
 
   return (
     <LayoutGroup>
-      <div className={cn("flex flex-col items-start gap-2", className)}>
+      <div className={cn("flex flex-col items-start gap-2", className)} {...props}>
         <AnimatePresence mode="sync">
           {visibleChips.map((chip) => {
             const display = getMasteryDisplay(chip.mastery_id);
