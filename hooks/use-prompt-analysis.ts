@@ -8,8 +8,8 @@ import type {
   MasteryDisplayData,
 } from "@/lib/masteries/types";
 
-const DEBOUNCE_DELAY = 1500;
-const SATISFACTION_DISPLAY_DURATION = 1500; // Show checkmark before removal
+const DEBOUNCE_DELAY = 1000;
+const SATISFACTION_DISPLAY_DURATION = 3000; // Show checkmark before removal
 const MIN_PROMPT_LENGTH = 30;
 
 interface UsePromptAnalysisOptions {
@@ -29,11 +29,7 @@ export function usePromptAnalysis(
   prompt: string,
   options: UsePromptAnalysisOptions = {}
 ): UsePromptAnalysisReturn {
-  const {
-    enabled = true,
-    learnedMasteryIds = [],
-    onSatisfied,
-  } = options;
+  const { enabled = true, learnedMasteryIds = [], onSatisfied } = options;
 
   const [chips, setChips] = useState<ActiveChip[]>([]);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -54,7 +50,8 @@ export function usePromptAnalysis(
   // Analyze prompt when debounced value changes
   useEffect(() => {
     if (!enabled) return;
-    if (!debouncedPrompt || debouncedPrompt.trim().length < MIN_PROMPT_LENGTH) return;
+    if (!debouncedPrompt || debouncedPrompt.trim().length < MIN_PROMPT_LENGTH)
+      return;
     if (debouncedPrompt === lastAnalyzedPrompt.current) return;
 
     lastAnalyzedPrompt.current = debouncedPrompt;
@@ -96,7 +93,9 @@ export function usePromptAnalysis(
 
           // Mark satisfied chips
           data.satisfied.forEach((sat) => {
-            const idx = updated.findIndex((c) => c.mastery_id === sat.mastery_id);
+            const idx = updated.findIndex(
+              (c) => c.mastery_id === sat.mastery_id
+            );
             if (idx !== -1 && updated[idx].status === "active") {
               updated[idx] = { ...updated[idx], status: "satisfied" };
 
@@ -114,7 +113,9 @@ export function usePromptAnalysis(
 
           // Add new chips (avoid duplicates)
           data.surface.forEach((surf) => {
-            const exists = updated.some((c) => c.mastery_id === surf.mastery_id);
+            const exists = updated.some(
+              (c) => c.mastery_id === surf.mastery_id
+            );
             if (!exists) {
               updated.push({
                 mastery_id: surf.mastery_id,
@@ -127,7 +128,9 @@ export function usePromptAnalysis(
           // Limit to 1 active chip (keep newest)
           const activeChips = updated.filter((c) => c.status === "active");
           if (activeChips.length > 1) {
-            const sorted = activeChips.sort((a, b) => b.surfaced_at - a.surfaced_at);
+            const sorted = activeChips.sort(
+              (a, b) => b.surfaced_at - a.surfaced_at
+            );
             const toKeep = new Set(sorted.slice(0, 1).map((c) => c.mastery_id));
             return updated.filter(
               (c) => c.status !== "active" || toKeep.has(c.mastery_id)
