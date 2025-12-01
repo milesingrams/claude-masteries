@@ -5,7 +5,7 @@ import { useDebounce } from "react-use";
 import type { ActiveChip, AnalyzePromptResponse } from "@/lib/masteries/types";
 import { useMasteryContext } from "@/lib/masteries/mastery-context";
 
-const DEBOUNCE_DELAY = 1000;
+const DEBOUNCE_DELAY = 1500;
 const MIN_PROMPT_LENGTH = 30;
 
 interface UsePromptAnalysisOptions {

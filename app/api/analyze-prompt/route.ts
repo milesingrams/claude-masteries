@@ -38,7 +38,12 @@ export const maxDuration = 15;
 export async function POST(req: Request) {
   try {
     const body: AnalyzePromptRequest = await req.json();
-    const { partial_prompt, active_chip_id, learned_mastery_ids, suppressed_mastery_ids } = body;
+    const {
+      partial_prompt,
+      active_chip_id,
+      learned_mastery_ids,
+      suppressed_mastery_ids,
+    } = body;
 
     // Skip analysis for empty or very short prompts
     if (!partial_prompt || partial_prompt.trim().length < 30) {
@@ -117,7 +122,7 @@ Example: If user is writing about email and mastery chip_example is "You could a
 SATISFACTION:
 If there is an active_chip, check if the partial prompt satisfies it based on the satisfaction_triggers. A chip is satisfied when the user's prompt contains the phrases or demonstrates the behavior described. Return satisfied: true if satisfied, false otherwise.
 
-Be conservative for surfacing. Be generous for satisfaction—if the user incorporated the suggestion, credit them.
+Be very conservative for surfacing. Be generous for satisfaction—if the user incorporated the suggestion, credit them.
 </instructions>`;
 
     const { object } = await generateObject({
