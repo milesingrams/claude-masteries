@@ -6,32 +6,6 @@ import { useMasteryContext } from "@/lib/masteries/mastery-context";
 import { MasteryChip } from "./mastery-chip";
 import { cn } from "@/lib/utils";
 
-const chipWrapperVariants = {
-  initial: {
-    opacity: 0,
-    filter: "blur(4px)",
-    scale: 0.98,
-  },
-  animate: {
-    opacity: 1,
-    filter: "blur(0px)",
-    scale: 1,
-    transition: {
-      duration: 0.3,
-      ease: "easeOut" as const,
-    },
-  },
-  exit: {
-    opacity: 0,
-    filter: "blur(4px)",
-    scale: 0.98,
-    transition: {
-      duration: 0.2,
-      ease: "easeOut" as const,
-    },
-  },
-};
-
 interface ChipContainerProps {
   chips: ActiveChip[];
   onDismiss: (id: string) => void;
@@ -50,7 +24,7 @@ export function ChipContainer({
 
   return (
     <div className={cn("flex flex-col items-start gap-2", className)}>
-      <AnimatePresence>
+      <AnimatePresence mode="sync">
         {visibleChips.map((chip) => {
           const display = getMasteryDisplay(chip.mastery_id);
           if (!display) return null;
@@ -58,10 +32,10 @@ export function ChipContainer({
           return (
             <motion.div
               key={chip.mastery_id}
-              variants={chipWrapperVariants}
-              initial="initial"
-              animate="animate"
-              exit="exit"
+              initial={{ opacity: 0, filter: "blur(4px)", scale: 0.95 }}
+              animate={{ opacity: 1, filter: "blur(0px)", scale: 1 }}
+              exit={{ opacity: 0, filter: "blur(4px)", scale: 0.95 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
             >
               <MasteryChip
                 chip={chip}

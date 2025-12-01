@@ -45,7 +45,7 @@ export function MessageInput({
     <div className="pointer-events-none absolute right-0 bottom-0 left-0 z-10 px-4 pb-4">
       <div className="mx-auto max-w-3xl space-y-2">
         {/* Mastery Chips */}
-        {enableChips && chips.length > 0 && (
+        {enableChips && (
           <ChipContainer
             chips={chips}
             onDismiss={dismissChip}
