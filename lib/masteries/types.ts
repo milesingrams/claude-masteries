@@ -21,18 +21,16 @@ export interface ActiveChip {
 // API request/response types
 export interface AnalyzePromptRequest {
   partial_prompt: string;
-  active_chip_ids: string[];
+  active_chip_id: string | null;
   learned_mastery_ids?: string[];
 }
 
 export interface AnalyzePromptResponse {
-  surface: Array<{
+  surface: {
     mastery_id: string;
     chip_text: string;
-  }>;
-  satisfied: Array<{
-    mastery_id: string;
-  }>;
+  } | null;
+  satisfied_id: string | null;
 }
 
 // Mastery progress tracking (Phase 2)

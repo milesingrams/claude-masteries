@@ -1,60 +1,62 @@
 "use client";
 
 import type { ComponentProps } from "react";
-import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import type { ActiveChip } from "@/lib/masteries/types";
 import { useMasteryContext } from "@/lib/masteries/mastery-context";
 import { MasteryChip } from "./mastery-chip";
 import { cn } from "@/lib/utils";
 
 interface ChipContainerProps extends ComponentProps<"div"> {
-  chips: ActiveChip[];
-  onDismiss: (ids: string[]) => void;
+  chip: ActiveChip | null;
+  onDismiss: () => void;
   onShowMe: (masteryId: string, chipText: string) => Promise<void>;
 }
 
 export function ChipContainer({
-  chips,
+  chip,
   onDismiss,
   onShowMe,
   className,
   ...props
 }: ChipContainerProps) {
-  const { getMasteryDisplay, hasMasteryDisplay } = useMasteryContext();
+  const { getMasteryDisplay } = useMasteryContext();
 
-  // Only show chips that have display data
-  const visibleChips = chips.filter((chip) =>
-    hasMasteryDisplay(chip.mastery_id)
-  );
+  const display = chip ? getMasteryDisplay(chip.mastery_id) : null;
+  const isVisible = chip && display;
 
   return (
-    <LayoutGroup>
-      <div className={cn("flex flex-col items-start gap-2", className)} {...props}>
-        <AnimatePresence mode="sync">
-          {visibleChips.map((chip) => {
-            const display = getMasteryDisplay(chip.mastery_id);
-            if (!display) return null;
-
-            return (
-              <motion.div
-                key={chip.mastery_id}
-                layout
-                initial={{ opacity: 0, filter: "blur(4px)", scale: 0.95 }}
-                animate={{ opacity: 1, filter: "blur(0px)", scale: 1 }}
-                exit={{ opacity: 0, filter: "blur(4px)", scale: 0.95 }}
-                transition={{ duration: 0.2, ease: "easeOut" }}
-              >
-                <MasteryChip
-                  chip={chip}
-                  display={display}
-                  onDismiss={() => onDismiss([chip.mastery_id])}
-                  onShowMe={() => onShowMe(chip.mastery_id, chip.chip_text || "")}
-                />
-              </motion.div>
-            );
-          })}
-        </AnimatePresence>
-      </div>
-    </LayoutGroup>
+    <div
+      className={cn("flex flex-col items-start gap-2", className)}
+      {...props}
+    >
+      <AnimatePresence mode="popLayout">
+        {isVisible && (
+          <motion.div
+            key={chip.mastery_id}
+            layout
+            initial={{ opacity: 0, filter: "blur(4px)", scale: 0.95 }}
+            animate={{ opacity: 1, filter: "blur(0px)", scale: 1 }}
+            exit={{
+              opacity: 0,
+              filter: "blur(4px)",
+              scale: 0.95,
+              transition: {
+                duration: chip.status === "satisfied" ? 2 : 0.2,
+                ease: "easeOut",
+              },
+            }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+          >
+            <MasteryChip
+              chip={chip}
+              display={display}
+              onDismiss={onDismiss}
+              onShowMe={() => onShowMe(chip.mastery_id, chip.chip_text || "")}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   );
 }

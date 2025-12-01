@@ -57,7 +57,7 @@ export function MessageInput({
     },
   });
 
-  const { chips, dismissChips, satisfyChips } = usePromptAnalysis(message, {
+  const { chip, dismissChip, satisfyChip } = usePromptAnalysis(message, {
     enabled: enableChips && !disabled && !isStreaming,
   });
 
@@ -75,7 +75,7 @@ export function MessageInput({
       streamedTextRef.current = "";
 
       // Mark satisfied immediately - user engaged with the technique
-      satisfyChips([masteryId]);
+      satisfyChip();
 
       // Trigger completion with mastery params
       await complete(original, {
@@ -85,7 +85,7 @@ export function MessageInput({
         },
       });
     },
-    [message, complete, satisfyChips]
+    [message, complete, satisfyChip]
   );
 
   const handleRevert = useCallback(() => {
@@ -122,8 +122,8 @@ export function MessageInput({
         {/* Mastery Chips */}
         {enableChips && (
           <ChipContainer
-            chips={chips}
-            onDismiss={dismissChips}
+            chip={chip}
+            onDismiss={dismissChip}
             onShowMe={handleShowMe}
             className="pointer-events-auto"
           />
