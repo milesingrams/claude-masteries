@@ -14,7 +14,12 @@ interface MasteryChipProps {
   onShowMe: () => Promise<void>;
 }
 
-export function MasteryChip({ chip, display, onDismiss, onShowMe }: MasteryChipProps) {
+export function MasteryChip({
+  chip,
+  display,
+  onDismiss,
+  onShowMe,
+}: MasteryChipProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isShowMeLoading, setIsShowMeLoading] = useState(false);
   const chipRef = useRef<HTMLDivElement>(null);
@@ -66,7 +71,7 @@ export function MasteryChip({ chip, display, onDismiss, onShowMe }: MasteryChipP
       transition={{ duration: 0.2, ease: "easeOut" }}
       ref={chipRef}
       onClick={handleChipClick}
-      className="group bg-card/80 text-card-foreground border-border/50 hover:border-border relative w-fit cursor-pointer overflow-hidden border backdrop-blur-sm"
+      className="group bg-card text-card-foreground border-border/50 hover:border-border relative w-fit cursor-pointer overflow-hidden border backdrop-blur-sm"
       style={{ borderRadius: 6 }}
       data-slot="mastery-chip"
     >
@@ -122,7 +127,7 @@ export function MasteryChip({ chip, display, onDismiss, onShowMe }: MasteryChipP
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="text-[#d97757] hover:text-[#d97757]/80 h-6 px-2 text-[10px]"
+                  className="h-6 px-2 text-[10px] text-[#d97757] hover:text-[#d97757]/80"
                   onClick={handleShowMe}
                   disabled={isShowMeLoading}
                 >

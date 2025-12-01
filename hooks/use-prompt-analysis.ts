@@ -69,8 +69,7 @@ export function usePromptAnalysis(
       setIsAnalyzing(true);
 
       try {
-        const activeChipId =
-          chip?.status === "active" ? chip.mastery_id : null;
+        const activeChipId = chip?.status === "active" ? chip.mastery_id : null;
 
         const response = await fetch("/api/analyze-prompt", {
           method: "POST",

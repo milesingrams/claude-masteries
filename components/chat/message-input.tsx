@@ -27,11 +27,7 @@ export function MessageInput({
   ...props
 }: MessageInputProps) {
   const [message, setMessage] = useState("");
-  const [rewriteState, setRewriteState] = useState<{
-    originalPrompt: string;
-    masteryId: string;
-  } | null>(null);
-  const streamedTextRef = useRef<string>("");
+  const [originalPrompt, setOriginalPrompt] = useState<string | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const {
@@ -42,17 +38,13 @@ export function MessageInput({
     api: "/api/rewrite-prompt",
     streamProtocol: "text",
     onFinish: (_prompt, completionText) => {
-      // Sync final completion (original + appended) to message state
-      const original = rewriteState?.originalPrompt ?? "";
-      const finalText = original + completionText;
-      streamedTextRef.current = finalText;
-      setMessage(finalText);
+      setMessage(completionText);
     },
     onError: (error) => {
       console.error("Show me failed:", error);
-      if (rewriteState) {
-        setMessage(rewriteState.originalPrompt);
-        setRewriteState(null);
+      if (originalPrompt !== null) {
+        setMessage(originalPrompt);
+        setOriginalPrompt(null);
       }
     },
   });
@@ -70,15 +62,13 @@ export function MessageInput({
 
   const handleShowMe = useCallback(
     async (masteryId: string, chipText: string): Promise<void> => {
-      const original = message;
-      setRewriteState({ originalPrompt: original, masteryId });
-      streamedTextRef.current = "";
+      setOriginalPrompt(message);
 
       // Mark satisfied immediately - user engaged with the technique
       satisfyChip();
 
       // Trigger completion with mastery params
-      await complete(original, {
+      await complete(message, {
         body: {
           mastery_id: masteryId,
           chip_text: chipText,
@@ -89,21 +79,19 @@ export function MessageInput({
   );
 
   const handleRevert = useCallback(() => {
-    if (rewriteState) {
-      setMessage(rewriteState.originalPrompt);
-      setRewriteState(null);
-      streamedTextRef.current = "";
+    if (originalPrompt !== null) {
+      setMessage(originalPrompt);
+      setOriginalPrompt(null);
     }
-  }, [rewriteState]);
+  }, [originalPrompt]);
 
   const handleMessageChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newValue = e.target.value;
     setMessage(newValue);
 
     // If user edits after a rewrite, clear the revert option
-    if (rewriteState && newValue !== streamedTextRef.current) {
-      setRewriteState(null);
-      streamedTextRef.current = "";
+    if (originalPrompt !== null) {
+      setOriginalPrompt(null);
     }
   };
 
@@ -144,7 +132,7 @@ export function MessageInput({
           >
             <Textarea
               ref={textareaRef}
-              value={isStreaming ? (rewriteState?.originalPrompt ?? "") + completion : message}
+              value={isStreaming ? completion : message}
               onChange={handleMessageChange}
               placeholder={placeholder}
               disabled={disabled || isStreaming}
@@ -164,7 +152,7 @@ export function MessageInput({
                 {isStreaming && (
                   <ClaudeLogo size={20} style={{ animation: "pulse-scale 1.2s ease-in-out infinite" }} />
                 )}
-                {rewriteState && !isStreaming && (
+                {originalPrompt !== null && !isStreaming && (
                   <Button
                     type="button"
                     variant="ghost"
