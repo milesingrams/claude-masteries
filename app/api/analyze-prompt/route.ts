@@ -84,10 +84,18 @@ ${JSON.stringify(
 </masteries>
 
 <active_chip>
-${activeChip ? JSON.stringify({
-  id: activeChip.id,
-  satisfaction_triggers: activeChip.satisfaction_triggers,
-}, null, 2) : "null"}
+${
+  activeChip
+    ? JSON.stringify(
+        {
+          id: activeChip.id,
+          satisfaction_triggers: activeChip.satisfaction_triggers,
+        },
+        null,
+        2
+      )
+    : "null"
+}
 </active_chip>
 
 <instructions>
