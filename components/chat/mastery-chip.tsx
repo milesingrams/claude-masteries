@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import { motion, type Variants } from "framer-motion";
-import { Check, X, ChevronDown, ChevronUp } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import { motion, AnimatePresence, type Variants } from "framer-motion";
+import { Check, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ClaudeLogo } from "@/components/ui/claude-logo";
@@ -47,71 +47,75 @@ const chipVariants: Variants = {
   },
 };
 
-const detailVariants: Variants = {
-  hidden: {
-    height: 0,
-    opacity: 0,
-  },
-  visible: {
-    height: "auto",
-    opacity: 1,
-    transition: {
-      height: {
-        type: "spring" as const,
-        stiffness: 500,
-        damping: 30,
-      },
-      opacity: {
-        duration: 0.2,
-        delay: 0.1,
-      },
-    },
-  },
-};
 
 export function MasteryChip({ chip, display, onDismiss }: MasteryChipProps) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const chipRef = useRef<HTMLDivElement>(null);
 
   const isSatisfied = chip.status === "satisfied";
   const isFading = chip.status === "fading";
 
+  // Click outside to collapse
+  useEffect(() => {
+    if (!isExpanded) return;
+
+    function handleClickOutside(event: MouseEvent) {
+      if (chipRef.current && !chipRef.current.contains(event.target as Node)) {
+        setIsExpanded(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isExpanded]);
+
+  const handleChipClick = () => {
+    if (!isSatisfied && !isFading) {
+      setIsExpanded(true);
+    }
+  };
+
+  const handleDismiss = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onDismiss();
+  };
+
   return (
     <motion.div
+      ref={chipRef}
+      layout
       variants={chipVariants}
       initial="initial"
       animate={isSatisfied ? "satisfied" : "animate"}
       exit="exit"
+      onClick={handleChipClick}
+      transition={{ layout: { duration: 0.2, ease: "easeOut" } }}
       className={cn(
-        "group relative w-fit overflow-hidden rounded-md border transition-colors",
+        "group relative overflow-hidden rounded-md border",
         "bg-card/80 text-card-foreground backdrop-blur-sm",
         isSatisfied &&
           "border-green-500/40 bg-green-50/80 dark:bg-green-950/20",
         isFading && "pointer-events-none",
-        !isSatisfied && !isFading && "border-border/50 hover:border-border",
-        chip.relevance === "high" && !isSatisfied && "border-grey/30"
+        !isSatisfied &&
+          !isFading &&
+          "border-border/50 hover:border-border cursor-pointer",
+        chip.relevance === "high" && !isSatisfied && "border-grey/30",
+        "w-fit"
       )}
       data-slot="mastery-chip"
     >
-      <div className="flex items-center gap-1.5 px-2 py-1">
+      <motion.div layout="position" className="flex items-center gap-1.5 px-2 py-1">
         {/* Icon */}
-        <motion.div
-          initial={false}
-          animate={{
-            rotate: isSatisfied ? [0, -10, 10, 0] : 0,
-            scale: isSatisfied ? [1, 1.2, 1] : 1,
-          }}
-          transition={{ duration: 0.4 }}
-          className="shrink-0"
-        >
+        <div className="shrink-0">
           {isSatisfied ? (
             <Check className="h-3 w-3 text-green-600 dark:text-green-400" />
           ) : (
             <ClaudeLogo className="h-3 w-3 text-[#d97757]" />
           )}
-        </motion.div>
+        </div>
 
         {/* Chip text */}
-        <span className="text-muted-foreground text-xs">
+        <span className="text-muted-foreground flex-1 text-xs whitespace-nowrap">
           {isSatisfied ? display.name : display.chip_text}
         </span>
 
@@ -120,29 +124,35 @@ export function MasteryChip({ chip, display, onDismiss }: MasteryChipProps) {
           <Button
             variant="ghost"
             size="icon"
-            className="h-5 w-5"
-            onClick={onDismiss}
+            className="h-5 w-5 shrink-0"
+            onClick={handleDismiss}
           >
             <X className="h-2.5 w-2.5" />
           </Button>
         )}
-      </div>
-      {/* Expanded detail */}
-      <motion.div
-        variants={detailVariants}
-        initial="hidden"
-        animate={isExpanded && !isSatisfied ? "visible" : "hidden"}
-        className="overflow-hidden"
-      >
-        <div className="border-border/30 border-t px-2 py-1.5">
-          <p className="text-muted-foreground/80 text-[11px] leading-relaxed">
-            {display.detail}
-          </p>
-          <p className="text-muted-foreground/50 mt-0.5 text-[10px]">
-            {display.category}
-          </p>
-        </div>
       </motion.div>
+      {/* Expanded detail */}
+      <AnimatePresence mode="popLayout">
+        {isExpanded && !isSatisfied && (
+          <motion.div
+            layout
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            className="overflow-hidden"
+          >
+            <div className="border-border/30 border-t px-2 py-1.5">
+              <p className="text-muted-foreground/80 text-[11px] leading-relaxed">
+                {display.detail}
+              </p>
+              <p className="text-muted-foreground/50 mt-0.5 text-[10px]">
+                {display.category}
+              </p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }
