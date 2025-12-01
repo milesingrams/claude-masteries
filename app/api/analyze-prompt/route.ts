@@ -98,7 +98,7 @@ Be conservative for surfacing. Be generous for satisfaction—if the user incorp
 </instructions>`;
 
     const { object } = await generateObject({
-      model: anthropic("claude-3-5-haiku-20241022"),
+      model: anthropic("claude-sonnet-4-5"),
       schema: analysisSchema,
       prompt,
     });

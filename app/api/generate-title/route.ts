@@ -14,7 +14,7 @@ export async function POST(req: Request) {
     }
 
     const { text } = await generateText({
-      model: anthropic("claude-sonnet-4-5-20250929"),
+      model: anthropic("claude-sonnet-4-5"),
       messages: [
         {
           role: "user",

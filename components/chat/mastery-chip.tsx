@@ -54,7 +54,11 @@ export function MasteryChip({ chip, display, onDismiss }: MasteryChipProps) {
       style={{ borderRadius: 6 }}
       data-slot="mastery-chip"
     >
-      <motion.div layout className="flex items-center gap-1.5 px-2 py-1">
+      <motion.div
+        layout
+        transition={{ duration: 0.2, ease: "easeOut" }}
+        className="flex items-center gap-1.5 px-2 py-1"
+      >
         {/* Icon */}
         {isSatisfied ? (
           <Check className="h-3 w-3 text-green-600 dark:text-green-400" />
