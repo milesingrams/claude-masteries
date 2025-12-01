@@ -27,7 +27,7 @@ export async function POST(req: Request) {
     const { category, name } = parseIdParts(mastery_id);
 
     const prompt = `<task>
-Rewrite the user's prompt to demonstrate a specific prompting technique.
+Generate text to append to the user's prompt that demonstrates a specific prompting technique.
 </task>
 
 <original_prompt>
@@ -42,11 +42,12 @@ Explanation: ${mastery.detail}
 </technique>
 
 <instructions>
-Output the COMPLETE rewritten prompt that incorporates this technique.
-- Preserve the user's original intent and content
-- Enhance it by applying the technique naturally
-- Keep the tone consistent with the original
-- Output ONLY the final prompt text, nothing else (no explanations, no preamble)
+Output ONLY the text to append to the user's prompt.
+- Generate the additional context, constraints, or enhancements based on the technique
+- Do NOT repeat or include the original prompt
+- Output text that naturally follows the original when appended with a line break
+- Keep it concise and focused on applying the technique
+- Output ONLY the addition text, nothing else (no explanations, no preamble)
 </instructions>`;
 
     const result = streamText({

@@ -37,21 +37,22 @@ export function MessageInput({
   } = useCompletion({
     api: "/api/rewrite-prompt",
     streamProtocol: "text",
-    onFinish: (_prompt, completionText) => {
-      setMessage(completionText);
+    onFinish: (prompt, completionText) => {
+      // prompt is the original we passed to complete()
+      setMessage(`${prompt} ${completionText}`);
     },
     onError: (error) => {
       console.error("Show me failed:", error);
-      if (originalPrompt !== null) {
-        setMessage(originalPrompt);
-        setOriginalPrompt(null);
-      }
+      // Revert handled by originalPrompt state
     },
   });
 
-  const { chip, dismissChip, satisfyChip, resetSession } = usePromptAnalysis(message, {
-    enabled: enableChips && !disabled && !isStreaming,
-  });
+  const { chip, dismissChip, satisfyChip, resetSession } = usePromptAnalysis(
+    message,
+    {
+      enabled: enableChips && !disabled && !isStreaming,
+    }
+  );
 
   // Scroll textarea to bottom during streaming
   useEffect(() => {
@@ -106,7 +107,13 @@ export function MessageInput({
   };
 
   return (
-    <div className={cn("pointer-events-none absolute right-0 bottom-0 left-0 z-10 px-4 pb-4", className)} {...props}>
+    <div
+      className={cn(
+        "pointer-events-none absolute right-0 bottom-0 left-0 z-10 px-4 pb-4",
+        className
+      )}
+      {...props}
+    >
       <div className="mx-auto max-w-3xl space-y-2">
         {/* Mastery Chips */}
         {enableChips && (
@@ -127,13 +134,16 @@ export function MessageInput({
             )}
             style={
               isStreaming
-                ? { animation: "pulse-border 1.5s ease-in-out infinite", borderColor: "rgba(217, 120, 87, 0.4)" }
+                ? {
+                    animation: "pulse-border 1.5s ease-in-out infinite",
+                    borderColor: "rgba(217, 120, 87, 0.4)",
+                  }
                 : undefined
             }
           >
             <Textarea
               ref={textareaRef}
-              value={isStreaming ? completion : message}
+              value={isStreaming ? `${originalPrompt} ${completion}` : message}
               onChange={handleMessageChange}
               placeholder={placeholder}
               disabled={disabled || isStreaming}
@@ -152,7 +162,12 @@ export function MessageInput({
               {/* Left side - Revert Button or Streaming Indicator */}
               <div className="flex items-center">
                 {isStreaming && (
-                  <ClaudeLogo size={20} style={{ animation: "pulse-scale 1.2s ease-in-out infinite" }} />
+                  <ClaudeLogo
+                    size={20}
+                    style={{
+                      animation: "pulse-scale 1.2s ease-in-out infinite",
+                    }}
+                  />
                 )}
                 {originalPrompt !== null && !isStreaming && (
                   <Button
