@@ -30,6 +30,10 @@ interface MasteryContextValue {
 
   // Actions
   markSatisfied: (masteryId: string) => void;
+
+  // Helpers
+  getMasteryDisplay: (masteryId: string) => MasteryDisplayData | undefined;
+  hasMasteryDisplay: (masteryId: string) => boolean;
 }
 
 const MasteryContext = createContext<MasteryContextValue | null>(null);
@@ -92,6 +96,16 @@ export function MasteryProvider({ children }: { children: ReactNode }) {
     [masteryDisplayData]
   );
 
+  const getMasteryDisplay = useCallback(
+    (masteryId: string) => masteryDisplayData[masteryId],
+    [masteryDisplayData]
+  );
+
+  const hasMasteryDisplay = useCallback(
+    (masteryId: string) => masteryId in masteryDisplayData,
+    [masteryDisplayData]
+  );
+
   const learnedMasteryIds = getLearnedMasteryIds(progress);
 
   return (
@@ -102,6 +116,8 @@ export function MasteryProvider({ children }: { children: ReactNode }) {
         progress,
         learnedMasteryIds,
         markSatisfied,
+        getMasteryDisplay,
+        hasMasteryDisplay,
       }}
     >
       {children}

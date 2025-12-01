@@ -1,7 +1,8 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import type { ActiveChip, MasteryDisplayData } from "@/lib/masteries/types";
+import type { ActiveChip } from "@/lib/masteries/types";
+import { useMasteryContext } from "@/lib/masteries/mastery-context";
 import { MasteryChip } from "./mastery-chip";
 import { cn } from "@/lib/utils";
 
@@ -33,27 +34,25 @@ const chipWrapperVariants = {
 
 interface ChipContainerProps {
   chips: ActiveChip[];
-  masteryDisplayData: Record<string, MasteryDisplayData>;
   onDismiss: (id: string) => void;
   className?: string;
 }
 
 export function ChipContainer({
   chips,
-  masteryDisplayData,
   onDismiss,
   className,
 }: ChipContainerProps) {
+  const { getMasteryDisplay, hasMasteryDisplay } = useMasteryContext();
+
   // Only show chips that have display data
-  const visibleChips = chips.filter(
-    (chip) => masteryDisplayData[chip.mastery_id]
-  );
+  const visibleChips = chips.filter((chip) => hasMasteryDisplay(chip.mastery_id));
 
   return (
     <div className={cn("flex flex-col items-start gap-2", className)}>
       <AnimatePresence>
         {visibleChips.map((chip) => {
-          const display = masteryDisplayData[chip.mastery_id];
+          const display = getMasteryDisplay(chip.mastery_id);
           if (!display) return null;
 
           return (

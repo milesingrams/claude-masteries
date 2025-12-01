@@ -24,8 +24,7 @@ export function MessageInput({
   const [message, setMessage] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const { masteryDisplayData, learnedMasteryIds, markSatisfied, isLoading } =
-    useMasteryContext();
+  const { learnedMasteryIds, markSatisfied, isLoading } = useMasteryContext();
 
   const { chips, dismissChip } = usePromptAnalysis(message, {
     enabled: enableChips && !disabled && !isLoading,
@@ -49,7 +48,6 @@ export function MessageInput({
         {enableChips && chips.length > 0 && (
           <ChipContainer
             chips={chips}
-            masteryDisplayData={masteryDisplayData}
             onDismiss={dismissChip}
             className="pointer-events-auto"
           />
