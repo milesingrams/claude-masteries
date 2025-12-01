@@ -9,7 +9,7 @@ export interface MasteryDisplayData {
 }
 
 // Active chip state
-export type ChipStatus = "active" | "satisfied" | "fading";
+export type ChipStatus = "active" | "satisfied";
 
 export interface ActiveChip {
   mastery_id: string;

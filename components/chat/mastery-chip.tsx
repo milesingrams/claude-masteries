@@ -29,7 +29,6 @@ export function MasteryChip({ chip, display, onDismiss }: MasteryChipProps) {
   const chipRef = useRef<HTMLDivElement>(null);
 
   const isSatisfied = chip.status === "satisfied";
-  const isFading = chip.status === "fading";
 
   // Click outside to collapse
   useEffect(() => {
@@ -46,7 +45,7 @@ export function MasteryChip({ chip, display, onDismiss }: MasteryChipProps) {
   }, [isExpanded]);
 
   const handleChipClick = () => {
-    if (!isSatisfied && !isFading) {
+    if (!isSatisfied) {
       setIsExpanded(true);
     }
   };
@@ -67,10 +66,7 @@ export function MasteryChip({ chip, display, onDismiss }: MasteryChipProps) {
         "bg-card/80 text-card-foreground backdrop-blur-sm",
         isSatisfied &&
           "border-green-500/40 bg-green-50/80 dark:bg-green-950/20",
-        isFading && "pointer-events-none",
-        !isSatisfied &&
-          !isFading &&
-          "border-border/50 hover:border-border cursor-pointer",
+        !isSatisfied && "border-border/50 hover:border-border cursor-pointer",
         chip.relevance === "high" && !isSatisfied && "border-grey/30"
       )}
       data-slot="mastery-chip"

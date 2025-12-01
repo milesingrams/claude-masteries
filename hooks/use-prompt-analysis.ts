@@ -9,8 +9,7 @@ import type {
 } from "@/lib/masteries/types";
 
 const DEBOUNCE_DELAY = 1500;
-const SATISFACTION_DISPLAY_DURATION = 1500; // Show checkmark for 1.5s
-const FADE_OUT_DURATION = 500; // Fade animation duration
+const SATISFACTION_DISPLAY_DURATION = 1500; // Show checkmark before removal
 const MIN_PROMPT_LENGTH = 30;
 
 interface UsePromptAnalysisOptions {
@@ -104,23 +103,12 @@ export function usePromptAnalysis(
               // Track for notification after state update
               satisfiedMasteryIds.push(sat.mastery_id);
 
-              // Schedule fade out after showing checkmark
-              setTimeout(() => {
-                setChips((curr) =>
-                  curr.map((c) =>
-                    c.mastery_id === sat.mastery_id
-                      ? { ...c, status: "fading" }
-                      : c
-                  )
-                );
-              }, SATISFACTION_DISPLAY_DURATION);
-
-              // Remove after fade animation
+              // Remove after showing satisfied state - AnimatePresence handles exit animation
               setTimeout(() => {
                 setChips((curr) =>
                   curr.filter((c) => c.mastery_id !== sat.mastery_id)
                 );
-              }, SATISFACTION_DISPLAY_DURATION + FADE_OUT_DURATION);
+              }, SATISFACTION_DISPLAY_DURATION);
             }
           });
 
