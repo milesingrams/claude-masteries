@@ -82,17 +82,16 @@ export function MasteryChip({ chip, display, onDismiss }: MasteryChipProps) {
       animate={isSatisfied ? "satisfied" : "animate"}
       exit="exit"
       className={cn(
-        "group relative overflow-hidden rounded-md border transition-colors",
+        "group relative w-fit overflow-hidden rounded-md border transition-colors",
         "bg-card/80 text-card-foreground backdrop-blur-sm",
         isSatisfied &&
           "border-green-500/40 bg-green-50/80 dark:bg-green-950/20",
         isFading && "pointer-events-none",
         !isSatisfied && !isFading && "border-border/50 hover:border-border",
-        chip.relevance === "high" && !isSatisfied && "border-primary/30"
+        chip.relevance === "high" && !isSatisfied && "border-grey/30"
       )}
       data-slot="mastery-chip"
     >
-      {/* Main chip content */}
       <div className="flex items-center gap-1.5 px-2 py-1">
         {/* Icon */}
         <motion.div
@@ -118,31 +117,16 @@ export function MasteryChip({ chip, display, onDismiss }: MasteryChipProps) {
 
         {/* Actions */}
         {!isSatisfied && (
-          <div className="ml-auto flex items-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-5 w-5"
-              onClick={() => setIsExpanded(!isExpanded)}
-            >
-              {isExpanded ? (
-                <ChevronUp className="h-2.5 w-2.5" />
-              ) : (
-                <ChevronDown className="h-2.5 w-2.5" />
-              )}
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="hover:text-destructive h-5 w-5"
-              onClick={onDismiss}
-            >
-              <X className="h-2.5 w-2.5" />
-            </Button>
-          </div>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-5 w-5"
+            onClick={onDismiss}
+          >
+            <X className="h-2.5 w-2.5" />
+          </Button>
         )}
       </div>
-
       {/* Expanded detail */}
       <motion.div
         variants={detailVariants}

@@ -26,7 +26,7 @@ export function ChipContainer({
   if (visibleChips.length === 0) return null;
 
   return (
-    <div className={cn("flex flex-col gap-2", className)}>
+    <div className={cn("flex flex-wrap gap-2", className)}>
       <AnimatePresence mode="popLayout">
         {visibleChips.map((chip) => {
           const display = masteryDisplayData[chip.mastery_id];
