@@ -1,7 +1,8 @@
 "use client";
 
 import type { ComponentProps } from "react";
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
+import { useCompletion } from "@ai-sdk/react";
 import { Plus, ArrowUp, Undo2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -31,11 +32,33 @@ export function MessageInput({
     originalPrompt: string;
     masteryId: string;
   } | null>(null);
-  const [isStreaming, setIsStreaming] = useState(false);
   const streamedTextRef = useRef<string>("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const { learnedMasteryIds, markSatisfied } = useMasteryContext();
+
+  const {
+    completion,
+    complete,
+    isLoading: isStreaming,
+  } = useCompletion({
+    api: "/api/rewrite-prompt",
+    streamProtocol: "text",
+    onFinish: (_prompt, completionText) => {
+      // Sync final completion (original + appended) to message state
+      const original = rewriteState?.originalPrompt ?? "";
+      const finalText = original + completionText;
+      streamedTextRef.current = finalText;
+      setMessage(finalText);
+    },
+    onError: (error) => {
+      console.error("Show me failed:", error);
+      if (rewriteState) {
+        setMessage(rewriteState.originalPrompt);
+        setRewriteState(null);
+      }
+    },
+  });
 
   const { chips, dismissChip } = usePromptAnalysis(message, {
     enabled: enableChips && !disabled && !isStreaming,
@@ -43,56 +66,32 @@ export function MessageInput({
     onSatisfied: markSatisfied,
   });
 
+  // Scroll textarea to bottom during streaming
+  useEffect(() => {
+    if (isStreaming && textareaRef.current) {
+      textareaRef.current.scrollTop = textareaRef.current.scrollHeight;
+    }
+  }, [completion, isStreaming]);
+
   const handleShowMe = useCallback(
-    async (masteryId: string, chipText: string) => {
+    async (masteryId: string, chipText: string): Promise<void> => {
       const original = message;
       setRewriteState({ originalPrompt: original, masteryId });
-      setIsStreaming(true);
-      setMessage("");
       streamedTextRef.current = "";
 
-      try {
-        const response = await fetch("/api/rewrite-prompt", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            original_prompt: original,
-            mastery_id: masteryId,
-            chip_text: chipText,
-          }),
-        });
+      // Mark satisfied immediately - user engaged with the technique
+      markSatisfied(masteryId);
+      dismissChip(masteryId);
 
-        if (!response.ok) throw new Error("Rewrite failed");
-
-        const reader = response.body?.getReader();
-        if (!reader) throw new Error("No reader available");
-
-        const decoder = new TextDecoder();
-        let accumulated = "";
-
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-
-          const chunk = decoder.decode(value, { stream: true });
-          accumulated += chunk;
-          streamedTextRef.current = accumulated;
-          setMessage(accumulated);
-        }
-
-        // Mark mastery as satisfied after successful rewrite
-        markSatisfied(masteryId);
-        dismissChip(masteryId);
-      } catch (error) {
-        console.error("Show me failed:", error);
-        // Restore original on error
-        setMessage(original);
-        setRewriteState(null);
-      } finally {
-        setIsStreaming(false);
-      }
+      // Trigger completion with mastery params
+      await complete(original, {
+        body: {
+          mastery_id: masteryId,
+          chip_text: chipText,
+        },
+      });
     },
-    [message, markSatisfied, dismissChip]
+    [message, complete, markSatisfied, dismissChip]
   );
 
   const handleRevert = useCallback(() => {
@@ -151,7 +150,7 @@ export function MessageInput({
           >
             <Textarea
               ref={textareaRef}
-              value={message}
+              value={isStreaming ? (rewriteState?.originalPrompt ?? "") + completion : message}
               onChange={handleMessageChange}
               placeholder={placeholder}
               disabled={disabled || isStreaming}

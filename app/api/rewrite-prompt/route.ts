@@ -1,7 +1,6 @@
 import { createAnthropic } from "@ai-sdk/anthropic";
 import { streamText } from "ai";
 import { getMasteryById, parseIdParts } from "@/lib/masteries";
-import type { RewritePromptRequest } from "@/lib/masteries/types";
 
 const anthropic = createAnthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
@@ -11,10 +10,12 @@ export const maxDuration = 30;
 
 export async function POST(req: Request) {
   try {
-    const body: RewritePromptRequest = await req.json();
-    const { original_prompt, mastery_id, chip_text } = body;
+    const body = await req.json();
+    // useCompletion sends 'prompt', but we also support 'original_prompt' for backwards compat
+    const { prompt: inputPrompt, original_prompt, mastery_id, chip_text } = body;
+    const userPrompt = original_prompt || inputPrompt;
 
-    if (!original_prompt || !mastery_id) {
+    if (!userPrompt || !mastery_id) {
       return new Response("Missing required fields", { status: 400 });
     }
 
@@ -26,11 +27,11 @@ export async function POST(req: Request) {
     const { category, name } = parseIdParts(mastery_id);
 
     const prompt = `<task>
-Make minimal adjustments to the user's prompt to incorporate a specific prompting technique. Preserve their original wording, voice, and structure as much as possible.
+Generate additional text to append to the user's prompt that demonstrates a specific prompting technique.
 </task>
 
 <original_prompt>
-${original_prompt}
+${userPrompt}
 </original_prompt>
 
 <technique>
@@ -41,13 +42,14 @@ Explanation: ${mastery.detail}
 </technique>
 
 <instructions>
-Adjust the user's prompt to naturally incorporate this technique. Your output should:
-1. Keep the user's original wording and structure as close as possible
-2. Only add or modify what's necessary to demonstrate the technique
-3. Sound natural, not forced or over-elaborate
-4. Be ready to send as-is (no explanations, just the adjusted prompt)
+Generate ONLY the additional text to append to the user's prompt that demonstrates this technique.
+- Do NOT repeat or modify the original prompt
+- Output only new text that should be added after the original
+- Keep it concise and natural
+- The appended text should flow naturally from the original
+- Start with appropriate punctuation or whitespace (e.g., newline, space) as needed
 
-Output ONLY the adjusted prompt text, nothing else.
+Output ONLY the text to append, nothing else.
 </instructions>`;
 
     const result = streamText({

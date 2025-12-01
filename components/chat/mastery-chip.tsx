@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Check, X, Sparkles, Loader2 } from "lucide-react";
+import { Check, X, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ClaudeLogo } from "@/components/ui/claude-logo";
 import type { ActiveChip, MasteryDisplayData } from "@/lib/masteries/types";
@@ -122,14 +122,12 @@ export function MasteryChip({ chip, display, onDismiss, onShowMe }: MasteryChipP
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="text-muted-foreground hover:text-foreground h-6 px-2 text-[10px]"
+                  className="text-[#d97757] hover:text-[#d97757]/80 h-6 px-2 text-[10px]"
                   onClick={handleShowMe}
                   disabled={isShowMeLoading}
                 >
-                  {isShowMeLoading ? (
+                  {isShowMeLoading && (
                     <Loader2 className="mr-1 h-3 w-3 animate-spin" />
-                  ) : (
-                    <Sparkles className="mr-1 h-3 w-3" />
                   )}
                   Show me
                 </Button>
