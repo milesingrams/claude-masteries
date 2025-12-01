@@ -62,7 +62,7 @@ export function MessageInput({
               onChange={(e) => setMessage(e.target.value)}
               placeholder={placeholder}
               disabled={disabled}
-              className="text-foreground placeholder:text-muted-foreground max-h-[200px] min-h-[56px] resize-none border-0 bg-transparent px-3 py-3 pr-20 text-base focus-visible:ring-0 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50 md:text-base"
+              className="text-foreground placeholder:text-muted-foreground max-h-[200px] min-h-[80px] resize-none border-0 bg-transparent px-3 py-3 pr-20 text-base focus-visible:ring-0 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50 md:text-base"
               onKeyDown={(e) => {
                 if (e.key === "Enter" && !e.shiftKey) {
                   e.preventDefault();
@@ -72,11 +72,11 @@ export function MessageInput({
             />
 
             {/* Action Buttons */}
-            <div className="absolute right-2 bottom-2 flex items-center gap-1">
+            <div className="absolute right-2 bottom-2 flex items-center gap-2">
               <Button
                 type="button"
                 size="icon"
-                variant="ghost"
+                variant="outline"
                 className="hover:bg-accent h-8 w-8"
                 disabled={disabled}
               >
