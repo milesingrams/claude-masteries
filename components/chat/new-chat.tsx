@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { ClaudeLogo } from "@/components/ui/claude-logo";
 
 export function NewChat() {
   const greeting = getGreeting();
@@ -10,7 +10,7 @@ export function NewChat() {
       <div className="w-full max-w-2xl space-y-8 text-center">
         {/* Greeting */}
         <div className="flex items-center justify-center gap-2">
-          <Image src="/claude-logo.svg" alt="Claude" width={36} height={36} />
+          <ClaudeLogo size={36} />
           <h1 className="text-muted-foreground ml-2 font-serif text-3xl font-normal sm:text-4xl">
             {greeting}
           </h1>

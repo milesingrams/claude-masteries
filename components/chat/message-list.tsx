@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import Image from "next/image";
 import { UserMessage } from "./user-message";
 import { AgentMessage } from "./agent-message";
+import { ClaudeLogo } from "@/components/ui/claude-logo";
 import type { Message } from "@/lib/types";
 
 interface MessageListProps {
@@ -44,11 +44,8 @@ export function MessageList({ messages, isLoading }: MessageListProps) {
         )}
         {messages.length > 0 && (
           <div className="flex w-full px-3 py-2">
-            <Image
-              src="/claude-logo.svg"
-              alt="Claude"
-              width={28}
-              height={28}
+            <ClaudeLogo
+              size={28}
               className={isLoading ? "animate-pulse-scale" : ""}
             />
           </div>

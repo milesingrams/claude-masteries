@@ -19,12 +19,14 @@ export function ChipContainer({
   className,
 }: ChipContainerProps) {
   // Only show chips that have display data
-  const visibleChips = chips.filter((chip) => masteryDisplayData[chip.mastery_id]);
+  const visibleChips = chips.filter(
+    (chip) => masteryDisplayData[chip.mastery_id]
+  );
 
   if (visibleChips.length === 0) return null;
 
   return (
-    <div className={cn("flex flex-wrap gap-2", className)}>
+    <div className={cn("flex flex-col gap-2", className)}>
       <AnimatePresence mode="popLayout">
         {visibleChips.map((chip) => {
           const display = masteryDisplayData[chip.mastery_id];
