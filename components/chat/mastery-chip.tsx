@@ -66,8 +66,7 @@ export function MasteryChip({ chip, display, onDismiss }: MasteryChipProps) {
         "bg-card/80 text-card-foreground backdrop-blur-sm",
         isSatisfied &&
           "border-green-500/40 bg-green-50/80 dark:bg-green-950/20",
-        !isSatisfied && "border-border/50 hover:border-border cursor-pointer",
-        chip.relevance === "high" && !isSatisfied && "border-grey/30"
+        !isSatisfied && "border-border/50 hover:border-border cursor-pointer"
       )}
       data-slot="mastery-chip"
     >

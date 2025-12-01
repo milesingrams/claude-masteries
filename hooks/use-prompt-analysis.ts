@@ -118,8 +118,6 @@ export function usePromptAnalysis(
             if (!exists) {
               updated.push({
                 mastery_id: surf.mastery_id,
-                relevance: surf.relevance,
-                reason: surf.reason,
                 surfaced_at: Date.now(),
                 status: "active",
               });

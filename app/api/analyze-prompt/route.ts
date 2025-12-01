@@ -17,15 +17,12 @@ const analysisSchema = z.object({
     .array(
       z.object({
         mastery_id: z.string(),
-        relevance: z.enum(["high", "medium"]),
-        reason: z.string(),
       })
     )
     .max(1),
   satisfied: z.array(
     z.object({
       mastery_id: z.string(),
-      evidence: z.string(),
     })
   ),
 });

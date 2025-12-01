@@ -13,8 +13,6 @@ export type ChipStatus = "active" | "satisfied";
 
 export interface ActiveChip {
   mastery_id: string;
-  relevance: "high" | "medium";
-  reason: string;
   surfaced_at: number;
   status: ChipStatus;
 }
@@ -29,12 +27,9 @@ export interface AnalyzePromptRequest {
 export interface AnalyzePromptResponse {
   surface: Array<{
     mastery_id: string;
-    relevance: "high" | "medium";
-    reason: string;
   }>;
   satisfied: Array<{
     mastery_id: string;
-    evidence: string;
   }>;
 }
 
