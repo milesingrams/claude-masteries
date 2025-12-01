@@ -19,6 +19,7 @@ const analysisSchema = z.object({
       chip_text: z.string(),
     })
     .nullable(),
+  maintained: z.boolean(),
   satisfied: z.boolean(),
 });
 
@@ -29,6 +30,7 @@ function toResponse(
 ): AnalyzePromptResponse {
   return {
     surface: result.surface,
+    maintained_id: result.maintained && activeChipId ? activeChipId : null,
     satisfied_id: result.satisfied && activeChipId ? activeChipId : null,
   };
 }
@@ -49,6 +51,7 @@ export async function POST(req: Request) {
     if (!partial_prompt || partial_prompt.trim().length < 30) {
       return Response.json({
         surface: null,
+        maintained_id: null,
         satisfied_id: null,
       } as AnalyzePromptResponse);
     }
@@ -71,13 +74,7 @@ export async function POST(req: Request) {
       ? masteries.find((m) => m.id === active_chip_id)
       : null;
 
-    const prompt = `<task>
-Analyze the user's partial prompt to:
-1. Identify the single most relevant mastery to surface (if any)
-2. Check if any active chips have been satisfied
-</task>
-
-<partial_prompt>
+    const prompt = `<partial_prompt>
 ${partial_prompt}
 </partial_prompt>
 
@@ -99,6 +96,7 @@ ${
     ? JSON.stringify(
         {
           id: activeChip.id,
+          surface_triggers: activeChip.surface_triggers,
           satisfaction_triggers: activeChip.satisfaction_triggers,
         },
         null,
@@ -109,20 +107,28 @@ ${
 </active_chip>
 
 <instructions>
-SURFACING:
-Match the partial prompt against each mastery's surface_triggers. Surface when the user's prompt matches the trigger conditions but isn't yet using the technique. Only surface the single most relevant mastery. If nothing clearly matches, return null for surface.
+Analyze the partial prompt and return three things:
 
-When surfacing a mastery, generate a contextual chip_text (5-10 words) that:
-- References the specific topic/task from the user's prompt
-- Suggests the technique in a helpful, kind, and non-pushy way
-- Uses the chip_example as a style reference for tone and length
+1. MAINTAINED (only if active_chip exists):
+Is the active chip still relevant to what the user is writing?
+Return true if the prompt still matches the active chip's surface_triggers.
 
-Example: If user is writing about email and mastery chip_example is "You could ask Claude what's possible here", generate something like "Ask Claude how it would approach this email"
+2. SATISFIED (only if active_chip exists):
+Has the user applied the technique?
+Return true if the prompt clearly demonstrates the behavior or contains phrases from satisfaction_triggers.
+The user doesn't need to use exact phrases, but the intent should be clear—not just hinted at.
 
-SATISFACTION:
-If there is an active_chip, check if the partial prompt satisfies it based on the satisfaction_triggers. A chip is satisfied when the user's prompt contains the phrases or demonstrates the behavior described. Return satisfied: true if satisfied, false otherwise.
+3. SURFACE (only if no active_chip, or maintained is false):
+Find the single most relevant mastery for this prompt.
+Only surface if there's a clear match to surface_triggers.
+Be conservative—when in doubt, return null.
 
-Be very conservative for surfacing. Be generous for satisfaction—if the user incorporated the suggestion, credit them.
+If surfacing, generate a contextual chip_text (5-10 words) that:
+- References the user's specific topic/task
+- Suggests the technique naturally, not pushy
+- Matches the tone of chip_example
+
+Example: User writing about email + chip_example "You could ask Claude what's possible here" → "Ask Claude how it would approach this email"
 </instructions>`;
 
     const { object } = await generateObject({
@@ -137,6 +143,7 @@ Be very conservative for surfacing. Be generous for satisfaction—if the user i
     // Return empty response on error to avoid breaking the UI
     return Response.json({
       surface: null,
+      maintained_id: null,
       satisfied_id: null,
     } as AnalyzePromptResponse);
   }

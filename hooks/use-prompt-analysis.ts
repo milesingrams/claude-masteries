@@ -99,19 +99,24 @@ export function usePromptAnalysis(
 
         const data: AnalyzePromptResponse = await response.json();
 
-        // Satisfy chip if it met criteria (check ID matches to avoid race conditions)
-        if (data.satisfied_id && chip?.mastery_id === data.satisfied_id) {
-          satisfyChip();
-        }
+        // Maintain active chip if it's still relevant
+        if (data.maintained_id && chip?.mastery_id === data.maintained_id) {
+          return;
+        } else {
+          // Satisfy chip if it met criteria (check ID matches to avoid race conditions)
+          if (data.satisfied_id && chip?.mastery_id === data.satisfied_id) {
+            satisfyChip();
+          }
 
-        // Set new suggested chip
-        if (data.surface) {
-          setChip({
-            mastery_id: data.surface.mastery_id,
-            surfaced_at: Date.now(),
-            status: "active",
-            chip_text: data.surface.chip_text,
-          });
+          // Set new suggested chip
+          if (data.surface) {
+            setChip({
+              mastery_id: data.surface.mastery_id,
+              surfaced_at: Date.now(),
+              status: "active",
+              chip_text: data.surface.chip_text,
+            });
+          }
         }
       } catch (error) {
         if ((error as Error).name !== "AbortError") {

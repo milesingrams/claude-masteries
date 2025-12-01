@@ -31,6 +31,7 @@ export interface AnalyzePromptResponse {
     mastery_id: string;
     chip_text: string;
   } | null;
+  maintained_id: string | null;
   satisfied_id: string | null;
 }
 
