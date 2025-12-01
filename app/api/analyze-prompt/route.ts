@@ -17,6 +17,7 @@ const analysisSchema = z.object({
     .array(
       z.object({
         mastery_id: z.string(),
+        chip_text: z.string(),
       })
     )
     .max(1),
@@ -70,6 +71,7 @@ ${JSON.stringify(
   availableMasteries.map((m) => ({
     id: m.id,
     surface_triggers: m.surface_triggers,
+    chip_example: m.chip,
   })),
   null,
   2
@@ -90,6 +92,13 @@ ${JSON.stringify(
 <instructions>
 SURFACING:
 Match the partial prompt against each mastery's surface_triggers. Surface when the user's prompt matches the trigger conditions but isn't yet using the technique. Only surface the single most relevant mastery. If nothing clearly matches, return an empty array.
+
+When surfacing a mastery, generate a contextual chip_text (5-10 words) that:
+- References the specific topic/task from the user's prompt
+- Suggests the technique in a helpful, non-pushy way
+- Uses the chip_example as a style reference for tone and length
+
+Example: If user is writing about email and mastery chip_example is "You could ask Claude what's possible here", generate something like "Ask Claude how it would approach this email"
 
 SATISFACTION:
 Match the partial prompt against each active chip's satisfaction_triggers. A chip is satisfied when the user's prompt contains the phrases or demonstrates the behavior described. Look for the specific phrases listed.

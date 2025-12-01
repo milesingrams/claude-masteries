@@ -15,6 +15,7 @@ export interface ActiveChip {
   mastery_id: string;
   surfaced_at: number;
   status: ChipStatus;
+  chip_text?: string;
 }
 
 // API request/response types
@@ -27,6 +28,7 @@ export interface AnalyzePromptRequest {
 export interface AnalyzePromptResponse {
   surface: Array<{
     mastery_id: string;
+    chip_text: string;
   }>;
   satisfied: Array<{
     mastery_id: string;

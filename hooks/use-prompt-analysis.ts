@@ -121,6 +121,7 @@ export function usePromptAnalysis(
                 mastery_id: surf.mastery_id,
                 surfaced_at: Date.now(),
                 status: "active",
+                chip_text: surf.chip_text,
               });
             }
           });
