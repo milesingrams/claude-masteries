@@ -1,0 +1,7 @@
+{
+  "id": "meta/capability-inquiry",
+  "learning_threshold": 3,
+  "chip": "You could ask Claude what's possible here",
+  "description": "Asks Claude directly about its capabilities or how it would approach a problem. Surface when user seems unsure how to approach a problem, asks something that could be done multiple ways, might not know what Claude can do, or is new to a type of request. Satisfied when user asks about possibilities using phrases like: what can you do, how would you approach, what do you need from me, what are my options, how could you help with, what's possible.",
+  "detail": "When you're not sure what's possible, ask. Claude can explain its capabilities, suggest approaches, or tell you what information would help it help you. Turning Claude into a guide to its own abilities unlocks possibilities you didn't know existed."
+}

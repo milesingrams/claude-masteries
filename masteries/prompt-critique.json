@@ -1,0 +1,7 @@
+{
+  "id": "meta/prompt-critique",
+  "learning_threshold": 3,
+  "chip": "Claude could help you ask this better",
+  "description": "Asks Claude to improve or critique the prompt itself before answering. Surface when user's prompt is vague or underspecified, user seems to struggle articulating what they want, or request is complex and might benefit from restructuring. Satisfied when user requests prompt improvement using phrases like: how should I ask, improve this prompt, what's a better way to ask, help me phrase, critique my question, how could I make this clearer, rewrite my prompt.",
+  "detail": "Claude can help you prompt Claude. If you're not sure how to ask something, ask Claude to improve your question before answering it. You'll learn what makes prompts effective while getting better results. Meta-prompting is a skill that compounds."
+}

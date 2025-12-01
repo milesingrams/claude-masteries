@@ -87,7 +87,7 @@ export function MasteryChip({ chip, display, onDismiss }: MasteryChipProps) {
 
         {/* Chip text */}
         <span className="text-muted-foreground flex-1 text-xs whitespace-nowrap">
-          {isSatisfied ? display.name : display.chip_text}
+          {isSatisfied ? display.name : display.chip}
         </span>
 
         {/* Actions */}

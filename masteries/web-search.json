@@ -1,0 +1,7 @@
+{
+  "id": "capabilities/web-search",
+  "learning_threshold": 3,
+  "chip": "Claude could search the web for this",
+  "description": "Uses Claude's ability to search the web for current information beyond its training data. Surface when user asks about current events, recent information, real-time data like prices or news, or facts that may have changed since Claude's training. Satisfied when user requests current information using phrases like: search for, look up, find recent, what's the latest, current, up to date, can you search, what's happening with.",
+  "detail": "Claude's knowledge has a cutoff date, but it can search the web for current information. For recent news, live data, or anything that changes over time, asking Claude to search gets you fresher, more accurate results than relying on training data alone."
+}

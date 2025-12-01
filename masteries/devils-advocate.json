@@ -1,0 +1,7 @@
+{
+  "id": "interaction/devils-advocate",
+  "learning_threshold": 3,
+  "chip": "Claude could argue the other side",
+  "description": "Has Claude argue against the user's position to stress-test thinking and expose weaknesses. Surface when user presents a confident opinion, makes a decision, builds an argument, or discusses a topic with multiple valid perspectives. Satisfied when user requests counterarguments or opposing views using phrases like: argue against, devil's advocate, what would someone say who disagrees, poke holes, challenge this, strongest argument against.",
+  "detail": "It's easy to build a case for what you already believe. Asking Claude to argue the other side—with genuine effort—exposes weaknesses in your thinking and often strengthens your final position. The best ideas survive scrutiny."
+}

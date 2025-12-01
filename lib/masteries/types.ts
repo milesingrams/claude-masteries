@@ -1,28 +1,9 @@
-// Full mastery definition (server-side only)
-export interface Mastery {
-  id: string;
-  name: string;
-  category: string;
-  learning_threshold: number;
-  chip_text: string;
-  triggers: string[];
-  satisfaction: string[];
-  detail: string;
-}
-
-// Minimal data sent to Claude for analysis
-export interface MasteryAnalysisInput {
-  id: string;
-  triggers: string[];
-  satisfaction: string[];
-}
-
-// Data kept client-side for display
+// Data kept client-side for display (name/category derived from id)
 export interface MasteryDisplayData {
   id: string;
   name: string;
   category: string;
-  chip_text: string;
+  chip: string;
   detail: string;
   learning_threshold: number;
 }

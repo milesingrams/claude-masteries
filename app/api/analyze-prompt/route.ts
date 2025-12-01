@@ -1,7 +1,7 @@
 import { createAnthropic } from "@ai-sdk/anthropic";
 import { generateObject } from "ai";
 import { z } from "zod";
-import { getMasteriesForAnalysis } from "@/lib/masteries/loader";
+import { masteries, type Mastery } from "@/lib/masteries";
 import type { AnalyzePromptRequest, AnalyzePromptResponse } from "@/lib/masteries/types";
 
 const anthropic = createAnthropic({
@@ -39,15 +39,15 @@ export async function POST(req: Request) {
       return Response.json({ surface: [], satisfied: [] } as AnalyzePromptResponse);
     }
 
-    // Load all masteries and filter out learned ones
-    let masteries = getMasteriesForAnalysis();
+    // Filter out learned masteries
+    let availableMasteries: Mastery[] = masteries;
     if (learned_mastery_ids?.length) {
-      masteries = masteries.filter((m) => !learned_mastery_ids.includes(m.id));
+      availableMasteries = masteries.filter((m) => !learned_mastery_ids.includes(m.id));
     }
 
     // Get active chips for satisfaction checking
     const activeChips = active_chip_ids?.length
-      ? masteries.filter((m) => active_chip_ids.includes(m.id))
+      ? availableMasteries.filter((m) => active_chip_ids.includes(m.id))
       : [];
 
     const prompt = `<task>
@@ -63,17 +63,17 @@ ${partial_prompt}
 </partial_prompt>
 
 <masteries>
-${JSON.stringify(masteries, null, 2)}
+${JSON.stringify(availableMasteries.map((m) => ({ id: m.id, description: m.description })), null, 2)}
 </masteries>
 
 <active_chips>
-${JSON.stringify(activeChips, null, 2)}
+${JSON.stringify(activeChips.map((m) => ({ id: m.id, description: m.description })), null, 2)}
 </active_chips>
 
 <instructions>
-1. Review the partial prompt against each mastery's triggers
+1. Review the partial prompt against each mastery's description (which contains both surface triggers and satisfaction criteria)
 2. Surface at most 1 mastery - only the single most relevant one
-3. For active chips, check if the prompt now satisfies their satisfaction criteria
+3. For active chips, check if the prompt now satisfies their satisfaction criteria (look for "Satisfied when" in description)
 4. Be very conservative - only surface a chip if it's clearly and strongly relevant
 5. If nothing is highly relevant, return an empty surface array
 6. Keep reasons and evidence brief (1 sentence max)

@@ -1,0 +1,7 @@
+{
+  "id": "capabilities/multi-modal/upload-file",
+  "learning_threshold": 3,
+  "chip": "You could show Claude the file directly",
+  "description": "Shares files directly with Claude rather than describing or copy-pasting their contents. Surface when user describes or summarizes a document, asks about content they have in a file, is transcribing or pasting content, or references a document, PDF, or data file. Satisfied when user uploads or attaches a file using phrases like: here's the file, I've attached, see attached, uploading, let me share the document, I'll upload.",
+  "detail": "Instead of describing what's in a document or copy-pasting excerpts, you can give Claude the file directly. It can read PDFs, documents, spreadsheets, and code files—then analyze, summarize, or work with the full content. Let Claude see what you're seeing."
+}

@@ -1,11 +1,18 @@
-import { getMasteriesForDisplay } from "@/lib/masteries/loader";
+import { masteries, parseIdParts } from "@/lib/masteries";
+import type { MasteryDisplayData } from "@/lib/masteries/types";
 
 export async function GET() {
-  try {
-    const masteries = getMasteriesForDisplay();
-    return Response.json(masteries);
-  } catch (error) {
-    console.error("Error loading masteries:", error);
-    return Response.json([], { status: 500 });
-  }
+  const displayData: MasteryDisplayData[] = masteries.map((m) => {
+    const { category, name } = parseIdParts(m.id);
+    return {
+      id: m.id,
+      name,
+      category,
+      chip: m.chip,
+      detail: m.detail,
+      learning_threshold: m.learning_threshold,
+    };
+  });
+
+  return Response.json(displayData);
 }
