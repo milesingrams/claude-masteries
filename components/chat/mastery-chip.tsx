@@ -23,7 +23,6 @@ const chipVariants: Variants = {
   },
 };
 
-
 export function MasteryChip({ chip, display, onDismiss }: MasteryChipProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const chipRef = useRef<HTMLDivElement>(null);
@@ -57,17 +56,10 @@ export function MasteryChip({ chip, display, onDismiss }: MasteryChipProps) {
 
   return (
     <motion.div
+      layout
       ref={chipRef}
-      variants={chipVariants}
-      animate={isSatisfied ? "satisfied" : undefined}
       onClick={handleChipClick}
-      className={cn(
-        "group relative overflow-hidden rounded-md border w-fit",
-        "bg-card/80 text-card-foreground backdrop-blur-sm",
-        isSatisfied &&
-          "border-green-500/40 bg-green-50/80 dark:bg-green-950/20",
-        !isSatisfied && "border-border/50 hover:border-border cursor-pointer"
-      )}
+      className="group bg-card/80 text-card-foreground border-border/50 hover:border-border relative w-fit cursor-pointer overflow-hidden rounded-md border backdrop-blur-sm"
       data-slot="mastery-chip"
     >
       <div className="flex items-center gap-1.5 px-2 py-1">

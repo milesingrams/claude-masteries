@@ -20,7 +20,9 @@ export function ChipContainer({
   const { getMasteryDisplay, hasMasteryDisplay } = useMasteryContext();
 
   // Only show chips that have display data
-  const visibleChips = chips.filter((chip) => hasMasteryDisplay(chip.mastery_id));
+  const visibleChips = chips.filter((chip) =>
+    hasMasteryDisplay(chip.mastery_id)
+  );
 
   return (
     <div className={cn("flex flex-col items-start gap-2", className)}>
