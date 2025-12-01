@@ -7,19 +7,19 @@ import { useMasteryContext } from "@/lib/masteries/mastery-context";
 import { MasteryChip } from "./mastery-chip";
 import { cn } from "@/lib/utils";
 
-interface ChipContainerProps extends ComponentProps<"div"> {
+interface MasteryChipContainerProps extends ComponentProps<"div"> {
   chip: ActiveChip | null;
   onDismiss: () => void;
   onShowMe: (masteryId: string, chipText: string) => Promise<void>;
 }
 
-export function ChipContainer({
+export function MasteryChipContainer({
   chip,
   onDismiss,
   onShowMe,
   className,
   ...props
-}: ChipContainerProps) {
+}: MasteryChipContainerProps) {
   const { getMasteryDisplay } = useMasteryContext();
 
   const display = chip ? getMasteryDisplay(chip.mastery_id) : null;

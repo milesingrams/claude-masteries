@@ -6,8 +6,8 @@ import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { toast } from "sonner";
 import { ChatHeader } from "@/components/chat/chat-header";
-import { MessageList } from "@/components/chat/message-list";
-import { MessageInput } from "@/components/chat/message-input";
+import { MessageList } from "@/components/chat/messages/message-list";
+import { MessageInput } from "@/components/chat/prompt/message-input";
 import { useChatContext } from "@/lib/chat-context";
 import type { Message } from "@/lib/types";
 

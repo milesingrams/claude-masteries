@@ -7,7 +7,7 @@ import { Plus, ArrowUp, Undo2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ClaudeLogo } from "@/components/ui/claude-logo";
-import { ChipContainer } from "./chip-container";
+import { MasteryChipContainer } from "./mastery-chip-container";
 import { MasteryDebugPopover } from "@/components/debug/mastery-debug-popover";
 import { usePromptAnalysis } from "@/hooks/use-prompt-analysis";
 import { cn } from "@/lib/utils";
@@ -16,14 +16,14 @@ interface MessageInputProps extends ComponentProps<"div"> {
   onMessageSubmit: (message: string) => void;
   disabled?: boolean;
   placeholder?: string;
-  enableChips?: boolean;
+  enableMasteryChips?: boolean;
 }
 
 export function MessageInput({
   onMessageSubmit,
   disabled = false,
   placeholder = "How can I help you today?",
-  enableChips = true,
+  enableMasteryChips = true,
   className,
   ...props
 }: MessageInputProps) {
@@ -50,7 +50,7 @@ export function MessageInput({
 
   const { chip, suppressedIds, dismissChip, satisfyChip, resetSession } =
     usePromptAnalysis(message, {
-      enabled: enableChips && !disabled && !isStreaming,
+      enabled: enableMasteryChips && !disabled && !isStreaming,
     });
 
   // Scroll textarea to bottom during streaming
@@ -114,14 +114,14 @@ export function MessageInput({
       {...props}
     >
       {/* Debug Popover */}
-      {enableChips && (
+      {enableMasteryChips && (
         <MasteryDebugPopover activeChip={chip} suppressedIds={suppressedIds} />
       )}
 
       <div className="mx-auto max-w-3xl space-y-2">
         {/* Mastery Chips */}
-        {enableChips && (
-          <ChipContainer
+        {enableMasteryChips && (
+          <MasteryChipContainer
             chip={chip}
             onDismiss={dismissChip}
             onShowMe={handleShowMe}

@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { ClaudeLogo } from "@/components/ui/claude-logo";
-import { MessageInput } from "@/components/chat/message-input";
+import { MessageInput } from "@/components/chat/prompt/message-input";
 import { useChatContext } from "@/lib/chat-context";
 
 export default function Page() {
