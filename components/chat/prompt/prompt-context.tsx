@@ -144,8 +144,12 @@ export function PromptProvider({
   }, [originalPrompt]);
 
   // Analyze the prompt
-  const analyze = useCallback(
+  const analyzePrompt = useCallback(
     async (promptToAnalyze: string) => {
+      if (promptToAnalyze === lastAnalyzedPrompt.current) return;
+
+      lastAnalyzedPrompt.current = promptToAnalyze;
+
       if (abortControllerRef.current) {
         abortControllerRef.current.abort();
       }
@@ -204,11 +208,14 @@ export function PromptProvider({
     if (!enableMasteryChips || disabled || isStreaming) return;
     if (!debouncedPrompt || debouncedPrompt.trim().length < MIN_PROMPT_LENGTH)
       return;
-    if (debouncedPrompt === lastAnalyzedPrompt.current) return;
-
-    lastAnalyzedPrompt.current = debouncedPrompt;
-    analyze(debouncedPrompt);
-  }, [debouncedPrompt, enableMasteryChips, disabled, isStreaming, analyze]);
+    analyzePrompt(debouncedPrompt);
+  }, [
+    debouncedPrompt,
+    enableMasteryChips,
+    disabled,
+    isStreaming,
+    analyzePrompt,
+  ]);
 
   // Clear chip when prompt is cleared
   useEffect(() => {
