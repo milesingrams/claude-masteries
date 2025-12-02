@@ -3,13 +3,18 @@ import { generateObject } from "ai";
 import { z } from "zod";
 import { masteries, type Mastery } from "@/lib/masteries";
 import { MIN_PROMPT_LENGTH } from "@/lib/constants";
-import type {
-  AnalyzePromptRequest,
-  AnalyzePromptResponse,
-} from "@/lib/masteries/types";
 
 const anthropic = createAnthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
+});
+
+// Request schema
+const requestSchema = z.object({
+  partial_prompt: z.string(),
+  active_mastery_id: z.string().nullable(),
+  learned_mastery_ids: z.array(z.string()).optional(),
+  suppressed_mastery_ids: z.array(z.string()).optional(),
+  manual_mode: z.boolean().optional(),
 });
 
 // Response schema for structured output
@@ -25,6 +30,17 @@ const analysisSchema = z.object({
   maintained: z.boolean(),
   satisfied: z.boolean(),
 });
+
+type AnalyzePromptResponse = {
+  surface: {
+    mastery_id: string;
+    suggestion_text: string;
+    suggestion_description: string;
+    suggestion_examples: string[];
+  } | null;
+  maintained_id: string | null;
+  satisfied_id: string | null;
+};
 
 // Transform schema output to response format
 function toResponse(
@@ -42,14 +58,20 @@ export const maxDuration = 15;
 
 export async function POST(req: Request) {
   try {
-    const body: AnalyzePromptRequest = await req.json();
+    const body = await req.json();
+    const parsed = requestSchema.safeParse(body);
+
+    if (!parsed.success) {
+      return Response.json({ error: parsed.error.message }, { status: 400 });
+    }
+
     const {
       partial_prompt,
       active_mastery_id,
       learned_mastery_ids,
       suppressed_mastery_ids,
       manual_mode,
-    } = body;
+    } = parsed.data;
 
     // Skip analysis for empty or very short prompts
     if (!partial_prompt || partial_prompt.trim().length < MIN_PROMPT_LENGTH) {
@@ -57,7 +79,7 @@ export async function POST(req: Request) {
         surface: null,
         maintained_id: null,
         satisfied_id: null,
-      } as AnalyzePromptResponse);
+      } satisfies AnalyzePromptResponse);
     }
 
     // In manual mode, use all masteries (no filtering)
@@ -167,6 +189,6 @@ Example for a user writing about email:
       surface: null,
       maintained_id: null,
       satisfied_id: null,
-    } as AnalyzePromptResponse);
+    } satisfies AnalyzePromptResponse);
   }
 }

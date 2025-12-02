@@ -2,7 +2,7 @@
   "id": "interaction-patterns/role-play",
   "learning_threshold": 3,
   "title": "Claude could respond as someone specific",
+  "detail": "Claude can simulate perspectives—a skeptical investor, a confused customer, a tough editor, your future self. This lets you rehearse conversations, stress-test pitches, or get feedback through a specific lens. The persona shapes what Claude notices and how it responds.",
   "surface_triggers": "User is preparing for a conversation or presentation. User wants feedback from a particular perspective. User is trying to understand how someone else might react. User is practicing or rehearsing something. Task would benefit from a specific persona's viewpoint.",
-  "satisfaction_triggers": "User asks Claude to simulate a specific person or role. User requests feedback as if from a particular perspective. Phrases: pretend you're, respond as, act like, if you were my, simulate, play the role of, as a [role], imagine you're.",
-  "detail": "Claude can simulate perspectives—a skeptical investor, a confused customer, a tough editor, your future self. This lets you rehearse conversations, stress-test pitches, or get feedback through a specific lens. The persona shapes what Claude notices and how it responds."
+  "satisfaction_triggers": "User asks Claude to simulate a specific person or role. User requests feedback as if from a particular perspective. Phrases: pretend you're, respond as, act like, if you were my, simulate, play the role of, as a [role], imagine you're."
 }

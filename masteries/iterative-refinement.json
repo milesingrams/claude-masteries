@@ -2,7 +2,7 @@
   "id": "interaction-patterns/iterative-refinement",
   "learning_threshold": 3,
   "title": "This could be a starting point",
+  "detail": "Claude's first response is rarely the best possible version—it's a starting point. Pushing back with 'make it more concise' or 'try a different angle' often yields dramatically better results. The conversation is the canvas.",
   "surface_triggers": "User asks for creative content, writing, or code. User expects a polished final output. Task is complex enough that first attempts rarely nail it. User hasn't indicated they expect to iterate.",
-  "satisfaction_triggers": "User treats response as a draft and asks for changes. User requests revisions, alternatives, or improvements. Phrases: try again, make it more, change the, what if instead, give me another, revise, tweak, adjust, can you modify.",
-  "detail": "Claude's first response is rarely the best possible version—it's a starting point. Pushing back with 'make it more concise' or 'try a different angle' often yields dramatically better results. The conversation is the canvas."
+  "satisfaction_triggers": "User treats response as a draft and asks for changes. User requests revisions, alternatives, or improvements. Phrases: try again, make it more, change the, what if instead, give me another, revise, tweak, adjust, can you modify."
 }

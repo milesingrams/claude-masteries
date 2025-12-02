@@ -2,7 +2,7 @@
   "id": "capabilities/multi-modal/upload-file",
   "learning_threshold": 3,
   "title": "You could show Claude the file directly",
+  "detail": "Instead of describing what's in a document or copy-pasting excerpts, you can give Claude the file directly. It can read PDFs, documents, spreadsheets, and code files—then analyze, summarize, or work with the full content. Let Claude see what you're seeing.",
   "surface_triggers": "User describes or summarizes a document. User asks about content they have in a file. User is transcribing or copy-pasting content. User references a document, PDF, or data file.",
-  "satisfaction_triggers": "User uploads or attaches a file to the conversation. User shares a document directly rather than describing it. Phrases: here's the file, I've attached, see attached, uploading, let me share the document, I'll upload, attached is.",
-  "detail": "Instead of describing what's in a document or copy-pasting excerpts, you can give Claude the file directly. It can read PDFs, documents, spreadsheets, and code files—then analyze, summarize, or work with the full content. Let Claude see what you're seeing."
+  "satisfaction_triggers": "User uploads or attaches a file to the conversation. User shares a document directly rather than describing it. Phrases: here's the file, I've attached, see attached, uploading, let me share the document, I'll upload, attached is."
 }

@@ -20,26 +20,6 @@ export interface ActiveMasteryChip {
   suggestion_examples?: string[];
 }
 
-// API request/response types
-export interface AnalyzePromptRequest {
-  partial_prompt: string;
-  active_mastery_id: string | null;
-  learned_mastery_ids?: string[];
-  suppressed_mastery_ids?: string[];
-  manual_mode?: boolean;
-}
-
-export interface AnalyzePromptResponse {
-  surface: {
-    mastery_id: string;
-    suggestion_text: string;
-    suggestion_description: string;
-    suggestion_examples: string[];
-  } | null;
-  maintained_id: string | null;
-  satisfied_id: string | null;
-}
-
 // Mastery progress tracking (Phase 2)
 export interface MasteryProgress {
   mastery_id: string;
@@ -51,15 +31,4 @@ export interface MasteryProgress {
 
 export interface MasteryProgressStore {
   [mastery_id: string]: MasteryProgress;
-}
-
-// Rewrite prompt API types
-export interface RewritePromptRequest {
-  original_prompt: string;
-  mastery_id: string;
-  suggestion_text: string;
-}
-
-export interface RewritePromptResponse {
-  rewritten_prompt: string;
 }

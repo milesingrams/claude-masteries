@@ -12,12 +12,21 @@ import {
 } from "react";
 import { useDebounce } from "react-use";
 import { useCompletion } from "@ai-sdk/react";
-import type {
-  ActiveMasteryChip,
-  AnalyzePromptResponse,
-} from "@/lib/masteries/types";
+import type { ActiveMasteryChip } from "@/lib/masteries/types";
 import { useMasteryContext } from "@/lib/masteries/mastery-context";
 import { MIN_PROMPT_LENGTH } from "@/lib/constants";
+
+// Response type from analyze-prompt-for-mastery API
+type AnalyzePromptResponse = {
+  surface: {
+    mastery_id: string;
+    suggestion_text: string;
+    suggestion_description: string;
+    suggestion_examples: string[];
+  } | null;
+  maintained_id: string | null;
+  satisfied_id: string | null;
+};
 
 const DEBOUNCE_DELAY = 1000;
 

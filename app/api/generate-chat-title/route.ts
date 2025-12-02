@@ -1,17 +1,26 @@
 import { createAnthropic } from "@ai-sdk/anthropic";
 import { generateText } from "ai";
+import { z } from "zod";
 
 const anthropic = createAnthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
 });
 
+const requestSchema = z.object({
+  firstUserMessage: z.string(),
+  firstAssistantMessage: z.string(),
+});
+
 export async function POST(req: Request) {
   try {
-    const { firstUserMessage, firstAssistantMessage } = await req.json();
+    const body = await req.json();
+    const parsed = requestSchema.safeParse(body);
 
-    if (!firstUserMessage || !firstAssistantMessage) {
-      return new Response("Invalid request body", { status: 400 });
+    if (!parsed.success) {
+      return new Response(parsed.error.message, { status: 400 });
     }
+
+    const { firstUserMessage, firstAssistantMessage } = parsed.data;
 
     const { text } = await generateText({
       model: anthropic("claude-sonnet-4-5"),

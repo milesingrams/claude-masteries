@@ -2,7 +2,7 @@
   "id": "meta/prompt-critique",
   "learning_threshold": 3,
   "title": "Claude could help you ask this better",
+  "detail": "Claude can help you prompt Claude. If you're not sure how to ask something, ask Claude to improve your question before answering it. You'll learn what makes prompts effective while getting better results. Meta-prompting is a skill that compounds.",
   "surface_triggers": "User's prompt is vague or underspecified. User seems to struggle articulating what they want. Request is complex and might benefit from restructuring. User is asking something for the first time.",
-  "satisfaction_triggers": "User asks Claude to improve or critique their prompt. User asks how to ask something more effectively. Phrases: how should I ask, improve this prompt, what's a better way to ask, help me phrase, critique my question, how could I make this clearer, rewrite my prompt.",
-  "detail": "Claude can help you prompt Claude. If you're not sure how to ask something, ask Claude to improve your question before answering it. You'll learn what makes prompts effective while getting better results. Meta-prompting is a skill that compounds."
+  "satisfaction_triggers": "User asks Claude to improve or critique their prompt. User asks how to ask something more effectively. Phrases: how should I ask, improve this prompt, what's a better way to ask, help me phrase, critique my question, how could I make this clearer, rewrite my prompt."
 }

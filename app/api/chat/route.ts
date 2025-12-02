@@ -1,19 +1,35 @@
 import { createAnthropic } from "@ai-sdk/anthropic";
 import { convertToModelMessages, streamText, type UIMessage } from "ai";
+import { z } from "zod";
 
 const anthropic = createAnthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
+});
+
+// Validate structure, cast to UIMessage for SDK compatibility
+const requestSchema = z.object({
+  messages: z.array(
+    z.object({
+      id: z.string(),
+      role: z.enum(["user", "assistant", "system"]),
+      content: z.string(),
+      parts: z.array(z.unknown()).optional(),
+    })
+  ),
 });
 
 export const maxDuration = 30;
 
 export async function POST(req: Request) {
   try {
-    const { messages }: { messages: UIMessage[] } = await req.json();
+    const body = await req.json();
+    const parsed = requestSchema.safeParse(body);
 
-    if (!messages || !Array.isArray(messages)) {
-      return new Response("Invalid request body", { status: 400 });
+    if (!parsed.success) {
+      return new Response(parsed.error.message, { status: 400 });
     }
+
+    const messages = parsed.data.messages as UIMessage[];
 
     const result = streamText({
       model: anthropic("claude-sonnet-4-5"),

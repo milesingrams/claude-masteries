@@ -1,29 +1,38 @@
 import { createAnthropic } from "@ai-sdk/anthropic";
 import { streamText } from "ai";
+import { z } from "zod";
 import { getMasteryById, parseIdParts } from "@/lib/masteries";
 
 const anthropic = createAnthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
 });
 
+// Request schema - supports both 'prompt' (from useCompletion) and 'original_prompt'
+const requestSchema = z
+  .object({
+    prompt: z.string().optional(),
+    original_prompt: z.string().optional(),
+    mastery_id: z.string(),
+    suggestion_text: z.string(),
+    suggestion_description: z.string(),
+  })
+  .refine((data) => data.prompt || data.original_prompt, {
+    message: "Either prompt or original_prompt is required",
+  });
+
 export const maxDuration = 30;
 
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    // useCompletion sends 'prompt', but we also support 'original_prompt' for backwards compat
-    const {
-      prompt: inputPrompt,
-      original_prompt,
-      mastery_id,
-      suggestion_text,
-      suggestion_description,
-    } = body;
-    const userPrompt = original_prompt || inputPrompt;
+    const parsed = requestSchema.safeParse(body);
 
-    if (!userPrompt || !mastery_id) {
-      return new Response("Missing required fields", { status: 400 });
+    if (!parsed.success) {
+      return new Response(parsed.error.message, { status: 400 });
     }
+
+    const { prompt: inputPrompt, original_prompt, mastery_id, suggestion_text, suggestion_description } = parsed.data;
+    const userPrompt = (original_prompt || inputPrompt)!;
 
     const mastery = getMasteryById(mastery_id);
     if (!mastery) {
@@ -43,7 +52,7 @@ ${userPrompt}
 <technique>
 Name: ${category} / ${name}
 Suggestion: ${suggestion_text}
-Description: ${suggestion_description || mastery.satisfaction_triggers}
+Description: ${suggestion_description}
 </technique>
 
 <instructions>
