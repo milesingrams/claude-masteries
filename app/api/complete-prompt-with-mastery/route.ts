@@ -56,7 +56,7 @@ CRITICAL:
 - For example: "Respond as a [type of expert] would"
 
 FORMAT:
-- Close the previous sentence properly and add a space or newlines if needed
+- Close the previous sentence properly and/or add a space or newlines if needed
 - Do NOT repeat the original prompt
 - Keep it concise (1-2 sentences max)
 - Output ONLY the text to append, nothing else
