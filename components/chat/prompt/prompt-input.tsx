@@ -187,7 +187,7 @@ function PromptInputInner({
                           isAnalyzing
                             ? {
                                 animation:
-                                  "pulse-border-text 1.5s ease-in-out infinite",
+                                  "pulse-border 1.5s ease-in-out infinite",
                                 borderColor: "rgba(217, 120, 87, 0.4)",
                               }
                             : undefined
