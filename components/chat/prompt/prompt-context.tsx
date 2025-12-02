@@ -11,13 +11,16 @@ import {
   type RefObject,
 } from "react";
 import { useDebounce } from "react-use";
-import { useCompletion, experimental_useObject as useObject } from "@ai-sdk/react";
+import {
+  useCompletion,
+  experimental_useObject as useObject,
+} from "@ai-sdk/react";
 import type { ActiveMasteryChip } from "@/lib/masteries/types";
 import { useMasteryContext } from "@/lib/masteries/mastery-context";
 import { MIN_PROMPT_LENGTH } from "@/lib/constants";
 import {
   analyzePromptResponseSchema,
-  AnalyzePromptResponse,
+  type AnalyzePromptResponse,
 } from "@/app/api/analyze-prompt-for-mastery/schema";
 
 const DEBOUNCE_DELAY = 1000;
@@ -242,7 +245,13 @@ export function PromptProvider({
         manual_mode: manual,
       });
     },
-    [activeMasteryChip, learnedMasteryIds, suppressedIds, submitAnalysis, stopAnalysis]
+    [
+      activeMasteryChip,
+      learnedMasteryIds,
+      suppressedIds,
+      submitAnalysis,
+      stopAnalysis,
+    ]
   );
 
   // Manual analysis trigger (bypasses debounce and filtering)
@@ -273,7 +282,7 @@ export function PromptProvider({
   // Clear chip when prompt is cleared
   useEffect(() => {
     if (!prompt || prompt.trim().length === 0) {
-      setActiveMasteryChip(null);
+      setActiveMasteryChip(null); // eslint-disable-line react-hooks/set-state-in-effect
       lastAnalyzedPrompt.current = "";
     }
   }, [prompt]);
