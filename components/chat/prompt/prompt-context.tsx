@@ -10,7 +10,6 @@ import {
   type ReactNode,
   type RefObject,
 } from "react";
-import { useDebounce } from "react-use";
 import { useCompletion } from "@ai-sdk/react";
 import type { ActiveMasteryChip } from "@/lib/masteries/types";
 import { useMasteryContext } from "@/lib/masteries/mastery-context";
@@ -26,6 +25,7 @@ interface PromptContextValue {
   // Prompt state
   prompt: string;
   setPrompt: (value: string) => void;
+  handleUserInput: (value: string) => void;
   originalPrompt: string | null;
 
   // Analysis state
@@ -76,8 +76,10 @@ export function PromptProvider({
   // Analysis state
   const [activeMasteryChip, setActiveMasteryChip] =
     useState<ActiveMasteryChip | null>(null);
-  const [debouncedPrompt, setDebouncedPrompt] = useState("");
   const [suppressedIds, setSuppressedIds] = useState<string[]>([]);
+
+  // Debounce timer for user input
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const lastAnalyzedPrompt = useRef<string>("");
 
@@ -192,14 +194,6 @@ export function PromptProvider({
     },
   });
 
-  // Debounce the prompt
-  useDebounce(
-    () => {
-      setDebouncedPrompt(prompt);
-    },
-    DEBOUNCE_DELAY,
-    [prompt]
-  );
 
   // Mastery chip management
   const dismissMasteryChip = useCallback(() => {
@@ -333,22 +327,40 @@ export function PromptProvider({
     submitAnalysis,
   ]);
 
-  // Trigger analysis when debounced prompt changes
-  useEffect(() => {
-    if (!enableMasterySuggestions || disabled || isShowMeStreaming) return;
-    if (!debouncedPrompt || debouncedPrompt.trim().length < MIN_PROMPT_LENGTH)
-      return;
-    if (debouncedPrompt === lastAnalyzedPrompt.current) return;
+  // Handle user input - updates prompt and schedules debounced analysis
+  const handleUserInput = useCallback(
+    (value: string) => {
+      setPrompt(value);
 
-    lastAnalyzedPrompt.current = debouncedPrompt;
-    analyzePrompt(debouncedPrompt);
-  }, [
-    debouncedPrompt,
-    enableMasterySuggestions,
-    disabled,
-    isShowMeStreaming,
-    analyzePrompt,
-  ]);
+      // Clear any pending debounce timer
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+
+      // Schedule analysis if conditions are met
+      if (
+        enableMasterySuggestions &&
+        !disabled &&
+        value.trim().length >= MIN_PROMPT_LENGTH &&
+        value !== lastAnalyzedPrompt.current
+      ) {
+        debounceTimerRef.current = setTimeout(() => {
+          lastAnalyzedPrompt.current = value;
+          analyzePrompt(value);
+        }, DEBOUNCE_DELAY);
+      }
+    },
+    [enableMasterySuggestions, disabled, analyzePrompt]
+  );
+
+  // Cleanup debounce timer on unmount
+  useEffect(() => {
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+    };
+  }, []);
 
   // Clear chip when prompt is cleared
   useEffect(() => {
@@ -372,6 +384,7 @@ export function PromptProvider({
           ? `${originalPrompt}${masteryDemonstrationText}`
           : prompt,
         setPrompt,
+        handleUserInput,
         originalPrompt,
         activeMasteryChip,
         isAnalyzing,

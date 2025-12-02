@@ -62,6 +62,7 @@ function PromptInputInner({
   const {
     prompt,
     setPrompt,
+    handleUserInput,
     originalPrompt,
     isShowMeStreaming,
     isAnalyzing,
@@ -72,7 +73,7 @@ function PromptInputInner({
   } = usePromptContext();
 
   const handleMessageChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setPrompt(e.target.value);
+    handleUserInput(e.target.value);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
