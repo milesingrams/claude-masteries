@@ -23,24 +23,24 @@ interface PromptInputProps extends ComponentProps<"div"> {
   onPromptSubmit: (prompt: string) => void;
   disabled?: boolean;
   placeholder?: string;
-  enableMasteryChips?: boolean;
+  enableMasterySuggestions?: boolean;
 }
 
 export function PromptInput({
   onPromptSubmit,
   disabled = false,
   placeholder = "How can I help you today?",
-  enableMasteryChips = true,
+  enableMasterySuggestions = true,
   className,
   ...props
 }: PromptInputProps) {
   return (
-    <PromptProvider enableMasteryChips={enableMasteryChips} disabled={disabled}>
+    <PromptProvider enableMasterySuggestions={enableMasterySuggestions} disabled={disabled}>
       <PromptInputInner
         onPromptSubmit={onPromptSubmit}
         disabled={disabled}
         placeholder={placeholder}
-        enableMasteryChips={enableMasteryChips}
+        enableMasterySuggestions={enableMasterySuggestions}
         className={className}
         {...props}
       />
@@ -52,7 +52,7 @@ function PromptInputInner({
   onPromptSubmit,
   disabled = false,
   placeholder = "How can I help you today?",
-  enableMasteryChips = true,
+  enableMasterySuggestions = true,
   className,
   ...props
 }: PromptInputProps) {
@@ -60,7 +60,7 @@ function PromptInputInner({
     prompt,
     setPrompt,
     originalPrompt,
-    isStreaming,
+    isShowMeStreaming,
     isAnalyzing,
     resetSession,
     handleRevert,
@@ -91,11 +91,11 @@ function PromptInputInner({
       {...props}
     >
       {/* Debug Popover */}
-      {enableMasteryChips && <MasteryDebugPopover />}
+      {enableMasterySuggestions && <MasteryDebugPopover />}
 
       <div className="mx-auto max-w-3xl space-y-2">
         {/* Mastery Chips */}
-        {enableMasteryChips && (
+        {enableMasterySuggestions && (
           <MasteryChipContainer className="pointer-events-auto" />
         )}
 
@@ -104,10 +104,10 @@ function PromptInputInner({
           <div
             className={cn(
               "bg-background overflow-hidden rounded-xl border shadow-lg transition-all",
-              !isStreaming && "border-border focus-within:border-foreground/20"
+              !isShowMeStreaming && "border-border focus-within:border-foreground/20"
             )}
             style={
-              isStreaming
+              isShowMeStreaming
                 ? {
                     animation: "pulse-border 1.5s ease-in-out infinite",
                     borderColor: "rgba(217, 120, 87, 0.4)",
@@ -120,7 +120,7 @@ function PromptInputInner({
               value={prompt}
               onChange={handleMessageChange}
               placeholder={placeholder}
-              disabled={disabled || isStreaming}
+              disabled={disabled || isShowMeStreaming}
               autoFocus
               className="text-foreground placeholder:text-muted-foreground max-h-[200px] min-h-[60px] resize-none border-0 bg-transparent px-3 py-3 text-base focus-visible:ring-0 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50 md:text-base dark:bg-transparent"
               onKeyDown={(e) => {
@@ -135,7 +135,7 @@ function PromptInputInner({
             <div className="flex items-center justify-between px-2 pb-2">
               {/* Left side - Action Buttons */}
               <div className="flex items-center gap-2">
-                {isStreaming && (
+                {isShowMeStreaming && (
                   <ClaudeLogo
                     size={20}
                     style={{
@@ -143,7 +143,7 @@ function PromptInputInner({
                     }}
                   />
                 )}
-                {originalPrompt !== null && !isStreaming && (
+                {originalPrompt !== null && !isShowMeStreaming && (
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Button
@@ -164,7 +164,7 @@ function PromptInputInner({
 
               {/* Right side - Submit Button */}
               <div className="flex items-center gap-2">
-                {!isStreaming && (
+                {!isShowMeStreaming && (
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Button
@@ -174,7 +174,7 @@ function PromptInputInner({
                         className="hover:bg-accent h-8 w-8"
                         disabled={
                           disabled ||
-                          isStreaming ||
+                          isShowMeStreaming ||
                           isAnalyzing ||
                           prompt.trim().length < MIN_PROMPT_LENGTH
                         }
@@ -189,7 +189,7 @@ function PromptInputInner({
                 <Button
                   type="submit"
                   size="icon"
-                  disabled={!prompt.trim() || disabled || isStreaming}
+                  disabled={!prompt.trim() || disabled || isShowMeStreaming}
                   className="bg-primary hover:bg-primary/90 h-8 w-8 rounded-lg disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   <ArrowUp className="h-4 w-4 text-white" />

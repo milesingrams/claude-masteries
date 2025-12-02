@@ -8,22 +8,22 @@ export interface MasteryDisplayData {
   learning_threshold: number;
 }
 
-// Active chip state
-export type ChipStatus = "active" | "satisfied";
+// Active mastery chip state
+export type MasteryChipStatus = "active" | "satisfied";
 
-export interface ActiveChip {
+export interface ActiveMasteryChip {
   mastery_id: string;
   surfaced_at: number;
-  status: ChipStatus;
-  chip_text?: string;
-  chip_description?: string;
-  chip_examples?: string[];
+  status: MasteryChipStatus;
+  suggestion_text?: string;
+  suggestion_description?: string;
+  suggestion_examples?: string[];
 }
 
 // API request/response types
 export interface AnalyzePromptRequest {
   partial_prompt: string;
-  active_chip_id: string | null;
+  active_mastery_id: string | null;
   learned_mastery_ids?: string[];
   suppressed_mastery_ids?: string[];
   manual_mode?: boolean;
@@ -32,9 +32,9 @@ export interface AnalyzePromptRequest {
 export interface AnalyzePromptResponse {
   surface: {
     mastery_id: string;
-    chip_text: string;
-    chip_description: string;
-    chip_examples: string[];
+    suggestion_text: string;
+    suggestion_description: string;
+    suggestion_examples: string[];
   } | null;
   maintained_id: string | null;
   satisfied_id: string | null;
@@ -57,7 +57,7 @@ export interface MasteryProgressStore {
 export interface RewritePromptRequest {
   original_prompt: string;
   mastery_id: string;
-  chip_text: string;
+  suggestion_text: string;
 }
 
 export interface RewritePromptResponse {

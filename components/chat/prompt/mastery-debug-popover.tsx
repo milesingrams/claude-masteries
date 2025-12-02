@@ -14,7 +14,7 @@ import { cn } from "@/lib/utils";
 export function MasteryDebugPopover() {
   const { masteryDisplayData, progress, learnedMasteryIds } =
     useMasteryContext();
-  const { chip: activeChip, suppressedIds } = usePromptContext();
+  const { activeMasteryChip, suppressedIds } = usePromptContext();
 
   const allMasteryIds = Object.keys(masteryDisplayData);
   const totalMasteries = allMasteryIds.length;
@@ -41,29 +41,29 @@ export function MasteryDebugPopover() {
             </p>
           </div>
 
-          {/* Active Chip */}
+          {/* Active Mastery Chip */}
           <div className="space-y-2">
             <h5 className="text-sm font-medium">Currently Surfaced</h5>
-            {activeChip ? (
+            {activeMasteryChip ? (
               <div
                 className={cn(
                   "rounded-md border p-2 text-sm",
-                  activeChip.status === "satisfied"
+                  activeMasteryChip.status === "satisfied"
                     ? "border-green-500/50 bg-green-500/10"
                     : "border-blue-500/50 bg-blue-500/10"
                 )}
               >
                 <div className="font-mono text-xs opacity-70">
-                  {activeChip.mastery_id}
+                  {activeMasteryChip.mastery_id}
                 </div>
-                <div>{activeChip.chip_text}</div>
+                <div>{activeMasteryChip.suggestion_text}</div>
                 <div className="mt-1 text-xs opacity-70">
-                  Status: {activeChip.status}
+                  Status: {activeMasteryChip.status}
                 </div>
               </div>
             ) : (
               <div className="text-muted-foreground text-sm">
-                No chip surfaced
+                No mastery chip surfaced
               </div>
             )}
           </div>

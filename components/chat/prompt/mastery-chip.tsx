@@ -6,15 +6,15 @@ import { Check, X, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ClaudeLogo } from "@/components/ui/claude-logo";
 import { usePromptContext } from "@/components/chat/prompt/prompt-context";
-import type { ActiveChip, MasteryDisplayData } from "@/lib/masteries/types";
+import type { ActiveMasteryChip, MasteryDisplayData } from "@/lib/masteries/types";
 
 interface MasteryChipProps {
-  chip: ActiveChip;
+  chip: ActiveMasteryChip;
   display: MasteryDisplayData;
 }
 
 export function MasteryChip({ chip, display }: MasteryChipProps) {
-  const { dismissChip, handleShowMe } = usePromptContext();
+  const { dismissMasteryChip, handleMasteryDemonstration } = usePromptContext();
   const [isExpanded, setIsExpanded] = useState(false);
   const [isShowMeLoading, setIsShowMeLoading] = useState(false);
   const chipRef = useRef<HTMLDivElement>(null);
@@ -45,14 +45,18 @@ export function MasteryChip({ chip, display }: MasteryChipProps) {
 
   const onDismissClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    dismissChip();
+    dismissMasteryChip();
   };
 
   const onShowMeClick = async (e: React.MouseEvent) => {
     e.stopPropagation();
     setIsShowMeLoading(true);
     try {
-      await handleShowMe(chip.mastery_id, chip.chip_text || "");
+      await handleMasteryDemonstration({
+        masteryId: chip.mastery_id,
+        suggestionText: chip.suggestion_text || "",
+        suggestionDescription: chip.suggestion_description || "",
+      });
     } catch (error) {
       console.error("Show me failed:", error);
     } finally {
@@ -84,7 +88,7 @@ export function MasteryChip({ chip, display }: MasteryChipProps) {
 
         {/* Chip text */}
         <div className="text-muted-foreground flex-1 text-xs whitespace-nowrap">
-          {isSatisfied ? formattedCategoryName : chip.chip_text}
+          {isSatisfied ? formattedCategoryName : chip.suggestion_text}
         </div>
 
         {/* Actions */}
@@ -113,11 +117,11 @@ export function MasteryChip({ chip, display }: MasteryChipProps) {
           >
             <div className="border-border/30 border-t px-2 py-1.5">
               <p className="text-muted-foreground/80 text-[12px] leading-relaxed">
-                {chip.chip_description || display.detail}
+                {chip.suggestion_description || display.detail}
               </p>
-              {chip.chip_examples && chip.chip_examples.length > 0 && (
+              {chip.suggestion_examples && chip.suggestion_examples.length > 0 && (
                 <div className="mt-1.5 space-y-1">
-                  {chip.chip_examples.map((example, i) => (
+                  {chip.suggestion_examples.map((example, i) => (
                     <p
                       key={i}
                       className="text-muted-foreground/60 border-muted/30 border-l-2 pl-2 text-[12px] italic"

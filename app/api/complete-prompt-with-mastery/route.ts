@@ -16,7 +16,8 @@ export async function POST(req: Request) {
       prompt: inputPrompt,
       original_prompt,
       mastery_id,
-      chip_text,
+      suggestion_text,
+      suggestion_description,
     } = body;
     const userPrompt = original_prompt || inputPrompt;
 
@@ -41,8 +42,8 @@ ${userPrompt}
 
 <technique>
 Name: ${category} / ${name}
-Suggestion: ${chip_text}
-What makes a good implementation: ${mastery.satisfaction_triggers}
+Suggestion: ${suggestion_text}
+Description: ${suggestion_description || mastery.satisfaction_triggers}
 </technique>
 
 <instructions>
@@ -55,7 +56,7 @@ CRITICAL:
 - For example: "Respond as a [type of expert] would"
 
 FORMAT:
-- Close the previous sentence properly if needed
+- Close the previous sentence properly and add a space or newlines if needed
 - Do NOT repeat the original prompt
 - Keep it concise (1-2 sentences max)
 - Output ONLY the text to append, nothing else
@@ -68,7 +69,7 @@ FORMAT:
 
     return result.toTextStreamResponse();
   } catch (error) {
-    console.error("Error in complete-prompt:", error);
+    console.error("Error in complete-prompt-with-mastery:", error);
     return new Response("Failed to complete prompt", { status: 500 });
   }
 }

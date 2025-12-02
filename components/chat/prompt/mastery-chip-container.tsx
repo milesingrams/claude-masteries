@@ -12,10 +12,10 @@ export function MasteryChipContainer({
   ...props
 }: ComponentProps<"div">) {
   const { getMasteryDisplay } = useMasteryContext();
-  const { chip } = usePromptContext();
+  const { activeMasteryChip } = usePromptContext();
 
-  const display = chip ? getMasteryDisplay(chip.mastery_id) : null;
-  const isVisible = chip && display;
+  const display = activeMasteryChip ? getMasteryDisplay(activeMasteryChip.mastery_id) : null;
+  const isVisible = activeMasteryChip && display;
 
   return (
     <div
@@ -25,7 +25,7 @@ export function MasteryChipContainer({
       <AnimatePresence mode="popLayout">
         {isVisible && (
           <motion.div
-            key={chip.mastery_id}
+            key={activeMasteryChip.mastery_id}
             layout
             initial={{ opacity: 0, filter: "blur(4px)", scale: 0.95 }}
             animate={{ opacity: 1, filter: "blur(0px)", scale: 1 }}
@@ -34,13 +34,13 @@ export function MasteryChipContainer({
               filter: "blur(4px)",
               scale: 0.95,
               transition: {
-                duration: chip.status === "satisfied" ? 2 : 0.2,
+                duration: activeMasteryChip.status === "satisfied" ? 2 : 0.2,
                 ease: "easeOut",
               },
             }}
             transition={{ duration: 0.2, ease: "easeOut" }}
           >
-            <MasteryChip chip={chip} display={display} />
+            <MasteryChip chip={activeMasteryChip} display={display} />
           </motion.div>
         )}
       </AnimatePresence>

@@ -116,7 +116,7 @@ export default function ChatPage() {
             .map((part) => part.text)
             .join("") || "";
 
-        const response = await fetch("/api/generate-title", {
+        const response = await fetch("/api/generate-chat-title", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({

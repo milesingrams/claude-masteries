@@ -12,11 +12,14 @@ import {
 } from "react";
 import { useDebounce } from "react-use";
 import { useCompletion } from "@ai-sdk/react";
-import type { ActiveChip, AnalyzePromptResponse } from "@/lib/masteries/types";
+import type {
+  ActiveMasteryChip,
+  AnalyzePromptResponse,
+} from "@/lib/masteries/types";
 import { useMasteryContext } from "@/lib/masteries/mastery-context";
 import { MIN_PROMPT_LENGTH } from "@/lib/constants";
 
-const DEBOUNCE_DELAY = 1500;
+const DEBOUNCE_DELAY = 1000;
 
 interface PromptContextValue {
   // Prompt state
@@ -25,19 +28,23 @@ interface PromptContextValue {
   originalPrompt: string | null;
 
   // Analysis state
-  chip: ActiveChip | null;
+  activeMasteryChip: ActiveMasteryChip | null;
   isAnalyzing: boolean;
   suppressedIds: string[];
 
-  // Streaming state
-  completion: string;
-  isStreaming: boolean;
+  // Show me streaming state
+  masteryDemonstrationText: string;
+  isShowMeStreaming: boolean;
 
   // Actions
-  dismissChip: () => void;
-  satisfyChip: () => void;
+  dismissMasteryChip: () => void;
+  satisfyMasteryChip: () => void;
   resetSession: () => void;
-  handleShowMe: (masteryId: string, chipText: string) => Promise<void>;
+  handleMasteryDemonstration: (params: {
+    masteryId: string;
+    suggestionText: string;
+    suggestionDescription: string;
+  }) => Promise<void>;
   handleRevert: () => void;
   triggerManualAnalysis: () => void;
 
@@ -49,13 +56,13 @@ const PromptContext = createContext<PromptContextValue | null>(null);
 
 interface PromptProviderProps {
   children: ReactNode;
-  enableMasteryChips?: boolean;
+  enableMasterySuggestions?: boolean;
   disabled?: boolean;
 }
 
 export function PromptProvider({
   children,
-  enableMasteryChips = true,
+  enableMasterySuggestions = true,
   disabled = false,
 }: PromptProviderProps) {
   const { learnedMasteryIds, markSatisfied } = useMasteryContext();
@@ -66,7 +73,8 @@ export function PromptProvider({
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
   // Analysis state
-  const [chip, setChip] = useState<ActiveChip | null>(null);
+  const [activeMasteryChip, setActiveMasteryChip] =
+    useState<ActiveMasteryChip | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [debouncedPrompt, setDebouncedPrompt] = useState("");
   const [suppressedIds, setSuppressedIds] = useState<string[]>([]);
@@ -74,13 +82,13 @@ export function PromptProvider({
   const lastAnalyzedPrompt = useRef<string>("");
   const abortControllerRef = useRef<AbortController | null>(null);
 
-  // Rewrite streaming
+  // Show me streaming
   const {
-    completion,
-    complete,
-    isLoading: isStreaming,
+    completion: masteryDemonstrationText,
+    complete: triggerShowMe,
+    isLoading: isShowMeStreaming,
   } = useCompletion({
-    api: "/api/complete-prompt",
+    api: "/api/complete-prompt-with-mastery",
     streamProtocol: "text",
     onFinish: (originalText, completionText) => {
       setPrompt(`${originalText}${completionText}`);
@@ -99,41 +107,52 @@ export function PromptProvider({
     [prompt]
   );
 
-  // Chip management
-  const dismissChip = useCallback(() => {
-    if (chip) {
-      setSuppressedIds((prev) => [...prev, chip.mastery_id]);
+  // Mastery chip management
+  const dismissMasteryChip = useCallback(() => {
+    if (activeMasteryChip) {
+      setSuppressedIds((prev) => [...prev, activeMasteryChip.mastery_id]);
     }
-    setChip(null);
-  }, [chip]);
+    setActiveMasteryChip(null);
+  }, [activeMasteryChip]);
 
-  const satisfyChip = useCallback(() => {
-    if (chip) {
-      markSatisfied(chip.mastery_id);
-      setSuppressedIds((prev) => [...prev, chip.mastery_id]);
+  const satisfyMasteryChip = useCallback(() => {
+    if (activeMasteryChip) {
+      markSatisfied(activeMasteryChip.mastery_id);
+      setSuppressedIds((prev) => [...prev, activeMasteryChip.mastery_id]);
     }
-    setChip((prev) => (prev ? { ...prev, status: "satisfied" } : null));
-    requestAnimationFrame(() => setChip(null));
-  }, [chip, markSatisfied]);
+    setActiveMasteryChip((prev) =>
+      prev ? { ...prev, status: "satisfied" } : null
+    );
+    requestAnimationFrame(() => setActiveMasteryChip(null));
+  }, [activeMasteryChip, markSatisfied]);
 
   const resetSession = useCallback(() => {
     setSuppressedIds([]);
   }, []);
 
-  // Show me handler
-  const handleShowMe = useCallback(
-    async (masteryId: string, chipText: string): Promise<void> => {
+  // Mastery demonstration handler
+  const handleMasteryDemonstration = useCallback(
+    async ({
+      masteryId,
+      suggestionText,
+      suggestionDescription,
+    }: {
+      masteryId: string;
+      suggestionText: string;
+      suggestionDescription: string;
+    }): Promise<void> => {
       setOriginalPrompt(prompt);
-      satisfyChip();
+      satisfyMasteryChip();
 
-      await complete(prompt, {
+      await triggerShowMe(prompt, {
         body: {
           mastery_id: masteryId,
-          chip_text: chipText,
+          suggestion_text: suggestionText,
+          suggestion_description: suggestionDescription,
         },
       });
     },
-    [prompt, complete, satisfyChip]
+    [prompt, triggerShowMe, satisfyMasteryChip]
   );
 
   // Revert handler
@@ -155,14 +174,17 @@ export function PromptProvider({
       setIsAnalyzing(true);
 
       try {
-        const activeChipId = chip?.status === "active" ? chip.mastery_id : null;
+        const activeMasteryId =
+          activeMasteryChip?.status === "active"
+            ? activeMasteryChip.mastery_id
+            : null;
 
-        const response = await fetch("/api/analyze-prompt", {
+        const response = await fetch("/api/analyze-prompt-for-mastery", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             partial_prompt: promptToAnalyze,
-            active_chip_id: activeChipId,
+            active_mastery_id: activeMasteryId,
             learned_mastery_ids: learnedMasteryIds,
             suppressed_mastery_ids: suppressedIds,
             manual_mode: manual,
@@ -174,21 +196,27 @@ export function PromptProvider({
 
         const data: AnalyzePromptResponse = await response.json();
 
-        if (data.maintained_id && chip?.mastery_id === data.maintained_id) {
+        if (
+          data.maintained_id &&
+          activeMasteryChip?.mastery_id === data.maintained_id
+        ) {
           return;
         } else {
-          if (data.satisfied_id && chip?.mastery_id === data.satisfied_id) {
-            satisfyChip();
+          if (
+            data.satisfied_id &&
+            activeMasteryChip?.mastery_id === data.satisfied_id
+          ) {
+            satisfyMasteryChip();
           }
 
           if (data.surface) {
-            setChip({
+            setActiveMasteryChip({
               mastery_id: data.surface.mastery_id,
               surfaced_at: Date.now(),
               status: "active",
-              chip_text: data.surface.chip_text,
-              chip_description: data.surface.chip_description,
-              chip_examples: data.surface.chip_examples,
+              suggestion_text: data.surface.suggestion_text,
+              suggestion_description: data.surface.suggestion_description,
+              suggestion_examples: data.surface.suggestion_examples,
             });
           }
         }
@@ -200,20 +228,20 @@ export function PromptProvider({
         setIsAnalyzing(false);
       }
     },
-    [chip, learnedMasteryIds, satisfyChip, suppressedIds]
+    [activeMasteryChip, learnedMasteryIds, satisfyMasteryChip, suppressedIds]
   );
 
   // Manual analysis trigger (bypasses debounce and filtering)
   const triggerManualAnalysis = useCallback(() => {
     if (prompt.trim().length >= MIN_PROMPT_LENGTH) {
-      setChip(null); // Clear existing chip before fresh analysis
+      setActiveMasteryChip(null); // Clear existing chip before fresh analysis
       analyzePrompt(prompt, true);
     }
   }, [prompt, analyzePrompt]);
 
   // Trigger analysis when debounced prompt changes
   useEffect(() => {
-    if (!enableMasteryChips || disabled || isStreaming) return;
+    if (!enableMasterySuggestions || disabled || isShowMeStreaming) return;
     if (!debouncedPrompt || debouncedPrompt.trim().length < MIN_PROMPT_LENGTH)
       return;
     if (debouncedPrompt === lastAnalyzedPrompt.current) return;
@@ -222,42 +250,44 @@ export function PromptProvider({
     analyzePrompt(debouncedPrompt);
   }, [
     debouncedPrompt,
-    enableMasteryChips,
+    enableMasterySuggestions,
     disabled,
-    isStreaming,
+    isShowMeStreaming,
     analyzePrompt,
   ]);
 
   // Clear chip when prompt is cleared
   useEffect(() => {
     if (!prompt || prompt.trim().length === 0) {
-      setChip(null);
+      setActiveMasteryChip(null);
       lastAnalyzedPrompt.current = "";
     }
   }, [prompt]);
 
   // Scroll textarea to bottom during streaming
   useEffect(() => {
-    if (isStreaming && textareaRef.current) {
+    if (isShowMeStreaming && textareaRef.current) {
       textareaRef.current.scrollTop = textareaRef.current.scrollHeight;
     }
-  }, [completion, isStreaming]);
+  }, [masteryDemonstrationText, isShowMeStreaming]);
 
   return (
     <PromptContext.Provider
       value={{
-        prompt: isStreaming ? `${originalPrompt}${completion}` : prompt,
+        prompt: isShowMeStreaming
+          ? `${originalPrompt}${masteryDemonstrationText}`
+          : prompt,
         setPrompt,
         originalPrompt,
-        chip,
+        activeMasteryChip,
         isAnalyzing,
         suppressedIds,
-        completion,
-        isStreaming,
-        dismissChip,
-        satisfyChip,
+        masteryDemonstrationText,
+        isShowMeStreaming,
+        dismissMasteryChip,
+        satisfyMasteryChip,
         resetSession,
-        handleShowMe,
+        handleMasteryDemonstration,
         handleRevert,
         triggerManualAnalysis,
         textareaRef,
