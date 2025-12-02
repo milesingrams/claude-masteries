@@ -17,6 +17,8 @@ const analysisSchema = z.object({
     .object({
       mastery_id: z.string(),
       chip_text: z.string(),
+      chip_description: z.string(),
+      chip_examples: z.array(z.string()),
     })
     .nullable(),
   maintained: z.boolean(),
@@ -123,12 +125,27 @@ Find the single most relevant mastery for this prompt.
 Only surface if there's a clear match to surface_triggers.
 Be very conservative - when in doubt, return null.
 
-If surfacing, generate a contextual chip_text (5-10 words) that:
-- References the user's specific topic/task
-- Suggests the technique naturally, not pushy
-- Matches the tone of chip_example
+If surfacing, generate:
 
-Example: User writing about email + chip_example "You could ask Claude what's possible here" → "Ask Claude how it would approach this email"
+a) chip_text (5-10 words): A contextual suggestion that:
+   - References the user's specific topic/task
+   - Suggests the technique naturally, not pushy
+   - Matches the tone of chip_example
+
+b) chip_description (15-25 words): A brief explanation of WHY this technique helps, personalized to their task:
+   - Explain the benefit in context of what they're writing
+   - Be specific about what they'll gain
+   - Keep it conversational and helpful
+
+c) chip_examples (exactly 2 strings, each 8-15 words): Very short example phrases showing HOW to apply the technique:
+   - Each example should be a snippet they could actually add to their prompt
+   - Make them specific to their topic, not generic
+   - Show different ways to apply the same technique
+
+Example for a user writing about email:
+- chip_text: "Ask Claude how it would approach this email"
+- chip_description: "Letting Claude share its perspective often reveals angles you hadn't considered for tricky emails."
+- chip_examples: ["What would you suggest for the tone here?", "How would you handle the budget concern?"]
 </instructions>`;
 
     const { object } = await generateObject({

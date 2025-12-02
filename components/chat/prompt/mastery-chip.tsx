@@ -112,9 +112,21 @@ export function MasteryChip({ chip, display }: MasteryChipProps) {
             className="overflow-hidden"
           >
             <div className="border-border/30 border-t px-2 py-1.5">
-              <p className="text-muted-foreground/80 text-[11px] leading-relaxed">
-                {display.detail}
+              <p className="text-muted-foreground/80 text-[12px] leading-relaxed">
+                {chip.chip_description || display.detail}
               </p>
+              {chip.chip_examples && chip.chip_examples.length > 0 && (
+                <div className="mt-1.5 space-y-1">
+                  {chip.chip_examples.map((example, i) => (
+                    <p
+                      key={i}
+                      className="text-muted-foreground/60 border-muted/30 border-l-2 pl-2 text-[12px] italic"
+                    >
+                      &ldquo;{example}&rdquo;
+                    </p>
+                  ))}
+                </div>
+              )}
               <div className="mt-1.5 flex items-center justify-between">
                 <p className="text-muted-foreground/50 text-[10px]">
                   {formattedCategoryName}
@@ -122,7 +134,7 @@ export function MasteryChip({ chip, display }: MasteryChipProps) {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="h-6 px-2 text-[10px] text-[#d97757] hover:text-[#d97757]/80"
+                  className="h-6 px-2 text-[12px] text-[#d97757] hover:text-[#d97757]/80"
                   onClick={onShowMeClick}
                   disabled={isShowMeLoading}
                 >

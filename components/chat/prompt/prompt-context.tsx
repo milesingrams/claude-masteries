@@ -189,6 +189,8 @@ export function PromptProvider({
               surfaced_at: Date.now(),
               status: "active",
               chip_text: data.surface.chip_text,
+              chip_description: data.surface.chip_description,
+              chip_examples: data.surface.chip_examples,
             });
           }
         }

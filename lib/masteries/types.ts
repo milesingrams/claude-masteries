@@ -16,6 +16,8 @@ export interface ActiveChip {
   surfaced_at: number;
   status: ChipStatus;
   chip_text?: string;
+  chip_description?: string;
+  chip_examples?: string[];
 }
 
 // API request/response types
@@ -30,6 +32,8 @@ export interface AnalyzePromptResponse {
   surface: {
     mastery_id: string;
     chip_text: string;
+    chip_description: string;
+    chip_examples: string[];
   } | null;
   maintained_id: string | null;
   satisfied_id: string | null;
