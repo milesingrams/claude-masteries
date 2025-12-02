@@ -85,7 +85,7 @@ ${JSON.stringify(
   availableMasteries.map((m) => ({
     id: m.id,
     surface_triggers: m.surface_triggers,
-    chip_example: m.chip,
+    chip_example: m.title,
   })),
   null,
   2

@@ -1,7 +1,7 @@
 {
   "id": "prompt-craft/context-loading",
   "learning_threshold": 3,
-  "chip": "What context would help Claude here?",
+  "title": "What context would help Claude here?",
   "surface_triggers": "User asks about something specific to their situation without providing background. User's question assumes knowledge Claude doesn't have. User references something without explaining it. User asks for advice without context.",
   "satisfaction_triggers": "User provides background, history, or situational details. User explains the context before asking the question. Phrases: here's the background, for context, the situation is, to give you context, some background, here's what's happened, I've already tried, the reason I'm asking.",
   "detail": "Claude knows nothing about your specific situation until you share it. A few sentences of context—what you've tried, why this matters, what constraints you're under—transforms generic advice into targeted help. Context is the difference between useful and useless."

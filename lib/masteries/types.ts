@@ -3,7 +3,7 @@ export interface MasteryDisplayData {
   id: string;
   name: string;
   category: string;
-  chip: string;
+  title: string;
   detail: string;
   learning_threshold: number;
 }

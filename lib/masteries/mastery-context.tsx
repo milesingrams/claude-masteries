@@ -28,7 +28,7 @@ const staticMasteryDisplayData: Record<string, MasteryDisplayData> = masteries.r
       id: m.id,
       name,
       category,
-      chip: m.chip,
+      title: m.title,
       detail: m.detail,
       learning_threshold: m.learning_threshold,
     };
