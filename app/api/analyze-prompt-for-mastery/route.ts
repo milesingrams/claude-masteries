@@ -1,5 +1,5 @@
 import { createAnthropic } from "@ai-sdk/anthropic";
-import { streamObject } from "ai";
+import { generateObject } from "ai";
 import { z } from "zod";
 import { masteries, type Mastery } from "@/lib/masteries";
 import { MIN_PROMPT_LENGTH } from "@/lib/constants";
@@ -31,143 +31,100 @@ const requestSchema = z.object({
 
 export const maxDuration = 15;
 
-// Shared suggestion generation instructions
-const suggestionInstructions = `
-If surfacing, generate:
-
-a) suggestion_text (5-10 words): A contextual suggestion that:
-   - References the user's specific topic/task
-   - Suggests the technique naturally, not pushy
-
-b) suggestion_description (15-25 words): A brief explanation of WHY this technique helps, personalized to their task:
-   - Explain the benefit in context of what they're writing
-   - Be specific about what they'll gain
-   - Keep it conversational and helpful
-
-c) suggestion_examples (exactly 2 strings, each 8-15 words): Very short example phrases showing HOW to apply the technique:
-   - Each example should be a snippet they could actually add to their prompt
-   - Make them specific to their topic, not generic
-   - Show different ways to apply the same technique
-
-Example for a user writing about email:
-- suggestion_text: "Ask Claude how it would approach this email"
-- suggestion_description: "Letting Claude share its perspective often reveals angles you hadn't considered for tricky emails."
-- suggestion_examples: ["What would you suggest for the tone here?", "How would you handle the budget concern?"]
-`;
-
-// Manual mode: User clicked Brain button - always surface a suggestion
-function buildManualModePrompt(
-  partialPrompt: string,
-  availableMasteries: Mastery[]
-): string {
-  return `
-<partial_prompt>
-${partialPrompt}
-</partial_prompt>
-
-<masteries>
-${JSON.stringify(
-  availableMasteries.map((m) => ({
-    id: m.id,
-    surface_triggers: m.surface_triggers,
-    chip_example: m.title,
-  })),
-  null,
-  2
-)}
-</masteries>
-
-<instructions>
-The user explicitly requested prompt help. Find the most relevant mastery for this prompt, or generate a custom suggestion.
-
-Return:
-- surface: A mastery suggestion object (required - always provide a suggestion)
-- maintained_id: null (not applicable in manual mode)
-- satisfied_id: null (not applicable in manual mode)
-
-For the surface object:
-1. Look for a mastery whose surface_triggers match the prompt
-2. If a mastery matches, set mastery_id to that mastery's id
-3. If NO mastery clearly matches, you MUST still help:
-   - Set mastery_id to null (this indicates a custom suggestion)
-   - Generate a helpful prompting tip specific to their prompt
-   - Focus on what would improve clarity, specificity, or effectiveness
-
-${suggestionInstructions}
-</instructions>`;
-}
-
-// Active chip type for the prompt builder
+// Shared types
 type ActiveChip = z.infer<typeof activeChipSchema>;
 
-// Auto mode: Debounced analysis - check maintained/satisfied, only surface if clear match
-function buildAutoModePrompt(
-  partialPrompt: string,
-  availableMasteries: Mastery[],
-  activeChip: ActiveChip | null
-): string {
-  return `
-<partial_prompt>
-${partialPrompt}
-</partial_prompt>
+interface PromptContext {
+  partial_prompt: string;
+  available_masteries: Mastery[];
+  active_chip?: ActiveChip | null;
+}
 
-<masteries>
-${JSON.stringify(
-  availableMasteries.map((m) => ({
+// Build the masteries XML section
+function buildMasteriesSection(masteries: Mastery[]): string {
+  const simplified = masteries.map((m) => ({
     id: m.id,
     surface_triggers: m.surface_triggers,
-    chip_example: m.title,
-  })),
-  null,
-  2
-)}
-</masteries>
+  }));
+  return `<masteries>
+${JSON.stringify(simplified, null, 2)}
+</masteries>`;
+}
 
-${
-  activeChip
-    ? `
-<active_suggestion>
+// Build the active chip XML section
+function buildActiveChipSection(chip: ActiveChip): string {
+  return `<active_chip>
 ${JSON.stringify(
   {
-    mastery_id: activeChip.mastery_id,
-    suggestion_text: activeChip.suggestion_text,
-    suggestion_description: activeChip.suggestion_description,
-    suggestion_examples: activeChip.suggestion_examples,
+    mastery_id: chip.mastery_id,
+    text: chip.suggestion_text,
+    examples: chip.suggestion_examples,
   },
   null,
   2
 )}
-</active_suggestion>
-`
-    : ""
+</active_chip>`;
 }
+
+// Shared instructions for generating suggestions
+const SUGGESTION_FORMAT = `Generate for the surface object:
+- suggestion_text (5-10 words): Reference their specific topic, suggest technique naturally
+- suggestion_description (15-25 words): Why this helps for their task
+- suggestion_examples (2 strings, 8-15 words each): Snippets they could add to their prompt`;
+
+// Manual mode: User clicked Brain button - always surface a suggestion
+export function buildManualModePrompt(ctx: PromptContext): string {
+  return `<task>User requested prompt help. Find the most relevant mastery or generate a custom suggestion.</task>
+
+<partial_prompt>
+${ctx.partial_prompt}
+</partial_prompt>
+
+${buildMasteriesSection(ctx.available_masteries)}
 
 <instructions>
-Analyze the partial prompt and return:
-- surface: A mastery suggestion object, or null if no clear match
-- maintained_id: ${activeChip?.mastery_id ? `Set to "${activeChip.mastery_id}" if the active suggestion is still relevant to the prompt, otherwise null` : "null (no active suggestion)"}
-- satisfied_id: ${activeChip?.mastery_id ? `Set to "${activeChip.mastery_id}" if the user has applied the suggested technique, otherwise null` : "null (no active suggestion)"}
+1. Find a mastery whose surface_triggers match the prompt
+2. If a mastery matches, set mastery_id to that id
+3. If NO mastery matches, set mastery_id to null and generate a custom prompting tip
 
-${
-  activeChip
-    ? `
-The active suggestion should be:
-- MAINTAINED (set maintained_id to "${activeChip.mastery_id}"): If the prompt context hasn't changed significantly and the suggestion is still relevant
-- SATISFIED (set satisfied_id to "${activeChip.mastery_id}"): If the user has applied the technique. Check if the prompt now includes:
-  - Content similar to the suggestion_examples: ${JSON.stringify(activeChip.suggestion_examples)}
-  - Or otherwise demonstrates the behavior described in: "${activeChip.suggestion_description}"
-  The user doesn't need to use exact phrases, but the intent should be clear.
+${SUGGESTION_FORMAT}
 
-For SURFACE (only if the active suggestion is NOT maintained):
-`
-    : `
-For SURFACE:
-`
+Always return a surface object. Set maintained_id and satisfied_id to null.
+</instructions>`;
 }
-   Find the single most relevant mastery for this prompt.
-   Only surface if there's a clear match to surface_triggers.
-   Be very conservative - when in doubt, return null for surface.
-${suggestionInstructions}
+
+// Auto mode: Debounced analysis
+export function buildAutoModePrompt(ctx: PromptContext): string {
+  const hasActiveChip = ctx.active_chip?.mastery_id;
+
+  return `<task>Analyze prompt for mastery suggestions and satisfaction.</task>
+
+<partial_prompt>
+${ctx.partial_prompt}
+</partial_prompt>
+
+${buildMasteriesSection(ctx.available_masteries)}
+
+${ctx.active_chip ? buildActiveChipSection(ctx.active_chip) : ""}
+
+<instructions>
+${
+  hasActiveChip
+    ? `FIRST check the active chip (${ctx.active_chip!.mastery_id}):
+- SATISFIED: User's prompt demonstrates the technique (similar to examples: ${JSON.stringify(ctx.active_chip!.suggestion_examples)})
+  → Set satisfied_id to "${ctx.active_chip!.mastery_id}", surface: null, maintained_id: null
+- MAINTAINED: Suggestion still relevant but not yet applied
+  → Set maintained_id to "${ctx.active_chip!.mastery_id}", surface: null, satisfied_id: null
+- NEITHER: Context changed significantly
+  → Set both to null, consider surfacing a new mastery
+
+`
+    : ""
+}SURFACING (only if no maintained chip):
+- Find the single most relevant mastery matching surface_triggers
+- Be conservative—only surface if clearly relevant, otherwise null
+
+${SUGGESTION_FORMAT}
 </instructions>`;
 }
 
@@ -212,26 +169,29 @@ export async function POST(req: Request) {
     }
 
     if (manual_mode) {
-      const result = streamObject({
+      const result = await generateObject({
         model: anthropic("claude-haiku-4-5"),
         schema: analyzePromptResponseSchema,
-        prompt: buildManualModePrompt(partial_prompt, availableMasteries),
+        prompt: buildManualModePrompt({
+          partial_prompt,
+          available_masteries: availableMasteries,
+        }),
       });
 
-      return result.toTextStreamResponse();
+      return Response.json(result.object);
     }
 
-    const result = streamObject({
+    const result = await generateObject({
       model: anthropic("claude-haiku-4-5"),
       schema: analyzePromptResponseSchema,
-      prompt: buildAutoModePrompt(
+      prompt: buildAutoModePrompt({
         partial_prompt,
-        availableMasteries,
-        active_mastery_chip
-      ),
+        available_masteries: availableMasteries,
+        active_chip: active_mastery_chip,
+      }),
     });
 
-    return result.toTextStreamResponse();
+    return Response.json(result.object);
   } catch (error) {
     console.error("Error in analyze-prompt-for-mastery:", error);
     // Return empty response on error to avoid breaking the UI

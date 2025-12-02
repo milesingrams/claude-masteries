@@ -11,10 +11,7 @@ import {
   type RefObject,
 } from "react";
 import { useDebounce } from "react-use";
-import {
-  useCompletion,
-  experimental_useObject as useObject,
-} from "@ai-sdk/react";
+import { useCompletion } from "@ai-sdk/react";
 import type { ActiveMasteryChip } from "@/lib/masteries/types";
 import { useMasteryContext } from "@/lib/masteries/mastery-context";
 import { MIN_PROMPT_LENGTH } from "@/lib/constants";
@@ -123,23 +120,61 @@ export function PromptProvider({
     [activeMasteryChip, markSatisfied]
   );
 
-  // Prompt analysis with useObject
-  const {
-    submit: submitAnalysis,
-    isLoading: isAnalyzing,
-    stop: stopAnalysis,
-  } = useObject({
-    api: "/api/analyze-prompt-for-mastery",
-    schema: analyzePromptResponseSchema,
-    onFinish: ({ object }) => {
-      if (!object) return;
+  // Prompt analysis with fetch
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
-      handleAnalysisResponse(object);
+  const stopAnalysis = useCallback(() => {
+    abortControllerRef.current?.abort();
+    abortControllerRef.current = null;
+  }, []);
+
+  const submitAnalysis = useCallback(
+    async (payload: {
+      partial_prompt: string;
+      active_mastery_chip: {
+        mastery_id: string | null;
+        suggestion_text: string;
+        suggestion_description: string;
+        suggestion_examples: string[];
+      } | null;
+      learned_mastery_ids?: string[];
+      suppressed_mastery_ids?: string[];
+      manual_mode?: boolean;
+    }) => {
+      // Abort any in-flight request
+      stopAnalysis();
+
+      const controller = new AbortController();
+      abortControllerRef.current = controller;
+
+      setIsAnalyzing(true);
+      try {
+        const response = await fetch("/api/analyze-prompt-for-mastery", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+          signal: controller.signal,
+        });
+
+        if (!response.ok) {
+          throw new Error(`Analysis failed: ${response.status}`);
+        }
+
+        const data = analyzePromptResponseSchema.parse(await response.json());
+        handleAnalysisResponse(data);
+      } catch (error) {
+        if (error instanceof Error && error.name === "AbortError") {
+          // Request was aborted, ignore
+          return;
+        }
+        console.error("Analysis error:", error);
+      } finally {
+        setIsAnalyzing(false);
+      }
     },
-    onError: (error) => {
-      console.error("Analysis error:", error);
-    },
-  });
+    [stopAnalysis, handleAnalysisResponse]
+  );
 
   // Show me streaming
   const {
@@ -318,7 +353,7 @@ export function PromptProvider({
   // Clear chip when prompt is cleared
   useEffect(() => {
     if (!prompt || prompt.trim().length === 0) {
-      setActiveMasteryChip(null); // eslint-disable-line react-hooks/set-state-in-effect
+      setActiveMasteryChip(null);
       lastAnalyzedPrompt.current = "";
     }
   }, [prompt]);
