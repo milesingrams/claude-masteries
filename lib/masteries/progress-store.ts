@@ -80,15 +80,6 @@ export function getLearnedMasteryIds(progress: MasteryProgressStore): string[] {
     .map(([id]) => id);
 }
 
-// Reset progress for a mastery (useful for testing)
-export function resetMasteryProgress(
-  progress: MasteryProgressStore,
-  masteryId: string
-): MasteryProgressStore {
-  const { [masteryId]: _, ...rest } = progress;
-  return rest;
-}
-
 // Reset all progress
 export function resetAllProgress(): MasteryProgressStore {
   return {};
