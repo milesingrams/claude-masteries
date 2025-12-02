@@ -1,20 +1,15 @@
 import { createAnthropic } from "@ai-sdk/anthropic";
 import { generateText } from "ai";
-import { z } from "zod";
+import { generateChatTitleRequestSchema } from "./schema";
 
 const anthropic = createAnthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
 });
 
-const requestSchema = z.object({
-  firstUserMessage: z.string(),
-  firstAssistantMessage: z.string(),
-});
-
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const parsed = requestSchema.safeParse(body);
+    const parsed = generateChatTitleRequestSchema.safeParse(body);
 
     if (!parsed.success) {
       return new Response(parsed.error.message, { status: 400 });
