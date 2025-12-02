@@ -6,6 +6,7 @@ import { Check, X, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ClaudeLogo } from "@/components/ui/claude-logo";
 import { usePromptContext } from "@/components/chat/prompt/prompt-context";
+import { parseFormattedMasteryName } from "@/lib/masteries";
 import type { ActiveMasteryChip, MasteryDisplayData } from "@/lib/masteries/types";
 
 interface MasteryChipProps {
@@ -21,7 +22,7 @@ export function MasteryChip({ chip, display }: MasteryChipProps) {
 
   const isSatisfied = chip.status === "satisfied";
 
-  const formattedCategoryName = display ? `${display.category} / ${display.name}` : null;
+  const formattedCategoryName = chip.mastery_id ? parseFormattedMasteryName(chip.mastery_id) : null;
 
   // Click outside to collapse
   useEffect(() => {

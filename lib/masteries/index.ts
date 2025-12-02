@@ -60,3 +60,8 @@ export function parseIdParts(id: string): { category: string; name: string } {
     name: toTitleCase(slug),
   };
 }
+
+export function parseFormattedMasteryName(id: string): string {
+  const parts = id.split("/");
+  return parts.map(toTitleCase).join(" / ");
+}
