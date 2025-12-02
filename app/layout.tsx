@@ -46,16 +46,16 @@ export default function RootLayout({
           <ChatProvider>
             <MasteryProvider>
               <SidebarProvider>
-              <AppSidebar />
-              <SidebarInset>
-                {/* Mobile sidebar trigger - positioned to work with chat header */}
-                <SidebarTrigger className="absolute top-2 left-2 z-20 md:hidden" />
+                <AppSidebar />
+                <SidebarInset>
+                  {/* Mobile sidebar trigger - positioned to work with chat header */}
+                  <SidebarTrigger className="absolute top-2 left-2 z-20 md:hidden" />
 
-                {/* Chat Content */}
-                <div className="flex h-screen flex-1 flex-col overflow-hidden">
-                  {children}
-                </div>
-              </SidebarInset>
+                  {/* Chat Content */}
+                  <div className="flex h-screen flex-1 flex-col overflow-hidden">
+                    {children}
+                  </div>
+                </SidebarInset>
               </SidebarProvider>
               <Toaster />
             </MasteryProvider>

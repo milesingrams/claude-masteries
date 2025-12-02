@@ -14,9 +14,9 @@ import { useDebounce } from "react-use";
 import { useCompletion } from "@ai-sdk/react";
 import type { ActiveChip, AnalyzePromptResponse } from "@/lib/masteries/types";
 import { useMasteryContext } from "@/lib/masteries/mastery-context";
+import { MIN_PROMPT_LENGTH } from "@/lib/constants";
 
 const DEBOUNCE_DELAY = 1500;
-const MIN_PROMPT_LENGTH = 30;
 
 interface PromptContextValue {
   // Prompt state
@@ -39,6 +39,7 @@ interface PromptContextValue {
   resetSession: () => void;
   handleShowMe: (masteryId: string, chipText: string) => Promise<void>;
   handleRevert: () => void;
+  triggerManualAnalysis: () => void;
 
   // Refs
   textareaRef: RefObject<HTMLTextAreaElement | null>;
@@ -145,7 +146,7 @@ export function PromptProvider({
 
   // Analyze the prompt
   const analyzePrompt = useCallback(
-    async (promptToAnalyze: string) => {
+    async (promptToAnalyze: string, manual: boolean = false) => {
       if (abortControllerRef.current) {
         abortControllerRef.current.abort();
       }
@@ -164,6 +165,7 @@ export function PromptProvider({
             active_chip_id: activeChipId,
             learned_mastery_ids: learnedMasteryIds,
             suppressed_mastery_ids: suppressedIds,
+            manual_mode: manual,
           }),
           signal: abortControllerRef.current.signal,
         });
@@ -200,6 +202,14 @@ export function PromptProvider({
     },
     [chip, learnedMasteryIds, satisfyChip, suppressedIds]
   );
+
+  // Manual analysis trigger (bypasses debounce and filtering)
+  const triggerManualAnalysis = useCallback(() => {
+    if (prompt.trim().length >= MIN_PROMPT_LENGTH) {
+      setChip(null); // Clear existing chip before fresh analysis
+      analyzePrompt(prompt, true);
+    }
+  }, [prompt, analyzePrompt]);
 
   // Trigger analysis when debounced prompt changes
   useEffect(() => {
@@ -249,6 +259,7 @@ export function PromptProvider({
         resetSession,
         handleShowMe,
         handleRevert,
+        triggerManualAnalysis,
         textareaRef,
       }}
     >

@@ -26,6 +26,7 @@ export interface AnalyzePromptRequest {
   active_chip_id: string | null;
   learned_mastery_ids?: string[];
   suppressed_mastery_ids?: string[];
+  manual_mode?: boolean;
 }
 
 export interface AnalyzePromptResponse {

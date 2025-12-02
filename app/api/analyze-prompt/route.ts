@@ -2,6 +2,7 @@ import { createAnthropic } from "@ai-sdk/anthropic";
 import { generateObject } from "ai";
 import { z } from "zod";
 import { masteries, type Mastery } from "@/lib/masteries";
+import { MIN_PROMPT_LENGTH } from "@/lib/constants";
 import type {
   AnalyzePromptRequest,
   AnalyzePromptResponse,
@@ -47,10 +48,11 @@ export async function POST(req: Request) {
       active_chip_id,
       learned_mastery_ids,
       suppressed_mastery_ids,
+      manual_mode,
     } = body;
 
     // Skip analysis for empty or very short prompts
-    if (!partial_prompt || partial_prompt.trim().length < 30) {
+    if (!partial_prompt || partial_prompt.trim().length < MIN_PROMPT_LENGTH) {
       return Response.json({
         surface: null,
         maintained_id: null,
@@ -58,17 +60,20 @@ export async function POST(req: Request) {
       } as AnalyzePromptResponse);
     }
 
-    // Filter out learned and suppressed masteries
+    // In manual mode, use all masteries (no filtering)
+    // In automatic mode, filter out learned and suppressed masteries
     let availableMasteries: Mastery[] = masteries;
-    if (learned_mastery_ids?.length) {
-      availableMasteries = availableMasteries.filter(
-        (m) => !learned_mastery_ids.includes(m.id)
-      );
-    }
-    if (suppressed_mastery_ids?.length) {
-      availableMasteries = availableMasteries.filter(
-        (m) => !suppressed_mastery_ids.includes(m.id)
-      );
+    if (!manual_mode) {
+      if (learned_mastery_ids?.length) {
+        availableMasteries = availableMasteries.filter(
+          (m) => !learned_mastery_ids.includes(m.id)
+        );
+      }
+      if (suppressed_mastery_ids?.length) {
+        availableMasteries = availableMasteries.filter(
+          (m) => !suppressed_mastery_ids.includes(m.id)
+        );
+      }
     }
 
     // Get active chip for satisfaction checking

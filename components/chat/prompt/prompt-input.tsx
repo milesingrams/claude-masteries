@@ -1,9 +1,14 @@
 "use client";
 
 import type { ComponentProps } from "react";
-import { Plus, ArrowUp, Undo2 } from "lucide-react";
+import { ArrowUp, Undo2, Brain } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { ClaudeLogo } from "@/components/ui/claude-logo";
 import { MasteryChipContainer } from "./mastery-chip-container";
 import { MasteryDebugPopover } from "@/components/chat/prompt/mastery-debug-popover";
@@ -12,6 +17,7 @@ import {
   usePromptContext,
 } from "@/components/chat/prompt/prompt-context";
 import { cn } from "@/lib/utils";
+import { MIN_PROMPT_LENGTH } from "@/lib/constants";
 
 interface PromptInputProps extends ComponentProps<"div"> {
   onPromptSubmit: (prompt: string) => void;
@@ -55,8 +61,10 @@ function PromptInputInner({
     setPrompt,
     originalPrompt,
     isStreaming,
+    isAnalyzing,
     resetSession,
     handleRevert,
+    triggerManualAnalysis,
     textareaRef,
   } = usePromptContext();
 
@@ -125,8 +133,8 @@ function PromptInputInner({
 
             {/* Button Bar */}
             <div className="flex items-center justify-between px-2 pb-2">
-              {/* Left side - Revert Button or Streaming Indicator */}
-              <div className="flex items-center">
+              {/* Left side - Action Buttons */}
+              <div className="flex items-center gap-2">
                 {isStreaming && (
                   <ClaudeLogo
                     size={20}
@@ -136,30 +144,48 @@ function PromptInputInner({
                   />
                 )}
                 {originalPrompt !== null && !isStreaming && (
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    className="text-muted-foreground hover:text-foreground h-7 px-2 text-xs"
-                    onClick={handleRevert}
-                  >
-                    <Undo2 className="mr-1 h-3.5 w-3.5" />
-                    Revert
-                  </Button>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="text-muted-foreground hover:text-foreground h-7 px-2 text-xs"
+                        onClick={handleRevert}
+                      >
+                        <Undo2 className="mr-1 h-3.5 w-3.5" />
+                        Revert
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Restore original prompt</TooltipContent>
+                  </Tooltip>
                 )}
               </div>
 
-              {/* Right side - Action Buttons */}
+              {/* Right side - Submit Button */}
               <div className="flex items-center gap-2">
-                <Button
-                  type="button"
-                  size="icon"
-                  variant="outline"
-                  className="hover:bg-accent h-8 w-8"
-                  disabled={disabled}
-                >
-                  <Plus className="text-muted-foreground h-4 w-4" />
-                </Button>
+                {!isStreaming && (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        type="button"
+                        size="icon"
+                        variant="outline"
+                        className="hover:bg-accent h-8 w-8"
+                        disabled={
+                          disabled ||
+                          isStreaming ||
+                          isAnalyzing ||
+                          prompt.trim().length < MIN_PROMPT_LENGTH
+                        }
+                        onClick={triggerManualAnalysis}
+                      >
+                        <Brain className="text-muted-foreground h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Prompt help</TooltipContent>
+                  </Tooltip>
+                )}
                 <Button
                   type="submit"
                   size="icon"

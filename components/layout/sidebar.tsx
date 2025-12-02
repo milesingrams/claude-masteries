@@ -55,9 +55,7 @@ export function AppSidebar() {
             <TooltipTrigger asChild>
               <SidebarTrigger />
             </TooltipTrigger>
-            <TooltipContent side="right">
-              Open sidebar <kbd className="ml-1 text-xs opacity-60">⌘.</kbd>
-            </TooltipContent>
+            <TooltipContent side="right">Open sidebar</TooltipContent>
           </Tooltip>
         ) : (
           // Show header with Claude text and close button when expanded
@@ -69,10 +67,7 @@ export function AppSidebar() {
               <TooltipTrigger asChild>
                 <SidebarTrigger className="-mr-1" />
               </TooltipTrigger>
-              <TooltipContent side="right">
-                Close sidebar
-                <kbd className="ml-1 text-xs opacity-60">⌘.</kbd>
-              </TooltipContent>
+              <TooltipContent side="right">Close sidebar</TooltipContent>
             </Tooltip>
           </div>
         )}
