@@ -19,3 +19,16 @@
     border-color: rgba(217, 120, 87, 0.8);
   }
 }
+
+/* Pulsing border and text animation for analyzing state */
+@keyframes pulse-border-text {
+  0%,
+  100% {
+    border-color: rgba(217, 120, 87, 0.4);
+    color: rgba(217, 120, 87, 0.6);
+  }
+  50% {
+    border-color: rgba(217, 120, 87, 0.8);
+    color: rgba(217, 120, 87, 1);
+  }
+}

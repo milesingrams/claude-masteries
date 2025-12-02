@@ -35,7 +35,10 @@ export function PromptInput({
   ...props
 }: PromptInputProps) {
   return (
-    <PromptProvider enableMasterySuggestions={enableMasterySuggestions} disabled={disabled}>
+    <PromptProvider
+      enableMasterySuggestions={enableMasterySuggestions}
+      disabled={disabled}
+    >
       <PromptInputInner
         onPromptSubmit={onPromptSubmit}
         disabled={disabled}
@@ -104,7 +107,8 @@ function PromptInputInner({
           <div
             className={cn(
               "bg-background overflow-hidden rounded-xl border shadow-lg transition-all",
-              !isShowMeStreaming && "border-border focus-within:border-foreground/20"
+              !isShowMeStreaming &&
+                "border-border focus-within:border-foreground/20"
             )}
             style={
               isShowMeStreaming
@@ -179,8 +183,22 @@ function PromptInputInner({
                           prompt.trim().length < MIN_PROMPT_LENGTH
                         }
                         onClick={triggerManualAnalysis}
+                        style={
+                          isAnalyzing
+                            ? {
+                                animation:
+                                  "pulse-border-text 1.5s ease-in-out infinite",
+                                borderColor: "rgba(217, 120, 87, 0.4)",
+                              }
+                            : undefined
+                        }
                       >
-                        <Brain className="text-muted-foreground h-4 w-4" />
+                        <Brain
+                          className={cn(
+                            "h-4 w-4",
+                            !isAnalyzing && "text-muted-foreground"
+                          )}
+                        />
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent>Prompt help</TooltipContent>
