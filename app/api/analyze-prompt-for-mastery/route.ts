@@ -1,8 +1,12 @@
 import { createAnthropic } from "@ai-sdk/anthropic";
-import { generateObject } from "ai";
+import { streamObject } from "ai";
 import { z } from "zod";
 import { masteries, type Mastery } from "@/lib/masteries";
 import { MIN_PROMPT_LENGTH } from "@/lib/constants";
+import {
+  analyzePromptResponseSchema,
+  type AnalyzePromptResponse,
+} from "./schema";
 
 const anthropic = createAnthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
@@ -17,36 +21,6 @@ const requestSchema = z.object({
   manual_mode: z.boolean().optional(),
 });
 
-// Shared surface schema
-const surfaceSchema = z.object({
-  mastery_id: z.string().nullable(),
-  suggestion_text: z.string(),
-  suggestion_description: z.string(),
-  suggestion_examples: z.array(z.string()),
-});
-
-// Manual mode: always returns a suggestion (mastery or custom)
-const manualModeSchema = z.object({
-  surface: surfaceSchema,
-});
-
-// Auto mode: checks maintained/satisfied, surface is optional
-const autoModeSchema = z.object({
-  surface: surfaceSchema.nullable(),
-  maintained: z.boolean(),
-  satisfied: z.boolean(),
-});
-
-type AnalyzePromptResponse = {
-  surface: {
-    mastery_id: string | null;
-    suggestion_text: string;
-    suggestion_description: string;
-    suggestion_examples: string[];
-  } | null;
-  maintained_id: string | null;
-  satisfied_id: string | null;
-};
 
 export const maxDuration = 15;
 
@@ -99,6 +73,12 @@ ${JSON.stringify(
 <instructions>
 The user explicitly requested prompt help. Find the most relevant mastery for this prompt, or generate a custom suggestion.
 
+Return:
+- surface: A mastery suggestion object (required - always provide a suggestion)
+- maintained_id: null (not applicable in manual mode)
+- satisfied_id: null (not applicable in manual mode)
+
+For the surface object:
 1. Look for a mastery whose surface_triggers match the prompt
 2. If a mastery matches, set mastery_id to that mastery's id
 3. If NO mastery clearly matches, you MUST still help:
@@ -156,26 +136,28 @@ ${JSON.stringify(
 }
 
 <instructions>
-Analyze the partial prompt:
+Analyze the partial prompt and return:
+- surface: A mastery suggestion object, or null if no clear match
+- maintained_id: ${activeMastery ? `Set to "${activeMastery.id}" if the active mastery is still relevant to the prompt, otherwise null` : "null (no active mastery)"}
+- satisfied_id: ${activeMastery ? `Set to "${activeMastery.id}" if the user has applied the technique (matches satisfaction_triggers), otherwise null` : "null (no active mastery)"}
+
 ${
   activeMastery
     ? `
-1. MAINTAINED: Is the active mastery still relevant?
-   Return true if the prompt still matches the active mastery's surface_triggers.
+The active mastery "${activeMastery.id}" should be:
+- MAINTAINED (set maintained_id to "${activeMastery.id}"): If the prompt still matches the active mastery's surface_triggers
+- SATISFIED (set satisfied_id to "${activeMastery.id}"): If the prompt clearly demonstrates the behavior or contains phrases from satisfaction_triggers
+  The user doesn't need to use exact phrases, but the intent should be clear.
 
-2. SATISFIED: Has the user applied the technique?
-   Return true if the prompt clearly demonstrates the behavior or contains phrases from satisfaction_triggers.
-   The user doesn't need to use exact phrases, but the intent should be clear.
-
-3. SURFACE (only if maintained is false):
+For SURFACE (only if the active mastery is NOT maintained):
 `
     : `
-1. SURFACE:
+For SURFACE:
 `
 }
    Find the single most relevant mastery for this prompt.
    Only surface if there's a clear match to surface_triggers.
-   Be very conservative - when in doubt, return null.
+   Be very conservative - when in doubt, return null for surface.
 ${suggestionInstructions}
 </instructions>`;
 }
@@ -221,34 +203,26 @@ export async function POST(req: Request) {
     }
 
     if (manual_mode) {
-      const { object } = await generateObject({
+      const result = streamObject({
         model: anthropic("claude-sonnet-4-5"),
-        schema: manualModeSchema,
+        schema: analyzePromptResponseSchema,
         prompt: buildManualModePrompt(partial_prompt, availableMasteries),
       });
-      return Response.json({
-        surface: object.surface,
-        maintained_id: null,
-        satisfied_id: null,
-      });
+
+      return result.toTextStreamResponse();
     }
 
-    const { object } = await generateObject({
+    const result = streamObject({
       model: anthropic("claude-sonnet-4-5"),
-      schema: autoModeSchema,
+      schema: analyzePromptResponseSchema,
       prompt: buildAutoModePrompt(
         partial_prompt,
         availableMasteries,
         active_mastery_id
       ),
     });
-    return Response.json({
-      surface: object.surface,
-      maintained_id:
-        object.maintained && active_mastery_id ? active_mastery_id : null,
-      satisfied_id:
-        object.satisfied && active_mastery_id ? active_mastery_id : null,
-    });
+
+    return result.toTextStreamResponse();
   } catch (error) {
     console.error("Error in analyze-prompt-for-mastery:", error);
     // Return empty response on error to avoid breaking the UI

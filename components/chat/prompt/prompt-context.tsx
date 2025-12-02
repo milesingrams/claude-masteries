@@ -11,22 +11,14 @@ import {
   type RefObject,
 } from "react";
 import { useDebounce } from "react-use";
-import { useCompletion } from "@ai-sdk/react";
+import { useCompletion, experimental_useObject as useObject } from "@ai-sdk/react";
 import type { ActiveMasteryChip } from "@/lib/masteries/types";
 import { useMasteryContext } from "@/lib/masteries/mastery-context";
 import { MIN_PROMPT_LENGTH } from "@/lib/constants";
-
-// Response type from analyze-prompt-for-mastery API
-type AnalyzePromptResponse = {
-  surface: {
-    mastery_id: string | null; // null for custom suggestions
-    suggestion_text: string;
-    suggestion_description: string;
-    suggestion_examples: string[];
-  } | null;
-  maintained_id: string | null;
-  satisfied_id: string | null;
-};
+import {
+  analyzePromptResponseSchema,
+  AnalyzePromptResponse,
+} from "@/app/api/analyze-prompt-for-mastery/schema";
 
 const DEBOUNCE_DELAY = 1000;
 
@@ -84,12 +76,67 @@ export function PromptProvider({
   // Analysis state
   const [activeMasteryChip, setActiveMasteryChip] =
     useState<ActiveMasteryChip | null>(null);
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [debouncedPrompt, setDebouncedPrompt] = useState("");
   const [suppressedIds, setSuppressedIds] = useState<string[]>([]);
 
   const lastAnalyzedPrompt = useRef<string>("");
-  const abortControllerRef = useRef<AbortController | null>(null);
+
+  // Handle analysis response - extracted to avoid closure issues with useObject
+  const handleAnalysisResponse = useCallback(
+    (data: AnalyzePromptResponse) => {
+      if (
+        data.maintained_id &&
+        activeMasteryChip?.mastery_id === data.maintained_id
+      ) {
+        return;
+      }
+
+      if (
+        data.satisfied_id &&
+        activeMasteryChip?.mastery_id === data.satisfied_id
+      ) {
+        const masteryId = activeMasteryChip?.mastery_id;
+        if (masteryId) {
+          markSatisfied(masteryId);
+          setSuppressedIds((prev) => [...prev, masteryId]);
+        }
+        setActiveMasteryChip((prev) =>
+          prev ? { ...prev, status: "satisfied" } : null
+        );
+        requestAnimationFrame(() => setActiveMasteryChip(null));
+      }
+
+      if (data.surface) {
+        setActiveMasteryChip({
+          mastery_id: data.surface.mastery_id,
+          surfaced_at: Date.now(),
+          status: "active",
+          suggestion_text: data.surface.suggestion_text,
+          suggestion_description: data.surface.suggestion_description,
+          suggestion_examples: data.surface.suggestion_examples,
+        });
+      }
+    },
+    [activeMasteryChip, markSatisfied]
+  );
+
+  // Prompt analysis with useObject
+  const {
+    submit: submitAnalysis,
+    isLoading: isAnalyzing,
+    stop: stopAnalysis,
+  } = useObject({
+    api: "/api/analyze-prompt-for-mastery",
+    schema: analyzePromptResponseSchema,
+    onFinish: ({ object }) => {
+      if (!object) return;
+
+      handleAnalysisResponse(object);
+    },
+    onError: (error) => {
+      console.error("Analysis error:", error);
+    },
+  });
 
   // Show me streaming
   const {
@@ -176,72 +223,26 @@ export function PromptProvider({
     }
   }, [originalPrompt]);
 
-  // Analyze the prompt
+  // Analyze the prompt using useObject's submit
   const analyzePrompt = useCallback(
-    async (promptToAnalyze: string, manual: boolean = false) => {
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort();
-      }
-      abortControllerRef.current = new AbortController();
+    (promptToAnalyze: string, manual: boolean = false) => {
+      // Stop any in-progress analysis
+      stopAnalysis();
 
-      setIsAnalyzing(true);
+      const activeMasteryId =
+        activeMasteryChip?.status === "active"
+          ? activeMasteryChip.mastery_id
+          : null;
 
-      try {
-        const activeMasteryId =
-          activeMasteryChip?.status === "active"
-            ? activeMasteryChip.mastery_id
-            : null;
-
-        const response = await fetch("/api/analyze-prompt-for-mastery", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            partial_prompt: promptToAnalyze,
-            active_mastery_id: activeMasteryId,
-            learned_mastery_ids: learnedMasteryIds,
-            suppressed_mastery_ids: suppressedIds,
-            manual_mode: manual,
-          }),
-          signal: abortControllerRef.current.signal,
-        });
-
-        if (!response.ok) throw new Error("Analysis failed");
-
-        const data: AnalyzePromptResponse = await response.json();
-
-        if (
-          data.maintained_id &&
-          activeMasteryChip?.mastery_id === data.maintained_id
-        ) {
-          return;
-        } else {
-          if (
-            data.satisfied_id &&
-            activeMasteryChip?.mastery_id === data.satisfied_id
-          ) {
-            satisfyMasteryChip();
-          }
-
-          if (data.surface) {
-            setActiveMasteryChip({
-              mastery_id: data.surface.mastery_id,
-              surfaced_at: Date.now(),
-              status: "active",
-              suggestion_text: data.surface.suggestion_text,
-              suggestion_description: data.surface.suggestion_description,
-              suggestion_examples: data.surface.suggestion_examples,
-            });
-          }
-        }
-      } catch (error) {
-        if ((error as Error).name !== "AbortError") {
-          console.error("Analysis error:", error);
-        }
-      } finally {
-        setIsAnalyzing(false);
-      }
+      submitAnalysis({
+        partial_prompt: promptToAnalyze,
+        active_mastery_id: activeMasteryId,
+        learned_mastery_ids: learnedMasteryIds,
+        suppressed_mastery_ids: suppressedIds,
+        manual_mode: manual,
+      });
     },
-    [activeMasteryChip, learnedMasteryIds, satisfyMasteryChip, suppressedIds]
+    [activeMasteryChip, learnedMasteryIds, suppressedIds, submitAnalysis, stopAnalysis]
   );
 
   // Manual analysis trigger (bypasses debounce and filtering)
