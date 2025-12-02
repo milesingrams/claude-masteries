@@ -228,7 +228,7 @@ export function PromptProvider({
 
   // Analyze the prompt using useObject's submit
   const analyzePrompt = useCallback(
-    (promptToAnalyze: string, manual: boolean = false) => {
+    (promptToAnalyze: string) => {
       // Stop any in-progress analysis
       stopAnalysis();
 
@@ -242,25 +242,39 @@ export function PromptProvider({
         active_mastery_id: activeMasteryId,
         learned_mastery_ids: learnedMasteryIds,
         suppressed_mastery_ids: suppressedIds,
-        manual_mode: manual,
+        manual_mode: false,
       });
     },
-    [
-      activeMasteryChip,
-      learnedMasteryIds,
-      suppressedIds,
-      submitAnalysis,
-      stopAnalysis,
-    ]
+    [activeMasteryChip, learnedMasteryIds, suppressedIds, submitAnalysis, stopAnalysis]
   );
 
   // Manual analysis trigger (bypasses debounce and filtering)
+  // Inlines dismiss logic to compute fresh values before API call
   const triggerManualAnalysis = useCallback(() => {
-    if (prompt.trim().length >= MIN_PROMPT_LENGTH) {
-      dismissMasteryChip(); // Clear existing chip before fresh analysis
-      analyzePrompt(prompt, true);
+    if (prompt.trim().length < MIN_PROMPT_LENGTH) return;
+
+    // Compute new state values before any async operations
+    const masteryId = activeMasteryChip?.mastery_id;
+    const newSuppressedIds = masteryId
+      ? [...suppressedIds, masteryId]
+      : suppressedIds;
+
+    // Update state for UI
+    if (masteryId) {
+      setSuppressedIds(newSuppressedIds);
     }
-  }, [prompt, analyzePrompt, dismissMasteryChip]);
+    setActiveMasteryChip(null);
+
+    // Stop any in-progress analysis and submit with fresh values
+    stopAnalysis();
+    submitAnalysis({
+      partial_prompt: prompt,
+      active_mastery_id: null, // We just dismissed
+      learned_mastery_ids: learnedMasteryIds,
+      suppressed_mastery_ids: newSuppressedIds,
+      manual_mode: true,
+    });
+  }, [prompt, activeMasteryChip, suppressedIds, learnedMasteryIds, stopAnalysis, submitAnalysis]);
 
   // Trigger analysis when debounced prompt changes
   useEffect(() => {
