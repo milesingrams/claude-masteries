@@ -19,7 +19,7 @@ import {
   type AnalyzePromptResponse,
 } from "@/app/api/analyze-prompt-for-mastery/schema";
 
-const DEBOUNCE_DELAY = 800;
+const ANALYZE_PROMPT_DEBOUNCE_DELAY = 800;
 
 interface PromptContextValue {
   // Prompt state
@@ -194,7 +194,6 @@ export function PromptProvider({
     },
   });
 
-
   // Mastery chip management
   const dismissMasteryChip = useCallback(() => {
     const masteryId = activeMasteryChip?.mastery_id;
@@ -347,7 +346,7 @@ export function PromptProvider({
         debounceTimerRef.current = setTimeout(() => {
           lastAnalyzedPrompt.current = value;
           analyzePrompt(value);
-        }, DEBOUNCE_DELAY);
+        }, ANALYZE_PROMPT_DEBOUNCE_DELAY);
       }
     },
     [enableMasterySuggestions, disabled, analyzePrompt]
