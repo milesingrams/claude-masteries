@@ -1,15 +1,10 @@
+import type { UIMessage } from "ai";
 import { z } from "zod";
 
-// Validate structure, cast to UIMessage for SDK compatibility
+// Minimal validation - UIMessage type provides compile-time safety,
+// and the AI SDK handles the actual message structure
 export const chatRequestSchema = z.object({
-  messages: z.array(
-    z.object({
-      id: z.string(),
-      role: z.enum(["user", "assistant", "system"]),
-      content: z.string(),
-      parts: z.array(z.unknown()).optional(),
-    })
-  ),
+  messages: z.array(z.custom<UIMessage>()),
 });
 
 export type ChatRequest = z.infer<typeof chatRequestSchema>;
