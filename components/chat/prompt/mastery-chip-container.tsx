@@ -14,8 +14,13 @@ export function MasteryChipContainer({
   const { getMasteryDisplay } = useMasteryContext();
   const { activeMasteryChip } = usePromptContext();
 
-  const display = activeMasteryChip ? getMasteryDisplay(activeMasteryChip.mastery_id) : null;
-  const isVisible = activeMasteryChip && display;
+  // Get display data if we have a real mastery_id (null for custom suggestions)
+  const display = activeMasteryChip?.mastery_id
+    ? getMasteryDisplay(activeMasteryChip.mastery_id)
+    : undefined;
+
+  // Show chip if we have an active chip (with or without display data for custom suggestions)
+  const isVisible = !!activeMasteryChip;
 
   return (
     <div
@@ -25,7 +30,7 @@ export function MasteryChipContainer({
       <AnimatePresence mode="popLayout">
         {isVisible && (
           <motion.div
-            key={activeMasteryChip.mastery_id}
+            key={activeMasteryChip.mastery_id ?? "custom"}
             layout
             initial={{ opacity: 0, filter: "blur(4px)", scale: 0.95 }}
             animate={{ opacity: 1, filter: "blur(0px)", scale: 1 }}

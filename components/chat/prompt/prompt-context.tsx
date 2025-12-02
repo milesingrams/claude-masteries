@@ -19,7 +19,7 @@ import { MIN_PROMPT_LENGTH } from "@/lib/constants";
 // Response type from analyze-prompt-for-mastery API
 type AnalyzePromptResponse = {
   surface: {
-    mastery_id: string;
+    mastery_id: string | null; // null for custom suggestions
     suggestion_text: string;
     suggestion_description: string;
     suggestion_examples: string[];
@@ -50,7 +50,7 @@ interface PromptContextValue {
   satisfyMasteryChip: () => void;
   resetSession: () => void;
   handleMasteryDemonstration: (params: {
-    masteryId: string;
+    masteryId: string | null;
     suggestionText: string;
     suggestionDescription: string;
   }) => Promise<void>;
@@ -118,16 +118,18 @@ export function PromptProvider({
 
   // Mastery chip management
   const dismissMasteryChip = useCallback(() => {
-    if (activeMasteryChip) {
-      setSuppressedIds((prev) => [...prev, activeMasteryChip.mastery_id]);
+    const masteryId = activeMasteryChip?.mastery_id;
+    if (masteryId) {
+      setSuppressedIds((prev) => [...prev, masteryId]);
     }
     setActiveMasteryChip(null);
   }, [activeMasteryChip]);
 
   const satisfyMasteryChip = useCallback(() => {
-    if (activeMasteryChip) {
-      markSatisfied(activeMasteryChip.mastery_id);
-      setSuppressedIds((prev) => [...prev, activeMasteryChip.mastery_id]);
+    const masteryId = activeMasteryChip?.mastery_id;
+    if (masteryId) {
+      markSatisfied(masteryId);
+      setSuppressedIds((prev) => [...prev, masteryId]);
     }
     setActiveMasteryChip((prev) =>
       prev ? { ...prev, status: "satisfied" } : null
@@ -146,11 +148,13 @@ export function PromptProvider({
       suggestionText,
       suggestionDescription,
     }: {
-      masteryId: string;
+      masteryId: string | null;
       suggestionText: string;
       suggestionDescription: string;
     }): Promise<void> => {
       setOriginalPrompt(prompt);
+
+      // For custom suggestions (null mastery_id), just dismiss instead of tracking satisfaction
       satisfyMasteryChip();
 
       await triggerShowMe(prompt, {
@@ -243,10 +247,10 @@ export function PromptProvider({
   // Manual analysis trigger (bypasses debounce and filtering)
   const triggerManualAnalysis = useCallback(() => {
     if (prompt.trim().length >= MIN_PROMPT_LENGTH) {
-      setActiveMasteryChip(null); // Clear existing chip before fresh analysis
+      dismissMasteryChip(); // Clear existing chip before fresh analysis
       analyzePrompt(prompt, true);
     }
-  }, [prompt, analyzePrompt]);
+  }, [prompt, analyzePrompt, dismissMasteryChip]);
 
   // Trigger analysis when debounced prompt changes
   useEffect(() => {

@@ -12,7 +12,7 @@ export interface MasteryDisplayData {
 export type MasteryChipStatus = "active" | "satisfied";
 
 export interface ActiveMasteryChip {
-  mastery_id: string;
+  mastery_id: string | null; // null for custom suggestions (not tied to a mastery)
   surfaced_at: number;
   status: MasteryChipStatus;
   suggestion_text?: string;

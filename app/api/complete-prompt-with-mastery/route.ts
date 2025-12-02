@@ -8,11 +8,12 @@ const anthropic = createAnthropic({
 });
 
 // Request schema - supports both 'prompt' (from useCompletion) and 'original_prompt'
+// mastery_id is optional - null/missing indicates a custom suggestion
 const requestSchema = z
   .object({
     prompt: z.string().optional(),
     original_prompt: z.string().optional(),
-    mastery_id: z.string(),
+    mastery_id: z.string().nullable().optional(),
     suggestion_text: z.string(),
     suggestion_description: z.string(),
   })
@@ -40,12 +41,16 @@ export async function POST(req: Request) {
     } = parsed.data;
     const userPrompt = (original_prompt || inputPrompt)!;
 
-    const mastery = getMasteryById(mastery_id);
-    if (!mastery) {
-      return new Response("Mastery not found", { status: 404 });
+    // Build technique section - only include Name if we have a real mastery
+    let techniqueSection = "";
+    if (mastery_id) {
+      const mastery = getMasteryById(mastery_id);
+      if (!mastery) {
+        return new Response("Mastery not found", { status: 404 });
+      }
+      const { category, name } = parseIdParts(mastery_id);
+      techniqueSection = `Name: ${category} / ${name}`;
     }
-
-    const { category, name } = parseIdParts(mastery_id);
 
     const prompt = `
 <original_prompt>
@@ -53,7 +58,7 @@ ${userPrompt}
 </original_prompt>
 
 <technique>
-Name: ${category} / ${name}
+${techniqueSection}
 Suggestion: ${suggestion_text}
 Description: ${suggestion_description}
 </technique>

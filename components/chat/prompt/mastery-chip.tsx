@@ -10,7 +10,7 @@ import type { ActiveMasteryChip, MasteryDisplayData } from "@/lib/masteries/type
 
 interface MasteryChipProps {
   chip: ActiveMasteryChip;
-  display: MasteryDisplayData;
+  display?: MasteryDisplayData; // Optional - not present for custom suggestions
 }
 
 export function MasteryChip({ chip, display }: MasteryChipProps) {
@@ -21,7 +21,7 @@ export function MasteryChip({ chip, display }: MasteryChipProps) {
 
   const isSatisfied = chip.status === "satisfied";
 
-  const formattedCategoryName = `${display.category} / ${display.name}`;
+  const formattedCategoryName = display ? `${display.category} / ${display.name}` : null;
 
   // Click outside to collapse
   useEffect(() => {
@@ -88,7 +88,7 @@ export function MasteryChip({ chip, display }: MasteryChipProps) {
 
         {/* Chip text */}
         <div className="text-muted-foreground flex-1 text-xs whitespace-nowrap">
-          {isSatisfied ? formattedCategoryName : chip.suggestion_text}
+          {isSatisfied ? (formattedCategoryName || "Applied suggestion") : chip.suggestion_text}
         </div>
 
         {/* Actions */}
@@ -117,7 +117,7 @@ export function MasteryChip({ chip, display }: MasteryChipProps) {
           >
             <div className="border-border/30 border-t px-2 py-1.5">
               <p className="text-muted-foreground/80 text-[12px] leading-relaxed">
-                {chip.suggestion_description || display.detail}
+                {chip.suggestion_description || display?.detail}
               </p>
               {chip.suggestion_examples && chip.suggestion_examples.length > 0 && (
                 <div className="mt-1.5 space-y-1">
@@ -131,10 +131,12 @@ export function MasteryChip({ chip, display }: MasteryChipProps) {
                   ))}
                 </div>
               )}
-              <div className="mt-1.5 flex items-center justify-between">
-                <p className="text-muted-foreground/50 text-[10px]">
-                  {formattedCategoryName}
-                </p>
+              <div className="mt-1.5 flex items-center justify-end">
+                {formattedCategoryName && (
+                  <p className="text-muted-foreground/50 mr-auto text-[10px]">
+                    {formattedCategoryName}
+                  </p>
+                )}
                 <Button
                   variant="ghost"
                   size="sm"
