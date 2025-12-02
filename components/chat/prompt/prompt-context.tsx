@@ -23,7 +23,7 @@ import {
   type AnalyzePromptResponse,
 } from "@/app/api/analyze-prompt-for-mastery/schema";
 
-const DEBOUNCE_DELAY = 1000;
+const DEBOUNCE_DELAY = 800;
 
 interface PromptContextValue {
   // Prompt state
@@ -245,7 +245,13 @@ export function PromptProvider({
         manual_mode: false,
       });
     },
-    [activeMasteryChip, learnedMasteryIds, suppressedIds, submitAnalysis, stopAnalysis]
+    [
+      activeMasteryChip,
+      learnedMasteryIds,
+      suppressedIds,
+      submitAnalysis,
+      stopAnalysis,
+    ]
   );
 
   // Manual analysis trigger (bypasses debounce and filtering)
@@ -274,7 +280,14 @@ export function PromptProvider({
       suppressed_mastery_ids: newSuppressedIds,
       manual_mode: true,
     });
-  }, [prompt, activeMasteryChip, suppressedIds, learnedMasteryIds, stopAnalysis, submitAnalysis]);
+  }, [
+    prompt,
+    activeMasteryChip,
+    suppressedIds,
+    learnedMasteryIds,
+    stopAnalysis,
+    submitAnalysis,
+  ]);
 
   // Trigger analysis when debounced prompt changes
   useEffect(() => {
