@@ -232,14 +232,23 @@ export function PromptProvider({
       // Stop any in-progress analysis
       stopAnalysis();
 
-      const activeMasteryId =
-        activeMasteryChip?.status === "active"
-          ? activeMasteryChip.mastery_id
+      // Build active chip payload for satisfaction detection
+      const activeChipPayload =
+        activeMasteryChip?.status === "active" &&
+        activeMasteryChip.suggestion_text &&
+        activeMasteryChip.suggestion_description &&
+        activeMasteryChip.suggestion_examples
+          ? {
+              mastery_id: activeMasteryChip.mastery_id,
+              suggestion_text: activeMasteryChip.suggestion_text,
+              suggestion_description: activeMasteryChip.suggestion_description,
+              suggestion_examples: activeMasteryChip.suggestion_examples,
+            }
           : null;
 
       submitAnalysis({
         partial_prompt: promptToAnalyze,
-        active_mastery_id: activeMasteryId,
+        active_mastery_chip: activeChipPayload,
         learned_mastery_ids: learnedMasteryIds,
         suppressed_mastery_ids: suppressedIds,
         manual_mode: false,
@@ -275,7 +284,7 @@ export function PromptProvider({
     stopAnalysis();
     submitAnalysis({
       partial_prompt: prompt,
-      active_mastery_id: null, // We just dismissed
+      active_mastery_chip: null, // We just dismissed
       learned_mastery_ids: learnedMasteryIds,
       suppressed_mastery_ids: newSuppressedIds,
       manual_mode: true,

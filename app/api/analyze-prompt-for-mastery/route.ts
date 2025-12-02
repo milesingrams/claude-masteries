@@ -12,10 +12,18 @@ const anthropic = createAnthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
 });
 
+// Active chip schema for satisfaction detection
+const activeChipSchema = z.object({
+  mastery_id: z.string().nullable(),
+  suggestion_text: z.string(),
+  suggestion_description: z.string(),
+  suggestion_examples: z.array(z.string()),
+});
+
 // Request schema
 const requestSchema = z.object({
   partial_prompt: z.string(),
-  active_mastery_id: z.string().nullable(),
+  active_mastery_chip: activeChipSchema.nullable(),
   learned_mastery_ids: z.array(z.string()).optional(),
   suppressed_mastery_ids: z.array(z.string()).optional(),
   manual_mode: z.boolean().optional(),
@@ -89,16 +97,15 @@ ${suggestionInstructions}
 </instructions>`;
 }
 
+// Active chip type for the prompt builder
+type ActiveChip = z.infer<typeof activeChipSchema>;
+
 // Auto mode: Debounced analysis - check maintained/satisfied, only surface if clear match
 function buildAutoModePrompt(
   partialPrompt: string,
   availableMasteries: Mastery[],
-  activeMasteryId: string | null
+  activeChip: ActiveChip | null
 ): string {
-  const activeMastery = activeMasteryId
-    ? masteries.find((m) => m.id === activeMasteryId)
-    : null;
-
   return `
 <partial_prompt>
 ${partialPrompt}
@@ -117,19 +124,20 @@ ${JSON.stringify(
 </masteries>
 
 ${
-  activeMastery
+  activeChip
     ? `
-<active_mastery>
+<active_suggestion>
 ${JSON.stringify(
   {
-    id: activeMastery.id,
-    surface_triggers: activeMastery.surface_triggers,
-    satisfaction_triggers: activeMastery.satisfaction_triggers,
+    mastery_id: activeChip.mastery_id,
+    suggestion_text: activeChip.suggestion_text,
+    suggestion_description: activeChip.suggestion_description,
+    suggestion_examples: activeChip.suggestion_examples,
   },
   null,
   2
 )}
-</active_mastery>
+</active_suggestion>
 `
     : ""
 }
@@ -137,18 +145,20 @@ ${JSON.stringify(
 <instructions>
 Analyze the partial prompt and return:
 - surface: A mastery suggestion object, or null if no clear match
-- maintained_id: ${activeMastery ? `Set to "${activeMastery.id}" if the active mastery is still relevant to the prompt, otherwise null` : "null (no active mastery)"}
-- satisfied_id: ${activeMastery ? `Set to "${activeMastery.id}" if the user has applied the technique (matches satisfaction_triggers), otherwise null` : "null (no active mastery)"}
+- maintained_id: ${activeChip?.mastery_id ? `Set to "${activeChip.mastery_id}" if the active suggestion is still relevant to the prompt, otherwise null` : "null (no active suggestion)"}
+- satisfied_id: ${activeChip?.mastery_id ? `Set to "${activeChip.mastery_id}" if the user has applied the suggested technique, otherwise null` : "null (no active suggestion)"}
 
 ${
-  activeMastery
+  activeChip
     ? `
-The active mastery "${activeMastery.id}" should be:
-- MAINTAINED (set maintained_id to "${activeMastery.id}"): If the prompt still matches the active mastery's surface_triggers
-- SATISFIED (set satisfied_id to "${activeMastery.id}"): If the prompt clearly demonstrates the behavior or contains phrases from satisfaction_triggers
+The active suggestion should be:
+- MAINTAINED (set maintained_id to "${activeChip.mastery_id}"): If the prompt context hasn't changed significantly and the suggestion is still relevant
+- SATISFIED (set satisfied_id to "${activeChip.mastery_id}"): If the user has applied the technique. Check if the prompt now includes:
+  - Content similar to the suggestion_examples: ${JSON.stringify(activeChip.suggestion_examples)}
+  - Or otherwise demonstrates the behavior described in: "${activeChip.suggestion_description}"
   The user doesn't need to use exact phrases, but the intent should be clear.
 
-For SURFACE (only if the active mastery is NOT maintained):
+For SURFACE (only if the active suggestion is NOT maintained):
 `
     : `
 For SURFACE:
@@ -172,7 +182,7 @@ export async function POST(req: Request) {
 
     const {
       partial_prompt,
-      active_mastery_id,
+      active_mastery_chip,
       learned_mastery_ids,
       suppressed_mastery_ids,
       manual_mode,
@@ -217,7 +227,7 @@ export async function POST(req: Request) {
       prompt: buildAutoModePrompt(
         partial_prompt,
         availableMasteries,
-        active_mastery_id
+        active_mastery_chip
       ),
     });
 
