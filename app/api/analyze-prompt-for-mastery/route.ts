@@ -21,7 +21,6 @@ const requestSchema = z.object({
   manual_mode: z.boolean().optional(),
 });
 
-
 export const maxDuration = 15;
 
 // Shared suggestion generation instructions
@@ -204,7 +203,7 @@ export async function POST(req: Request) {
 
     if (manual_mode) {
       const result = streamObject({
-        model: anthropic("claude-sonnet-4-5"),
+        model: anthropic("claude-haiku-4-5"),
         schema: analyzePromptResponseSchema,
         prompt: buildManualModePrompt(partial_prompt, availableMasteries),
       });
@@ -213,7 +212,7 @@ export async function POST(req: Request) {
     }
 
     const result = streamObject({
-      model: anthropic("claude-sonnet-4-5"),
+      model: anthropic("claude-haiku-4-5"),
       schema: analyzePromptResponseSchema,
       prompt: buildAutoModePrompt(
         partial_prompt,
