@@ -27,7 +27,7 @@ export async function POST(req: Request) {
       messages: [
         {
           role: "user",
-          content: `Based on this conversation, generate a concise 3-5 word title that captures the main topic:
+          content: `Based on this conversation, generate a concise title that captures the main topic:
 
 User: ${firstUserMessage}
 Assistant: ${firstAssistantMessage}

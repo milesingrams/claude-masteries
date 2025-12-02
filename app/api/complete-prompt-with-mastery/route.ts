@@ -31,7 +31,13 @@ export async function POST(req: Request) {
       return new Response(parsed.error.message, { status: 400 });
     }
 
-    const { prompt: inputPrompt, original_prompt, mastery_id, suggestion_text, suggestion_description } = parsed.data;
+    const {
+      prompt: inputPrompt,
+      original_prompt,
+      mastery_id,
+      suggestion_text,
+      suggestion_description,
+    } = parsed.data;
     const userPrompt = (original_prompt || inputPrompt)!;
 
     const mastery = getMasteryById(mastery_id);
@@ -41,10 +47,7 @@ export async function POST(req: Request) {
 
     const { category, name } = parseIdParts(mastery_id);
 
-    const prompt = `<task>
-Generate text to append to the user's prompt that demonstrates a specific prompting technique.
-</task>
-
+    const prompt = `
 <original_prompt>
 ${userPrompt}
 </original_prompt>
@@ -56,9 +59,11 @@ Description: ${suggestion_description}
 </technique>
 
 <instructions>
+Generate text to append to the user's prompt that demonstrates a specific prompting technique.
 Output ONLY the text to append to the user's prompt.
 
 CRITICAL:
+- It must be as if it was written by the user, not by Claude.
 - Do NOT invent specific details, constraints, examples, or context the user hasn't provided
 - Use [bracketed placeholders] for any specifics you don't know
 - For example: "Keep it under [X words] and make the tone [formal/casual]"

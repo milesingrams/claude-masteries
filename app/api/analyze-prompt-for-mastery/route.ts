@@ -49,7 +49,8 @@ function toResponse(
 ): AnalyzePromptResponse {
   return {
     surface: result.surface,
-    maintained_id: result.maintained && activeMasteryId ? activeMasteryId : null,
+    maintained_id:
+      result.maintained && activeMasteryId ? activeMasteryId : null,
     satisfied_id: result.satisfied && activeMasteryId ? activeMasteryId : null,
   };
 }
@@ -103,7 +104,8 @@ export async function POST(req: Request) {
       ? masteries.find((m) => m.id === active_mastery_id)
       : null;
 
-    const prompt = `<partial_prompt>
+    const prompt = `
+<partial_prompt>
 ${partial_prompt}
 </partial_prompt>
 
@@ -189,6 +191,6 @@ Example for a user writing about email:
       surface: null,
       maintained_id: null,
       satisfied_id: null,
-    } satisfies AnalyzePromptResponse);
+    } as AnalyzePromptResponse);
   }
 }
