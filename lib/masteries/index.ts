@@ -16,6 +16,7 @@ import webSearch from "@/masteries/web-search.json";
 
 export interface Mastery {
   id: string;
+  icon: string;
   learning_threshold: number;
   title: string;
   surface_triggers: string;

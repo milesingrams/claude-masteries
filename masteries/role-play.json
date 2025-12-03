@@ -1,5 +1,6 @@
 {
   "id": "interaction-patterns/role-play",
+  "icon": "Theater",
   "learning_threshold": 3,
   "title": "Claude could respond as someone specific",
   "detail": "Claude can simulate perspectives—a skeptical investor, a confused customer, a tough editor, your future self. This lets you rehearse conversations, stress-test pitches, or get feedback through a specific lens. The persona shapes what Claude notices and how it responds.",

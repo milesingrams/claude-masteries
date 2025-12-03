@@ -1,5 +1,6 @@
 {
   "id": "interaction-patterns/thinking-partner",
+  "icon": "Brain",
   "learning_threshold": 3,
   "title": "You could think through this with Claude, not just get an answer",
   "detail": "Claude doesn't have to be an answer machine. You can use it as a thinking partner—someone to explore ideas with, surface considerations you missed, and help you reason through complexity. The goal isn't always an answer; sometimes it's clarity.",

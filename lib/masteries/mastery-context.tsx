@@ -31,6 +31,7 @@ const staticMasteryDisplayData: Record<string, MasteryDisplayData> = masteries.r
       title: m.title,
       detail: m.detail,
       learning_threshold: m.learning_threshold,
+      icon: m.icon,
     };
     return acc;
   },

@@ -1,5 +1,6 @@
 {
   "id": "meta/prompt-critique",
+  "icon": "MessageSquareText",
   "learning_threshold": 3,
   "title": "Claude could help you ask this better",
   "detail": "Claude can help you prompt Claude. If you're not sure how to ask something, ask Claude to improve your question before answering it. You'll learn what makes prompts effective while getting better results. Meta-prompting is a skill that compounds.",

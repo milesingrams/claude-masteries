@@ -1,5 +1,6 @@
 {
   "id": "meta/self-critique",
+  "icon": "Search",
   "learning_threshold": 3,
   "title": "You could ask Claude to critique its own response",
   "detail": "Claude can evaluate its own work with surprising honesty. Asking 'what might be wrong with this?' or 'what did you miss?' often surfaces blind spots, assumptions, or alternatives that weren't in the first response. It's like getting a second opinion for free.",

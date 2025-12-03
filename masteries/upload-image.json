@@ -1,5 +1,6 @@
 {
   "id": "capabilities/upload-image",
+  "icon": "Image",
   "learning_threshold": 3,
   "title": "Claude could look at this directly",
   "detail": "A picture is worth a thousand words—and Claude can see them. Screenshots, diagrams, photos, charts—upload them directly and ask Claude to interpret, analyze, or respond. Describing visual content takes effort and loses detail; sharing it is instant and complete.",

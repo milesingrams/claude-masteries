@@ -1,5 +1,6 @@
 {
   "id": "interaction-patterns/socratic-mode",
+  "icon": "CircleHelp",
   "learning_threshold": 3,
   "title": "What if Claude asked the questions first?",
   "detail": "Asking Claude to interview you before solving flips the dynamic. Instead of guessing what you need, Claude surfaces your assumptions, constraints, and hidden requirements. You often discover you were asking the wrong question entirely.",

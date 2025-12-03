@@ -1,5 +1,6 @@
 {
   "id": "prompt-craft/context-loading",
+  "icon": "FileText",
   "learning_threshold": 3,
   "title": "What context would help Claude here?",
   "detail": "Claude knows nothing about your specific situation until you share it. A few sentences of context—what you've tried, why this matters, what constraints you're under—transforms generic advice into targeted help. Context is the difference between useful and useless.",

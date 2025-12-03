@@ -6,6 +6,7 @@ export interface MasteryDisplayData {
   title: string;
   detail: string;
   learning_threshold: number;
+  icon: string;
 }
 
 // Active mastery chip state

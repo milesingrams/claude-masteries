@@ -1,5 +1,6 @@
 {
   "id": "prompt-craft/examples-in-prompt",
+  "icon": "Lightbulb",
   "learning_threshold": 3,
   "title": "You could show Claude what good looks like",
   "detail": "Describing what you want is hard. Showing it is easy. Including an example—a sentence in the right tone, a snippet in the right format, a reference to match—gives Claude a target to aim for. One good example is worth a hundred words of description.",

@@ -1,5 +1,6 @@
 {
   "id": "prompt-craft/role-framing",
+  "icon": "UserCog",
   "learning_threshold": 3,
   "title": "Who should Claude be for this?",
   "detail": "The same question yields different answers depending on who's answering. Asking Claude to respond 'as a senior engineer' vs 'as a product manager' vs 'as a skeptical customer' shapes what it prioritizes, notices, and recommends. The frame is part of the prompt.",

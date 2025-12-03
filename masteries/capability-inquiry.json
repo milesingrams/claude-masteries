@@ -1,5 +1,6 @@
 {
   "id": "meta/capability-inquiry",
+  "icon": "HelpCircle",
   "learning_threshold": 3,
   "title": "You could ask Claude what's possible here",
   "detail": "When you're not sure what's possible, ask. Claude can explain its capabilities, suggest approaches, or tell you what information would help it help you. Turning Claude into a guide to its own abilities unlocks possibilities you didn't know existed.",

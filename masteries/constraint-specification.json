@@ -1,5 +1,6 @@
 {
   "id": "prompt-craft/constraint-specification",
+  "icon": "SlidersHorizontal",
   "learning_threshold": 3,
   "title": "What constraints matter here?",
   "detail": "Constraints aren't limitations—they're creative fuel. Telling Claude the format, length, tone, audience, or what to avoid focuses the response dramatically. The more specific your boundaries, the less Claude has to guess.",
