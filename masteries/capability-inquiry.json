@@ -4,6 +4,5 @@
   "learning_threshold": 3,
   "title": "You could ask Claude what's possible here",
   "detail": "When you're not sure what's possible, ask. Claude can explain its capabilities, suggest approaches, or tell you what information would help it help you. Turning Claude into a guide to its own abilities unlocks possibilities you didn't know existed.",
-  "surface_triggers": "User seems unsure how to approach a problem. User asks something that could be done multiple ways. User might not know what Claude can do. Task is open-ended or exploratory. User is new to a type of request.",
-  "satisfaction_triggers": "User asks Claude what it can do or how it would approach something. User asks Claude what it needs to help effectively. Phrases: what can you do, how would you approach, what do you need from me, what are my options, how could you help with, what's possible, what would you suggest."
+  "surface_triggers": "User seems unsure how to approach a problem. User asks something that could be done multiple ways. User might not know what Claude can do. Task is open-ended or exploratory. User is new to a type of request."
 }

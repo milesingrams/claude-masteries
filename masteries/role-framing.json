@@ -4,6 +4,5 @@
   "learning_threshold": 3,
   "title": "Who should Claude be for this?",
   "detail": "The same question yields different answers depending on who's answering. Asking Claude to respond 'as a senior engineer' vs 'as a product manager' vs 'as a skeptical customer' shapes what it prioritizes, notices, and recommends. The frame is part of the prompt.",
-  "surface_triggers": "User asks for expert-level help in a specific domain. Task would benefit from a particular perspective. User hasn't specified what kind of expertise they need. Response could vary significantly based on framing.",
-  "satisfaction_triggers": "User tells Claude what role, expertise, or perspective to adopt. User frames the request with a specific lens. Phrases: as a, from the perspective of, like you're a, imagine you're, as an expert in, with the mindset of, thinking like a, you are a."
+  "surface_triggers": "User asks for expert-level help in a specific domain. Task would benefit from a particular perspective. User hasn't specified what kind of expertise they need. Response could vary significantly based on framing."
 }
