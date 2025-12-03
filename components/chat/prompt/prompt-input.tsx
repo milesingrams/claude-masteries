@@ -169,7 +169,7 @@ function PromptInputInner({
                         onClick={handleRevert}
                       >
                         <Undo2 className="mr-1 h-3.5 w-3.5" />
-                        Revert
+                        Undo Suggestions
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent>Restore original prompt</TooltipContent>
