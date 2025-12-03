@@ -61,7 +61,26 @@ export function MasteryProvider({ children }: { children: ReactNode }) {
 
   // Load progress from localStorage on mount
   useEffect(() => {
-    setProgress(loadProgress());
+    const stored = loadProgress();
+    // DEBUG: Add learned masteries for testing
+    const debugProgress: MasteryProgressStore = {
+      ...stored,
+      "capabilities/web-search": {
+        mastery_id: "capabilities/web-search",
+        satisfaction_count: 3,
+        learned: true,
+        first_seen_at: Date.now(),
+        last_satisfied_at: Date.now(),
+      },
+      "capabilities/upload-image": {
+        mastery_id: "capabilities/upload-image",
+        satisfaction_count: 3,
+        learned: true,
+        first_seen_at: Date.now(),
+        last_satisfied_at: Date.now(),
+      },
+    };
+    setProgress(debugProgress);
   }, []);
 
   // Save progress whenever it changes
