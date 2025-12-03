@@ -34,7 +34,7 @@ export function MessageList({ messages, isLoading }: MessageListProps) {
     <div ref={containerRef} className="flex-1 px-4">
       <div
         className="mx-auto max-w-3xl space-y-2 py-4"
-        style={{ paddingBottom: inputContainerHeight || 96 }}
+        style={{ paddingBottom: (inputContainerHeight || 50) + 16 }}
       >
         {messages.map((message) =>
           message.role === "user" ? (
@@ -51,7 +51,11 @@ export function MessageList({ messages, isLoading }: MessageListProps) {
           <div className="flex w-full px-3 py-2">
             <ClaudeLogo
               size={28}
-              style={isLoading ? { animation: "pulse-scale 1.2s ease-in-out infinite" } : undefined}
+              style={
+                isLoading
+                  ? { animation: "pulse-scale 1.2s ease-in-out infinite" }
+                  : undefined
+              }
             />
           </div>
         )}

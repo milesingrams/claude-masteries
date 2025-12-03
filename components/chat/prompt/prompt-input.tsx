@@ -131,13 +131,14 @@ function PromptInputInner({
               placeholder={placeholder}
               disabled={disabled || isShowMeStreaming}
               autoFocus
-              minHeight={60}
+              minHeight={50}
               maxHeight="50vh"
-              className="w-full rounded-md border-0 bg-transparent px-3 py-3 text-base text-foreground placeholder:text-muted-foreground shadow-none outline-none transition-[color,box-shadow] focus-visible:ring-0 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50 md:text-base dark:bg-transparent"
+              className="text-foreground placeholder:text-muted-foreground w-full rounded-md border-0 bg-transparent px-3 py-3 text-base shadow-none transition-[color,box-shadow] outline-none focus-visible:ring-0 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50 md:text-base dark:bg-transparent"
               onKeyDown={(e: React.KeyboardEvent<HTMLTextAreaElement>) => {
                 // On mobile/touch devices, allow Enter for new lines
                 // On desktop, Enter submits (Shift+Enter for new line)
-                const isTouchDevice = "ontouchstart" in window || navigator.maxTouchPoints > 0;
+                const isTouchDevice =
+                  "ontouchstart" in window || navigator.maxTouchPoints > 0;
                 if (e.key === "Enter" && !e.shiftKey && !isTouchDevice) {
                   e.preventDefault();
                   handleSubmit(e);
