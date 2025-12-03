@@ -6,7 +6,7 @@ import { useMasteryContext } from "@/lib/masteries/mastery-context";
 import { MasteryTimelineItem } from "./mastery-timeline-item";
 import type { MasteryDisplayData } from "@/lib/masteries/types";
 
-const gridVariants = {
+const gridMotionVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
@@ -16,7 +16,7 @@ const gridVariants = {
   },
 };
 
-const columnVariants = {
+const columnMotionVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
@@ -54,7 +54,7 @@ export function MasteriesGrid() {
   return (
     <motion.div
       className="flex flex-1 flex-col gap-8 md:flex-row"
-      variants={gridVariants}
+      variants={gridMotionVariants}
       initial="hidden"
       animate="visible"
     >
@@ -64,7 +64,7 @@ export function MasteriesGrid() {
           <motion.div
             key={category}
             className="flex w-full shrink-0 flex-col md:w-72"
-            variants={columnVariants}
+            variants={columnMotionVariants}
           >
             {/* Category header */}
             <h2 className="text-foreground/80 mb-4 text-sm font-semibold">
