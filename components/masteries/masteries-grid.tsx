@@ -6,12 +6,22 @@ import { useMasteryContext } from "@/lib/masteries/mastery-context";
 import { MasteryTimelineItem } from "./mastery-timeline-item";
 import type { MasteryDisplayData } from "@/lib/masteries/types";
 
-const containerVariants = {
+const gridVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.08,
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+const columnVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
     },
   },
 };
@@ -42,23 +52,27 @@ export function MasteriesGrid() {
   const categories = Object.keys(categorizedMasteries).sort();
 
   return (
-    <div className="flex flex-1 flex-col gap-8 md:flex-row">
+    <motion.div
+      className="flex flex-1 flex-col gap-8 md:flex-row"
+      variants={gridVariants}
+      initial="hidden"
+      animate="visible"
+    >
       {categories.map((category) => {
         const masteries = categorizedMasteries[category];
         return (
-          <div key={category} className="flex w-full shrink-0 flex-col md:w-72">
+          <motion.div
+            key={category}
+            className="flex w-full shrink-0 flex-col md:w-72"
+            variants={columnVariants}
+          >
             {/* Category header */}
             <h2 className="text-foreground/80 mb-4 text-sm font-semibold">
               {category}
             </h2>
 
             {/* Timeline for this category */}
-            <motion.div
-              className="flex flex-col"
-              variants={containerVariants}
-              initial="hidden"
-              animate="visible"
-            >
+            <div className="flex flex-col">
               {masteries.map((mastery, index) => (
                 <MasteryTimelineItem
                   key={mastery.id}
@@ -67,10 +81,10 @@ export function MasteriesGrid() {
                   isLast={index === masteries.length - 1}
                 />
               ))}
-            </motion.div>
-          </div>
+            </div>
+          </motion.div>
         );
       })}
-    </div>
+    </motion.div>
   );
 }
