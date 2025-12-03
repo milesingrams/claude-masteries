@@ -127,8 +127,11 @@ export function PromptProvider({
   const abortControllerRef = useRef<AbortController | null>(null);
 
   const stopAnalysis = useCallback(() => {
-    abortControllerRef.current?.abort();
-    abortControllerRef.current = null;
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+      setIsAnalyzing(false);
+    }
   }, []);
 
   const submitAnalysis = useCallback(
@@ -167,13 +170,13 @@ export function PromptProvider({
         handleAnalysisResponse(data);
       } catch (error) {
         if (error instanceof Error && error.name === "AbortError") {
-          // Request was aborted, ignore
+          // Request was aborted, don't update state as a new request may have started
           return;
         }
         console.error("Analysis error:", error);
-      } finally {
         setIsAnalyzing(false);
       }
+      setIsAnalyzing(false);
     },
     [stopAnalysis, handleAnalysisResponse]
   );
@@ -341,6 +344,9 @@ export function PromptProvider({
         clearTimeout(debounceTimerRef.current);
       }
 
+      // Abort any in-flight analysis request
+      stopAnalysis();
+
       // Schedule analysis if conditions are met
       if (
         enableMasterySuggestions &&
@@ -354,7 +360,7 @@ export function PromptProvider({
         }, ANALYZE_PROMPT_DEBOUNCE_DELAY);
       }
     },
-    [enableMasterySuggestions, disabled, analyzePrompt, originalPrompt]
+    [enableMasterySuggestions, disabled, analyzePrompt, originalPrompt, stopAnalysis]
   );
 
   // Cleanup debounce timer on unmount

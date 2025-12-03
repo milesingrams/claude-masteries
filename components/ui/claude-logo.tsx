@@ -10,7 +10,7 @@ export function ClaudeLogo({ className, size, ...props }: ClaudeLogoProps) {
     <svg
       viewBox="0 0 1200 1200"
       fill="currentColor"
-      className={cn("text-[#d97757]", className)}
+      className={cn("text-claude-orange", className)}
       width={size}
       height={size}
       aria-hidden="true"

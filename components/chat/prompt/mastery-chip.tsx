@@ -76,7 +76,7 @@ export function MasteryChip({ chip, display }: MasteryChipProps) {
       transition={{ duration: 0.2, ease: "easeOut" }}
       ref={chipRef}
       onClick={handleChipClick}
-      className="group bg-card text-card-foreground border-border/50 hover:border-border relative w-fit cursor-pointer overflow-hidden border backdrop-blur-sm"
+      className="group bg-card text-card-foreground border-border/50 hover:border-border relative max-w-full cursor-pointer overflow-hidden border backdrop-blur-sm"
       style={{ borderRadius: 6 }}
       data-slot="mastery-chip"
     >
@@ -89,11 +89,11 @@ export function MasteryChip({ chip, display }: MasteryChipProps) {
         {isSatisfied ? (
           <Check className="h-3 w-3 text-green-600 dark:text-green-400" />
         ) : (
-          <ClaudeLogo className="h-3 w-3 text-[#d97757]" />
+          <ClaudeLogo className="h-3 w-3 text-claude-orange" />
         )}
 
         {/* Chip text */}
-        <div className="text-foreground/80 flex-1 text-sm whitespace-nowrap">
+        <div className="text-foreground/80 min-w-0 flex-1 truncate text-sm">
           {isSatisfied
             ? formattedCategoryName || "Applied suggestion"
             : chip.suggestion_text}
@@ -153,7 +153,7 @@ export function MasteryChip({ chip, display }: MasteryChipProps) {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="h-6 px-2 text-xs text-[#d97757] hover:text-[#d97757]"
+                  className="h-6 px-2 text-xs text-claude-orange hover:text-claude-orange"
                   onClick={onShowMeClick}
                   disabled={isShowMeLoading}
                 >
