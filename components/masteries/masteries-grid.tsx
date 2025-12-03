@@ -31,13 +31,13 @@ export function MasteriesGrid() {
   const categories = Object.keys(categorizedMasteries).sort();
 
   return (
-    <div className="flex gap-8">
+    <div className="flex flex-col gap-8 md:flex-row">
       {categories.map((category) => {
         const masteries = categorizedMasteries[category];
         return (
-          <div key={category} className="flex w-72 shrink-0 flex-col">
+          <div key={category} className="flex w-full shrink-0 flex-col md:w-72">
             {/* Category header */}
-            <h2 className="mb-4 text-sm font-semibold text-foreground/80">
+            <h2 className="text-foreground/80 mb-4 text-sm font-semibold">
               {category}
             </h2>
 
