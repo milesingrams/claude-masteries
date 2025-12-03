@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
-import { Plus, Network } from "lucide-react";
+import { useParams, usePathname, useRouter } from "next/navigation";
+import { Plus, Network, type LucideIcon } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -29,8 +29,10 @@ export function AppSidebar() {
   const { state, isMobile, setOpenMobile } = useSidebar();
   const { chats, isLoaded, deleteChat } = useChatContext();
   const params = useParams();
+  const pathname = usePathname();
   const router = useRouter();
   const currentChatId = params?.chatId as string | undefined;
+  const isMasteriesPage = pathname === "/masteries";
 
   const closeMobileSidebar = () => {
     if (isMobile) {
@@ -93,6 +95,7 @@ export function AppSidebar() {
                   tooltip="Masteries"
                   onClick={closeMobileSidebar}
                   asChild
+                  isActive={isMasteriesPage}
                 >
                   <Link href="/masteries">
                     <Network className="h-4 w-4" />
