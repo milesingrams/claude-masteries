@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import { useMasteryContext } from "@/lib/masteries/mastery-context";
-import { MasteryCard } from "./mastery-card";
+import { MasteryTimelineItem } from "./mastery-timeline-item";
 import type { MasteryDisplayData } from "@/lib/masteries/types";
 
 export function MasteriesGrid() {
@@ -31,23 +31,30 @@ export function MasteriesGrid() {
   const categories = Object.keys(categorizedMasteries).sort();
 
   return (
-    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-      {categories.map((category) => (
-        <div key={category} className="flex flex-col gap-3">
-          <h2 className="text-sm font-semibold text-foreground/80">
-            {category}
-          </h2>
-          <div className="flex flex-col gap-3">
-            {categorizedMasteries[category].map((mastery) => (
-              <MasteryCard
-                key={mastery.id}
-                mastery={mastery}
-                isLearned={learnedMasteryIds.includes(mastery.id)}
-              />
-            ))}
+    <div className="flex gap-8">
+      {categories.map((category) => {
+        const masteries = categorizedMasteries[category];
+        return (
+          <div key={category} className="flex w-72 shrink-0 flex-col">
+            {/* Category header */}
+            <h2 className="mb-4 text-sm font-semibold text-foreground/80">
+              {category}
+            </h2>
+
+            {/* Timeline for this category */}
+            <div className="flex flex-col">
+              {masteries.map((mastery, index) => (
+                <MasteryTimelineItem
+                  key={mastery.id}
+                  mastery={mastery}
+                  isLearned={learnedMasteryIds.includes(mastery.id)}
+                  isLast={index === masteries.length - 1}
+                />
+              ))}
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }
