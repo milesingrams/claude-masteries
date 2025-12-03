@@ -1,5 +1,5 @@
 {
-  "id": "capabilities/multi-modal/upload-file",
+  "id": "capabilities/upload-file",
   "learning_threshold": 3,
   "title": "You could show Claude the file directly",
   "detail": "Instead of describing what's in a document or copy-pasting excerpts, you can give Claude the file directly. It can read PDFs, documents, spreadsheets, and code files—then analyze, summarize, or work with the full content. Let Claude see what you're seeing.",

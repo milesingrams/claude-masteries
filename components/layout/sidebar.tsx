@@ -92,9 +92,12 @@ export function AppSidebar() {
                 <SidebarMenuButton
                   tooltip="Masteries"
                   onClick={closeMobileSidebar}
+                  asChild
                 >
-                  <Network className="h-4 w-4" />
-                  <span>Masteries</span>
+                  <Link href="/masteries">
+                    <Network className="h-4 w-4" />
+                    <span>Masteries</span>
+                  </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
