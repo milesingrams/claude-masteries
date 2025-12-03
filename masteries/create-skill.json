@@ -1,0 +1,8 @@
+{
+  "id": "capabilities/create-skill",
+  "icon": "Wand",
+  "learning_threshold": 3,
+  "title": "You could save this as a skill",
+  "detail": "If you find yourself giving Claude the same instructions repeatedly—a particular format, a workflow, a persona—turn it into a skill. Custom skills let you package complex prompts into reusable shortcuts. Build once, use forever. Your most effective prompting patterns deserve to be captured.",
+  "surface_triggers": "User provides detailed multi-step instructions. User repeats similar prompts across conversations. User describes a workflow they use frequently. User asks Claude to remember specific instructions for next time."
+}

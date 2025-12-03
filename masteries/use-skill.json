@@ -1,0 +1,8 @@
+{
+  "id": "capabilities/use-skill",
+  "icon": "Sparkles",
+  "learning_threshold": 3,
+  "title": "There's a skill for that",
+  "detail": "Skills are specialized prompts that give Claude domain expertise on demand. Need help with a complex task like data analysis, creative writing, or code review? There may be a skill built for exactly that. Ask Claude what skills are available, or type / to browse—you might find one that transforms a multi-step task into a single command.",
+  "surface_triggers": "User is attempting a complex multi-step task. User asks how to accomplish something Claude has skills for. User would benefit from specialized domain knowledge. Task matches common skill categories like writing, analysis, or coding."
+}

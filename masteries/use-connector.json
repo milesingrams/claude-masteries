@@ -1,0 +1,8 @@
+{
+  "id": "capabilities/use-connector",
+  "icon": "Plug",
+  "learning_threshold": 3,
+  "title": "Claude could connect to that",
+  "detail": "Connectors let Claude access your tools and services directly—pull data from databases, interact with APIs, or work with your apps. Instead of copy-pasting between Claude and other tools, connect them. Claude becomes more powerful when it can reach into your actual workflow.",
+  "surface_triggers": "User manually copies data from external services. User describes data that exists in connected systems. User asks Claude to do something requiring external access. Task would benefit from live data from user's tools."
+}

@@ -1,6 +1,8 @@
 import capabilityInquiry from "@/masteries/capability-inquiry.json";
 import constraintSpecification from "@/masteries/constraint-specification.json";
 import contextLoading from "@/masteries/context-loading.json";
+import createArtifact from "@/masteries/create-artifact.json";
+import createSkill from "@/masteries/create-skill.json";
 import devilsAdvocate from "@/masteries/devils-advocate.json";
 import examplesInPrompt from "@/masteries/examples-in-prompt.json";
 import iterativeRefinement from "@/masteries/iterative-refinement.json";
@@ -12,6 +14,8 @@ import socraticMode from "@/masteries/socratic-mode.json";
 import thinkingPartner from "@/masteries/thinking-partner.json";
 import uploadFile from "@/masteries/upload-file.json";
 import uploadImage from "@/masteries/upload-image.json";
+import useConnector from "@/masteries/use-connector.json";
+import useSkill from "@/masteries/use-skill.json";
 import webSearch from "@/masteries/web-search.json";
 
 export interface Mastery {
@@ -20,7 +24,6 @@ export interface Mastery {
   learning_threshold: number;
   title: string;
   surface_triggers: string;
-  satisfaction_triggers: string;
   detail: string;
 }
 
@@ -28,6 +31,8 @@ export const masteries: Mastery[] = [
   capabilityInquiry,
   constraintSpecification,
   contextLoading,
+  createArtifact,
+  createSkill,
   devilsAdvocate,
   examplesInPrompt,
   iterativeRefinement,
@@ -39,6 +44,8 @@ export const masteries: Mastery[] = [
   thinkingPartner,
   uploadFile,
   uploadImage,
+  useConnector,
+  useSkill,
   webSearch,
 ];
 

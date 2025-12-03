@@ -1,0 +1,8 @@
+{
+  "id": "capabilities/create-artifact",
+  "icon": "FileCode",
+  "learning_threshold": 3,
+  "title": "Claude could create an artifact for this",
+  "detail": "Artifacts are standalone pieces of content—documents, code, diagrams, interactive components—that Claude creates as separate, downloadable outputs. When you need something you'll use outside the conversation, ask for an artifact. It makes the output portable, editable, and ready to use in your actual work.",
+  "surface_triggers": "User needs a standalone document or file. User asks for code they'll use elsewhere. User wants something downloadable or shareable. Output would be more useful as a separate, editable file."
+}
