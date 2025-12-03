@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { Check, X, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -146,8 +147,11 @@ export function MasteryChip({ chip, display }: MasteryChipProps) {
                     variant="outline"
                     size="sm"
                     className="text-muted-foreground mr-auto h-6 px-2 text-xs"
+                    asChild
                   >
-                    {formattedCategoryName}
+                    <Link href="/masteries" onClick={(e) => e.stopPropagation()}>
+                      {formattedCategoryName}
+                    </Link>
                   </Button>
                 )}
                 <Button
