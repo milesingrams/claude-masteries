@@ -93,7 +93,7 @@ export function MasteryChip({ chip, display }: MasteryChipProps) {
         )}
 
         {/* Chip text */}
-        <div className="text-muted-foreground flex-1 text-sm whitespace-nowrap">
+        <div className="text-foreground/80 flex-1 text-sm whitespace-nowrap">
           {isSatisfied
             ? formattedCategoryName || "Applied suggestion"
             : chip.suggestion_text}
@@ -124,7 +124,7 @@ export function MasteryChip({ chip, display }: MasteryChipProps) {
             className="overflow-hidden"
           >
             <div className="border-border/30 border-t px-2 py-1.5">
-              <p className="text-muted-foreground/80 text-sm">
+              <p className="text-muted-foreground text-sm">
                 {chip.suggestion_description || display?.detail}
               </p>
               {chip.suggestion_examples &&
@@ -133,23 +133,27 @@ export function MasteryChip({ chip, display }: MasteryChipProps) {
                     {chip.suggestion_examples.map((example, i) => (
                       <p
                         key={i}
-                        className="text-muted-foreground/80 border-muted/30 border-l-2 pl-2 text-sm italic"
+                        className="text-muted-foreground border-muted/30 border-l-2 pl-2 text-sm italic"
                       >
                         &ldquo;{example}&rdquo;
                       </p>
                     ))}
                   </div>
                 )}
-              <div className="mt-1.5 flex items-center justify-end">
+              <div className="mt-2 flex items-center justify-end">
                 {formattedCategoryName && (
-                  <p className="text-muted-foreground/80 mr-auto text-sm">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="text-muted-foreground mr-auto h-6 px-2 text-xs"
+                  >
                     {formattedCategoryName}
-                  </p>
+                  </Button>
                 )}
                 <Button
                   variant="outline"
                   size="sm"
-                  className="h-6 px-2 text-sm text-[#d97757] hover:text-[#d97757]/80"
+                  className="h-6 px-2 text-xs text-[#d97757] hover:text-[#d97757]"
                   onClick={onShowMeClick}
                   disabled={isShowMeLoading}
                 >
