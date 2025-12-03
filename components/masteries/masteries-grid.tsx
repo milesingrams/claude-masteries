@@ -1,9 +1,20 @@
 "use client";
 
 import { useMemo } from "react";
+import { motion } from "framer-motion";
 import { useMasteryContext } from "@/lib/masteries/mastery-context";
 import { MasteryTimelineItem } from "./mastery-timeline-item";
 import type { MasteryDisplayData } from "@/lib/masteries/types";
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.08,
+    },
+  },
+};
 
 export function MasteriesGrid() {
   const { masteryDisplayData, learnedMasteryIds } = useMasteryContext();
@@ -42,7 +53,12 @@ export function MasteriesGrid() {
             </h2>
 
             {/* Timeline for this category */}
-            <div className="flex flex-col">
+            <motion.div
+              className="flex flex-col"
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+            >
               {masteries.map((mastery, index) => (
                 <MasteryTimelineItem
                   key={mastery.id}
@@ -51,7 +67,7 @@ export function MasteriesGrid() {
                   isLast={index === masteries.length - 1}
                 />
               ))}
-            </div>
+            </motion.div>
           </div>
         );
       })}

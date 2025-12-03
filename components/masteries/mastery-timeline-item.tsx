@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import type { MasteryDisplayData } from "@/lib/masteries/types";
 import {
@@ -55,10 +56,14 @@ export function MasteryTimelineItem({
   const Icon = iconMap[mastery.icon];
 
   return (
-    <div
+    <motion.div
       className="group relative flex gap-4"
       onMouseEnter={() => setIsExpanded(true)}
       onMouseLeave={() => setIsExpanded(false)}
+      variants={{
+        hidden: { opacity: 0, x: -20 },
+        visible: { opacity: 1, x: 0 },
+      }}
     >
       {/* Timeline line and dot */}
       <div className="flex flex-col items-center pt-1.5">
@@ -132,8 +137,8 @@ export function MasteryTimelineItem({
                   "mt-2 text-sm transition-all duration-200 ease-in-out",
                   isLearned ? "text-foreground/80" : "text-muted-foreground",
                   isExpanded
-                    ? "translate-y-0 opacity-100 blur-0"
-                    : "translate-y-2 opacity-0 blur-sm"
+                    ? "blur-0 translate-x-0 opacity-100"
+                    : "translate-x-3 opacity-0 blur-sm"
                 )}
               >
                 {mastery.detail}
@@ -142,6 +147,6 @@ export function MasteryTimelineItem({
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
