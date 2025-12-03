@@ -7,8 +7,10 @@ export default function MasteriesPage() {
         <header className="border-border/40 bg-background/80 z-10 flex h-12 shrink-0 items-center justify-center border-b backdrop-blur-sm">
           <h1 className="text-sm font-medium">Masteries</h1>
         </header>
-        <main className="min-h-0 min-w-0 flex-1 overflow-auto p-6">
-          <MasteriesGrid />
+        <main className="min-h-0 min-w-0 flex-1 overflow-auto">
+          <div className="inline-block min-w-full p-6">
+            <MasteriesGrid />
+          </div>
         </main>
       </div>
     </div>

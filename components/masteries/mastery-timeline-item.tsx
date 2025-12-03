@@ -123,16 +123,17 @@ export function MasteryTimelineItem({
           <div
             className={cn(
               "grid transition-all duration-200 ease-in-out",
-              isExpanded
-                ? "grid-rows-[1fr] opacity-100"
-                : "grid-rows-[0fr] opacity-0"
+              isExpanded ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
             )}
           >
             <div className="overflow-hidden">
               <p
                 className={cn(
-                  "mt-2 text-sm",
-                  isLearned ? "text-foreground/80" : "text-muted-foreground"
+                  "mt-2 text-sm transition-all duration-200 ease-in-out",
+                  isLearned ? "text-foreground/80" : "text-muted-foreground",
+                  isExpanded
+                    ? "translate-y-0 opacity-100 blur-0"
+                    : "translate-y-2 opacity-0 blur-sm"
                 )}
               >
                 {mastery.detail}
