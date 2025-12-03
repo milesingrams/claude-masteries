@@ -16,6 +16,7 @@ import {
   PromptProvider,
   usePromptContext,
 } from "@/components/chat/prompt/prompt-context";
+import { useInputHeight } from "@/components/chat/prompt/input-height-context";
 import { cn } from "@/lib/utils";
 import { MIN_PROMPT_LENGTH } from "@/lib/constants";
 
@@ -72,6 +73,8 @@ function PromptInputInner({
     textareaRef,
   } = usePromptContext();
 
+  const { inputContainerRef } = useInputHeight();
+
   const handleMessageChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     handleUserInput(e.target.value);
   };
@@ -88,6 +91,7 @@ function PromptInputInner({
 
   return (
     <div
+      ref={inputContainerRef}
       className={cn(
         "pointer-events-none absolute right-0 bottom-0 left-0 z-10 px-4 pb-4",
         className

@@ -7,7 +7,10 @@ import { Button } from "@/components/ui/button";
 import { ClaudeLogo } from "@/components/ui/claude-logo";
 import { usePromptContext } from "@/components/chat/prompt/prompt-context";
 import { parseFormattedMasteryName } from "@/lib/masteries";
-import type { ActiveMasteryChip, MasteryDisplayData } from "@/lib/masteries/types";
+import type {
+  ActiveMasteryChip,
+  MasteryDisplayData,
+} from "@/lib/masteries/types";
 
 interface MasteryChipProps {
   chip: ActiveMasteryChip;
@@ -22,7 +25,9 @@ export function MasteryChip({ chip, display }: MasteryChipProps) {
 
   const isSatisfied = chip.status === "satisfied";
 
-  const formattedCategoryName = chip.mastery_id ? parseFormattedMasteryName(chip.mastery_id) : null;
+  const formattedCategoryName = chip.mastery_id
+    ? parseFormattedMasteryName(chip.mastery_id)
+    : null;
 
   // Click outside to collapse
   useEffect(() => {
@@ -88,8 +93,10 @@ export function MasteryChip({ chip, display }: MasteryChipProps) {
         )}
 
         {/* Chip text */}
-        <div className="text-muted-foreground flex-1 text-xs whitespace-nowrap">
-          {isSatisfied ? (formattedCategoryName || "Applied suggestion") : chip.suggestion_text}
+        <div className="text-muted-foreground flex-1 text-sm whitespace-nowrap">
+          {isSatisfied
+            ? formattedCategoryName || "Applied suggestion"
+            : chip.suggestion_text}
         </div>
 
         {/* Actions */}
@@ -117,31 +124,32 @@ export function MasteryChip({ chip, display }: MasteryChipProps) {
             className="overflow-hidden"
           >
             <div className="border-border/30 border-t px-2 py-1.5">
-              <p className="text-muted-foreground/80 text-[12px] leading-relaxed">
+              <p className="text-muted-foreground/80 text-sm">
                 {chip.suggestion_description || display?.detail}
               </p>
-              {chip.suggestion_examples && chip.suggestion_examples.length > 0 && (
-                <div className="mt-1.5 space-y-1">
-                  {chip.suggestion_examples.map((example, i) => (
-                    <p
-                      key={i}
-                      className="text-muted-foreground/60 border-muted/30 border-l-2 pl-2 text-[12px] italic"
-                    >
-                      &ldquo;{example}&rdquo;
-                    </p>
-                  ))}
-                </div>
-              )}
+              {chip.suggestion_examples &&
+                chip.suggestion_examples.length > 0 && (
+                  <div className="mt-1.5 space-y-1">
+                    {chip.suggestion_examples.map((example, i) => (
+                      <p
+                        key={i}
+                        className="text-muted-foreground/80 border-muted/30 border-l-2 pl-2 text-sm italic"
+                      >
+                        &ldquo;{example}&rdquo;
+                      </p>
+                    ))}
+                  </div>
+                )}
               <div className="mt-1.5 flex items-center justify-end">
                 {formattedCategoryName && (
-                  <p className="text-muted-foreground/50 mr-auto text-[10px]">
+                  <p className="text-muted-foreground/80 mr-auto text-sm">
                     {formattedCategoryName}
                   </p>
                 )}
                 <Button
-                  variant="ghost"
+                  variant="outline"
                   size="sm"
-                  className="h-6 px-2 text-[12px] text-[#d97757] hover:text-[#d97757]/80"
+                  className="h-6 px-2 text-sm text-[#d97757] hover:text-[#d97757]/80"
                   onClick={onShowMeClick}
                   disabled={isShowMeLoading}
                 >

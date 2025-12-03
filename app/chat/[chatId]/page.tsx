@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { ChatHeader } from "@/components/chat/chat-header";
 import { MessageList } from "@/components/chat/messages/message-list";
 import { PromptInput } from "@/components/chat/prompt/prompt-input";
+import { InputHeightProvider } from "@/components/chat/prompt/input-height-context";
 import { useChatContext } from "@/lib/chats/chat-context";
 import type { Message } from "@/lib/types";
 
@@ -158,29 +159,31 @@ export default function ChatPage() {
   };
 
   return (
-    <div className="relative h-full flex-1">
-      {/* Scrollable content area - absolute to ensure proper height */}
-      <div className="absolute inset-0 overflow-y-auto">
-        <ChatHeader title={chat.title} onDelete={handleDeleteChat} />
-        <MessageList
-          messages={messages.map((msg) => ({
-            id: msg.id,
-            role: msg.role as "user" | "assistant",
-            content:
-              msg.parts
-                .filter((part) => part.type === "text")
-                .map((part) => part.text)
-                .join("") || "",
-            createdAt: new Date(),
-          }))}
-          isLoading={isLoading}
+    <InputHeightProvider>
+      <div className="relative h-full flex-1">
+        {/* Scrollable content area - absolute to ensure proper height */}
+        <div className="absolute inset-0 overflow-y-auto">
+          <ChatHeader title={chat.title} onDelete={handleDeleteChat} />
+          <MessageList
+            messages={messages.map((msg) => ({
+              id: msg.id,
+              role: msg.role as "user" | "assistant",
+              content:
+                msg.parts
+                  .filter((part) => part.type === "text")
+                  .map((part) => part.text)
+                  .join("") || "",
+              createdAt: new Date(),
+            }))}
+            isLoading={isLoading}
+          />
+        </div>
+        {/* Floating input at bottom */}
+        <PromptInput
+          onPromptSubmit={handlePromptSubmit}
+          disabled={status !== "ready"}
         />
       </div>
-      {/* Floating input at bottom */}
-      <PromptInput
-        onPromptSubmit={handlePromptSubmit}
-        disabled={status !== "ready"}
-      />
-    </div>
+    </InputHeightProvider>
   );
 }
