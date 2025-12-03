@@ -31,7 +31,7 @@ export function MasteriesGrid() {
   const categories = Object.keys(categorizedMasteries).sort();
 
   return (
-    <div className="flex flex-col gap-8 md:flex-row">
+    <div className="flex flex-1 flex-col gap-8 md:flex-row">
       {categories.map((category) => {
         const masteries = categorizedMasteries[category];
         return (
