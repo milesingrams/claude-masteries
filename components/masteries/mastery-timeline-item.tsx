@@ -61,8 +61,8 @@ export function MasteryTimelineItem({
       onMouseLeave={() => setIsExpanded(false)}
     >
       {/* Timeline line and dot */}
-      <div className="flex flex-col items-center">
-        {/* Dot */}
+      <div className="flex flex-col items-center pt-1.5">
+        {/* Dot - vertically centered with collapsed card header */}
         <div
           className={cn(
             "relative flex size-8 shrink-0 items-center justify-center rounded-full border-2 transition-all duration-200",
@@ -113,7 +113,7 @@ export function MasteryTimelineItem({
               {mastery.name}
             </h3>
             {isLearned && (
-              <span className="rounded-full bg-claude-orange/20 px-2 py-0.5 text-xs font-medium text-claude-orange">
+              <span className="bg-claude-orange/10 text-claude-orange/90 rounded-full px-2 py-0.5 text-xs font-medium">
                 Learned
               </span>
             )}
