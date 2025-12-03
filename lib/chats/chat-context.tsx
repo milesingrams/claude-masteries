@@ -15,6 +15,7 @@ import {
   saveChat,
   deleteChat as deleteStorageChat,
 } from "@/lib/chats/chat-storage";
+import { demoChats } from "@/lib/chats/demo-chats";
 
 interface ChatContextType {
   chats: Chat[];
@@ -34,9 +35,16 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   const [isLoaded, setIsLoaded] = useState(false);
 
   // Load chats from localStorage after mount (client-side only)
+  // Seed demo chats if localStorage is empty
   useEffect(() => {
     const loadedChats = getAllChats();
-    setChats(loadedChats); // eslint-disable-line react-hooks/set-state-in-effect
+    if (loadedChats.length === 0) {
+      // Seed with demo chats
+      demoChats.forEach((chat) => saveChat(chat));
+      setChats(demoChats);
+    } else {
+      setChats(loadedChats);
+    }
     setIsLoaded(true);
   }, []);
 

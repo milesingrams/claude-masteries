@@ -28,25 +28,29 @@ export interface Mastery {
 }
 
 export const masteries: Mastery[] = [
-  capabilityInquiry,
-  constraintSpecification,
-  contextLoading,
+  // Capabilities
   createArtifact,
   createSkill,
-  devilsAdvocate,
-  examplesInPrompt,
-  iterativeRefinement,
-  promptCritique,
-  roleFraming,
-  rolePlay,
-  selfCritique,
-  socraticMode,
-  thinkingPartner,
   uploadFile,
   uploadImage,
   useConnector,
   useSkill,
   webSearch,
+  // Interaction Patterns
+  devilsAdvocate,
+  iterativeRefinement,
+  rolePlay,
+  socraticMode,
+  thinkingPartner,
+  // Prompt Craft
+  constraintSpecification,
+  contextLoading,
+  examplesInPrompt,
+  roleFraming,
+  // Meta
+  capabilityInquiry,
+  promptCritique,
+  selfCritique,
 ];
 
 export function getMasteryById(id: string): Mastery | undefined {

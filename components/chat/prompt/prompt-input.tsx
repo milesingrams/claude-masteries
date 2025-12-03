@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/tooltip";
 import { ClaudeLogo } from "@/components/ui/claude-logo";
 import { MasteryChipContainer } from "./mastery-chip-container";
-import { MasteryDebugPopover } from "@/components/chat/prompt/mastery-debug-popover";
+// import { MasteryDebugPopover } from "@/components/chat/prompt/mastery-debug-popover";
 import {
   PromptProvider,
   usePromptContext,
@@ -99,7 +99,7 @@ function PromptInputInner({
       {...props}
     >
       {/* Debug Popover */}
-      {enableMasterySuggestions && <MasteryDebugPopover />}
+      {/* {enableMasterySuggestions && <MasteryDebugPopover />} */}
 
       <div className="mx-auto max-w-3xl space-y-2">
         {/* Mastery Chips */}
