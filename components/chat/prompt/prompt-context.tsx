@@ -76,7 +76,12 @@ export function PromptProvider({
   // Analysis state
   const [activeMasteryChip, setActiveMasteryChip] =
     useState<ActiveMasteryChip | null>(null);
+  const [pendingMasteryChip, setPendingMasteryChip] =
+    useState<ActiveMasteryChip | null>(null);
   const [suppressedIds, setSuppressedIds] = useState<string[]>([]);
+
+  // Timer ref for satisfied chip removal
+  const satisfiedTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Debounce timer for user input
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -105,18 +110,35 @@ export function PromptProvider({
         setActiveMasteryChip((prev) =>
           prev ? { ...prev, status: "satisfied" } : null
         );
-        requestAnimationFrame(() => setActiveMasteryChip(null));
+        // Clear any existing timer
+        if (satisfiedTimerRef.current) {
+          clearTimeout(satisfiedTimerRef.current);
+        }
+        // Remove chip after 2-second exit animation, show pending chip if any
+        satisfiedTimerRef.current = setTimeout(() => {
+          setPendingMasteryChip((currentPending) => {
+            setActiveMasteryChip(currentPending);
+            return null;
+          });
+          satisfiedTimerRef.current = null;
+        }, 2000);
       }
 
       if (data.surface) {
-        setActiveMasteryChip({
+        const newChip: ActiveMasteryChip = {
           mastery_id: data.surface.mastery_id,
           surfaced_at: Date.now(),
           status: "active",
           suggestion_text: data.surface.suggestion_text,
           suggestion_description: data.surface.suggestion_description,
           suggestion_examples: data.surface.suggestion_examples,
-        });
+        };
+        // If a satisfied chip is animating out, queue the new chip
+        if (activeMasteryChip?.status === "satisfied") {
+          setPendingMasteryChip(newChip);
+        } else {
+          setActiveMasteryChip(newChip);
+        }
       }
     },
     [activeMasteryChip, markSatisfied]
@@ -203,7 +225,13 @@ export function PromptProvider({
     if (masteryId) {
       setSuppressedIds((prev) => [...prev, masteryId]);
     }
+    // Clear any pending satisfied timer
+    if (satisfiedTimerRef.current) {
+      clearTimeout(satisfiedTimerRef.current);
+      satisfiedTimerRef.current = null;
+    }
     setActiveMasteryChip(null);
+    setPendingMasteryChip(null);
   }, [activeMasteryChip]);
 
   const satisfyMasteryChip = useCallback(() => {
@@ -215,7 +243,18 @@ export function PromptProvider({
     setActiveMasteryChip((prev) =>
       prev ? { ...prev, status: "satisfied" } : null
     );
-    requestAnimationFrame(() => setActiveMasteryChip(null));
+    // Clear any existing timer
+    if (satisfiedTimerRef.current) {
+      clearTimeout(satisfiedTimerRef.current);
+    }
+    // Remove chip after 2-second exit animation, show pending chip if any
+    satisfiedTimerRef.current = setTimeout(() => {
+      setPendingMasteryChip((currentPending) => {
+        setActiveMasteryChip(currentPending);
+        return null;
+      });
+      satisfiedTimerRef.current = null;
+    }, 2000);
   }, [activeMasteryChip, markSatisfied]);
 
   const resetSession = useCallback(() => {
@@ -363,11 +402,14 @@ export function PromptProvider({
     [enableMasterySuggestions, disabled, analyzePrompt, originalPrompt, stopAnalysis]
   );
 
-  // Cleanup debounce timer on unmount
+  // Cleanup timers on unmount
   useEffect(() => {
     return () => {
       if (debounceTimerRef.current) {
         clearTimeout(debounceTimerRef.current);
+      }
+      if (satisfiedTimerRef.current) {
+        clearTimeout(satisfiedTimerRef.current);
       }
     };
   }, []);
@@ -375,7 +417,13 @@ export function PromptProvider({
   // Clear chip when prompt is cleared
   useEffect(() => {
     if (!prompt || prompt.trim().length === 0) {
+      // Clear any pending satisfied timer
+      if (satisfiedTimerRef.current) {
+        clearTimeout(satisfiedTimerRef.current);
+        satisfiedTimerRef.current = null;
+      }
       setActiveMasteryChip(null);
+      setPendingMasteryChip(null);
       lastAnalyzedPrompt.current = "";
     }
   }, [prompt]);
