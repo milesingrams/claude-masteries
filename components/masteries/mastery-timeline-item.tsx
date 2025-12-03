@@ -100,14 +100,41 @@ export function MasteryTimelineItem({
       {/* Card content */}
       <div
         className={cn(
-          "mb-4 flex-1 overflow-hidden rounded-lg border transition-all duration-200",
+          "relative mb-4 flex-1 overflow-hidden rounded-lg border transition-all duration-200",
           isLearned
-            ? "border-claude-orange/30 bg-claude-orange/5"
+            ? "border-transparent bg-claude-orange/5"
             : "border-border/50 bg-muted/30",
           isExpanded && "shadow-md"
         )}
       >
-        <div className="p-3">
+        {/* Shiny border shimmer effect for learned masteries */}
+        {isLearned && (
+          <>
+            {/* Base border */}
+            <div className="pointer-events-none absolute inset-0 rounded-lg border border-claude-orange/30" />
+            {/* Hover-triggered shimmer border */}
+            <motion.div
+              className="pointer-events-none absolute inset-0 rounded-lg"
+              style={{
+                background:
+                  "linear-gradient(110deg, transparent 25%, rgba(255,140,50,0.3) 50%, transparent 75%)",
+                backgroundSize: "250% 100%",
+                mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                maskComposite: "exclude",
+                WebkitMask:
+                  "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                WebkitMaskComposite: "xor",
+                padding: "1px",
+              }}
+              initial={{ backgroundPosition: "200% 0" }}
+              animate={{
+                backgroundPosition: isExpanded ? "0% 0" : "200% 0",
+              }}
+              transition={{ duration: isExpanded ? 0.8 : 0, ease: "easeInOut" }}
+            />
+          </>
+        )}
+        <div className="relative p-3">
           <div className="flex items-center justify-between gap-2">
             <h3
               className={cn(
