@@ -331,6 +331,11 @@ export function PromptProvider({
     (value: string) => {
       setPrompt(value);
 
+      // Clear original prompt when user makes any edit (hides revert button)
+      if (originalPrompt !== null) {
+        setOriginalPrompt(null);
+      }
+
       // Clear any pending debounce timer
       if (debounceTimerRef.current) {
         clearTimeout(debounceTimerRef.current);
@@ -349,7 +354,7 @@ export function PromptProvider({
         }, ANALYZE_PROMPT_DEBOUNCE_DELAY);
       }
     },
-    [enableMasterySuggestions, disabled, analyzePrompt]
+    [enableMasterySuggestions, disabled, analyzePrompt, originalPrompt]
   );
 
   // Cleanup debounce timer on unmount

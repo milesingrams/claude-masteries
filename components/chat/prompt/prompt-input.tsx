@@ -3,7 +3,7 @@
 import type { ComponentProps } from "react";
 import { ArrowUp, Undo2, Brain } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
+import { AutosizeTextarea } from "@/components/ui/autosize-textarea";
 import {
   Tooltip,
   TooltipContent,
@@ -120,16 +120,21 @@ function PromptInputInner({
                 : undefined
             }
           >
-            <Textarea
+            <AutosizeTextarea
               ref={textareaRef}
               value={prompt}
               onChange={handleMessageChange}
               placeholder={placeholder}
               disabled={disabled || isShowMeStreaming}
               autoFocus
-              className="text-foreground placeholder:text-muted-foreground max-h-[200px] min-h-[60px] resize-none border-0 bg-transparent px-3 py-3 text-base focus-visible:ring-0 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50 md:text-base dark:bg-transparent"
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && !e.shiftKey) {
+              minHeight={60}
+              maxHeight="50vh"
+              className="w-full rounded-md border-0 bg-transparent px-3 py-3 text-base text-foreground placeholder:text-muted-foreground shadow-none outline-none transition-[color,box-shadow] focus-visible:ring-0 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50 md:text-base dark:bg-transparent"
+              onKeyDown={(e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+                // On mobile/touch devices, allow Enter for new lines
+                // On desktop, Enter submits (Shift+Enter for new line)
+                const isTouchDevice = "ontouchstart" in window || navigator.maxTouchPoints > 0;
+                if (e.key === "Enter" && !e.shiftKey && !isTouchDevice) {
                   e.preventDefault();
                   handleSubmit(e);
                 }
