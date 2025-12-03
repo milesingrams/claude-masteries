@@ -25,6 +25,16 @@ import {
 import { ChatOptionsDropdown } from "@/components/chat/chat-options-dropdown";
 import { useChatContext } from "@/lib/chats/chat-context";
 
+interface NavItem {
+  label: string;
+  href: string;
+  icon: LucideIcon;
+}
+
+const navItems: NavItem[] = [
+  { label: "Masteries", href: "/masteries", icon: Network },
+];
+
 export function AppSidebar() {
   const { state, isMobile, setOpenMobile } = useSidebar();
   const { chats, isLoaded, deleteChat } = useChatContext();
@@ -32,7 +42,6 @@ export function AppSidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const currentChatId = params?.chatId as string | undefined;
-  const isMasteriesPage = pathname === "/masteries";
 
   const closeMobileSidebar = () => {
     if (isMobile) {
@@ -90,19 +99,21 @@ export function AppSidebar() {
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  tooltip="Masteries"
-                  onClick={closeMobileSidebar}
-                  asChild
-                  isActive={isMasteriesPage}
-                >
-                  <Link href="/masteries">
-                    <Network className="h-4 w-4" />
-                    <span>Masteries</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
+              {navItems.map((item) => (
+                <SidebarMenuItem key={item.href}>
+                  <SidebarMenuButton
+                    tooltip={item.label}
+                    onClick={closeMobileSidebar}
+                    asChild
+                    isActive={pathname === item.href}
+                  >
+                    <Link href={item.href}>
+                      <item.icon className="h-4 w-4" />
+                      <span>{item.label}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
